@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { TableComponent } from './components/table/table.component';
 
 
 
@@ -12,10 +12,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     SharedRoutingModule
   ],
   declarations: [
-    SidebarComponent
+    SidebarComponent,
+    TableComponent
   ],
   exports: [
-    SidebarComponent
+    SidebarComponent,
+    TableComponent
   ]
 })
 export class SharedModule { }

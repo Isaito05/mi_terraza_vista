@@ -1,7 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-const routes: Routes = [];
+import { ProprovComponent } from './component/proprov.component';
+const routes: Routes = [
+  {
+    path: '',
+    component: ProprovComponent,
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

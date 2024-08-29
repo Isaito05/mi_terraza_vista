@@ -1,45 +1,11 @@
-<p>pedido works!</p>
-<div *ngIf="pedidos.length > 0; else noData">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Fecha</th>
-          <th>Info</th>
-          <th>Precio Total</th>
-          <th>RGU ID</th>
-          <th>Descripción</th>
-          <th>Estado</th>
-          <th>EstadoE</th>
-          <th>Notificación</th>
-          <th>Cancelado</th>
-          <th>Método de Pago</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let pedido of pedidos">
-          <td>{{ pedido.PED_ID }}</td>
-          <td>{{ pedido.PED_FECHA | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-          <td>
-            <ul>
-              <li *ngFor="let item of parseJson(pedido.PED_INFO)">
-                ID: {{ item.id }}, Cantidad: {{ item.cantidad }}
-              </li>
-            </ul>
-          </td>
-          <td>{{ pedido.PED_PRECIO_TOTAL | currency }}</td>
-          <td>{{ pedido.PED_RGU_ID }}</td>
-          <td>{{ pedido.PED_DESCRIPCION }}</td>
-          <td>{{ pedido.PED_ESTADO }}</td>
-          <td>{{ pedido.PED_ESTADOE }}</td>
-          <td>{{ pedido.PED_NOTIFICACION }}</td>
-          <td>{{ pedido.PED_CANCELADO }}</td>
-          <td>{{ pedido.PED_MET_PAGO }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <ng-template #noData>
-    <p>No hay datos disponibles.</p>
-  </ng-template>
-  
+<app-table
+  [data]="pedidos"
+  [columns]="[
+    { key: 'PED_ID', label: 'ID' },
+    { key: 'PED_FECHA', label: 'Fecha' },
+    { key: 'PED_PRECIO_TOTAL | currency', label: 'Precio Total' },
+    { key: 'rguUsuario.RGU_NOMBRES', label: 'Usuario' },
+  ]"
+  noDataMessage="No hay pedidos disponibles."
+>
+</app-table>

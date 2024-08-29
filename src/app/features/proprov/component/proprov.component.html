@@ -1,27 +1,33 @@
-<p>proprov works!</p>
-<div *ngIf="bodegas.length > 0; else noData">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Stock Mínimo</th>
-          <th>Estado</th>
-          <th>Proveedor ID</th>
-          <th>EstadoE</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let bodega of bodegas">
-          <td>{{ bodega.BOD_ID }}</td>
-          <td>{{ bodega.BOD_STOCK_MINIMO }}</td>
-          <td>{{ bodega.BOD_ESTADO }}</td>
-          <td>{{ bodega.BOD_PROPROV_ID }}</td>
-          <td>{{ bodega.BOD_ESTADOE }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="container-sm">
+  <h1 class="text-center fs-1">Detalles del Producto Proveedor</h1>
+  <table class="table table-striped">
+    <thead> 
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Cantidad</th>
+        <th>Fecha de Ingreso</th>
+        <th>Precio Unitario</th>
+        <th>Descripción</th>
+        <th>Proveedor </th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let producto of proprovs">
+        <td>{{ producto.PROPROV_ID }}</td>
+        <td>{{ producto.PROPROV_NOMBRE }}</td>
+        <td>{{ producto.PROPROV_CANTIDAD }}</td>
+        <td>{{ producto.PROPROV_FCH_INGRESO | date:'yyyy-MM-dd' }}</td>
+        <td>{{ producto.PROPROV_PRECIO_UNITARIO | currency }}</td>
+        <td>{{ producto.PROPROV_DESCRIPCION }}</td>
+        <td>{{ producto.proveedor.PROV_NOMBRE }}</td>
+        <td>{{ producto.PROPROV_ESTADO === 1 ? 'Activo' : 'Inactivo' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="proprovs.length === 0">
+    No hay productos disponibles.
   </div>
-  <ng-template #noData>
-    <p>No hay datos disponibles.</p>
-  </ng-template>
-  
+</div>

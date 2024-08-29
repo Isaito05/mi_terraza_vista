@@ -1,39 +1,11 @@
-<div class="container-sm">
-  <h1 class="text-center fs-1" >Modulo de Usuarios</h1>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Identificacion</th>
-        <th scope="col">Nombres</th>
-        <th scope="col">Apellidos</th>
-        <th scope="col">Genero</th>
-        <th scope="col">Direccion</th>
-        <th scope="col">Correo</th>
-        <th scope="col">Telefono</th>
-        <th scope="col">Rol</th>
-        <th scope="col">Tipo de documento</th>
-        <th scope="col">Acciones</th> <!-- Nueva columna para las acciones -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let usuario of usuarios; let i = index">
-        <td>{{ usuario.RGU_IDENTIFICACION }}</td>
-        <td>{{ usuario.RGU_NOMBRES }}</td>
-        <td>{{ usuario.RGU_APELLIDOS }}</td>
-        <td>{{ usuario.RGU_GENERO }}</td>
-        <td>{{ usuario.RGU_DIRECCION }}</td>
-        <td>{{ usuario.RGU_CORREO }}</td>
-        <td>{{ usuario.RGU_TELEFONO }}</td>
-        <td>{{ usuario.RGU_ROL }}</td>
-        <td>{{ usuario.RGU_TP_DOC }}</td>
-        <td>
-          <button type="button" class="btn btn-primary" (click)="buscarUsuarioPorId(usuario.RGU_ID)">Editar</button> <!-- Botón de edición -->
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="usuarios.length === 0">
-    No hay usuarios disponibles.
-  </div>
-</div>
+<app-table
+  [data]="usuarios"
+  [columns]="[
+    { key: 'RGU_IDENTIFICACION', label: 'Identificacion' },
+    { key: 'RGU_NOMBRES', label: 'Identificacion' },
+    { key: 'RGU_APELLIDOS', label: 'Identificacion' },
+    { key: 'RGU_GENERO', label: 'Identificacion' },
+  ]"
+  noDataMessage="No hay usuarios disponibles."
+>
+</app-table>

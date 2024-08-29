@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { PedidoRoutingModule } from './pedido-routing.module';
 import { PedidoComponent } from './component/pedido.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { PedidoComponent } from './component/pedido.component';
   ],
   imports: [
     CommonModule,
-    PedidoRoutingModule
+    PedidoRoutingModule,
+    SharedModule
   ]
 })
 export class PedidoModule { }
