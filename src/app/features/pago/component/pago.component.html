@@ -1,34 +1,9 @@
-
-<div class="container-sm">
-    <h1 class="text-center fs-1" >Modulo de Pagos</h1>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Monto</th>
-          <th scope="col">RGU ID</th>
-          <th scope="col">Descripción</th>
-          <th scope="col">Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let pago of pagos">
-          <td>{{ pago.PAGO_ID }}</td>
-          <td>{{ pago.PAGO_FECHA }}</td>
-          <td>{{ pago.PAGO_MONTO }}</td>
-          <td>{{ pago.rguUsuario.RGU_NOMBRES }}</td>
-          <td>{{ pago.PAGO_DESCRIPCION }}</td>
-          <td>{{ pago.PAGO_ESTADO }}</td>
-          <td>
-            <button type="button" class="btn btn-primary" (click)="buscarpagoPorId(pago.PAGO_ID)">Editar</button> <!-- Botón de edición -->
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>  
-    <div *ngIf="pagos.length === 0">
-      No hay pagos disponibles.
-    </div>
-  
-  
+<app-table [data]="pagos" [columns]="[
+      { key: 'PAGO_ID', label: 'ID' },
+      { key: 'PAGO_FECHA', label: 'Fecha' },
+      { key: 'PAGO_MONTO', label: 'Monto' },
+      { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
+      { key: 'PAGO_DESCRIPCION', label: 'Descripción' },
+      { key: 'PAGO_ESTADO', label: 'Estado' }
+    ]" noDataMessage="No hay pagos disponibles." title="Pago">
+</app-table>

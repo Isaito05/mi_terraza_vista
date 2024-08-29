@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { BodegaRoutingModule } from './bodega-routing.module';
 import { BodegaComponent } from './component/bodega.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { BodegaComponent } from './component/bodega.component';
   ],
   imports: [
     CommonModule,
-    BodegaRoutingModule
+    BodegaRoutingModule,
+    SharedModule
   ]
 })
 export class BodegaModule { }

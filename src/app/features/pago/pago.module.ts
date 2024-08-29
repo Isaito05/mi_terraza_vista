@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { PagoRoutingModule } from './pago-routing.module';
 import { PagoComponent } from './component/pago.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { PagoComponent } from './component/pago.component';
   ],
   imports: [
     CommonModule,
-    PagoRoutingModule
+    PagoRoutingModule,
+    SharedModule
   ]
 })
 export class PagoModule { }

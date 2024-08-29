@@ -1,33 +1,10 @@
-<div class="container-sm">
-  <h1 class="text-center fs-1">Detalles del Producto Proveedor</h1>
-  <table class="table table-striped">
-    <thead> 
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Cantidad</th>
-        <th>Fecha de Ingreso</th>
-        <th>Precio Unitario</th>
-        <th>Descripción</th>
-        <th>Proveedor </th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let producto of proprovs">
-        <td>{{ producto.PROPROV_ID }}</td>
-        <td>{{ producto.PROPROV_NOMBRE }}</td>
-        <td>{{ producto.PROPROV_CANTIDAD }}</td>
-        <td>{{ producto.PROPROV_FCH_INGRESO | date:'yyyy-MM-dd' }}</td>
-        <td>{{ producto.PROPROV_PRECIO_UNITARIO | currency }}</td>
-        <td>{{ producto.PROPROV_DESCRIPCION }}</td>
-        <td>{{ producto.proveedor.PROV_NOMBRE }}</td>
-        <td>{{ producto.PROPROV_ESTADO === 1 ? 'Activo' : 'Inactivo' }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="proprovs.length === 0">
-    No hay productos disponibles.
-  </div>
-</div>
+<app-table [data]="proprovs" [columns]="[
+      { key: 'PROPROV_ID', label: 'ID' },
+      { key: 'PROPROV_NOMBRE', label: 'Nombre' },
+      { key: 'PROPROV_CANTIDAD', label: 'Cantidad' },
+      { key: 'PROPROV_FCH_INGRESO', label: 'Fecha de Ingreso' },
+      { key: 'PROPROV_PRECIO_UNITARIO', label: 'Precio Unitario' },
+      { key: 'PROPROV_DESCRIPCION', label: 'Descripción' },
+      { key: 'proveedor.PROV_NOMBRE', label: 'Proveedor' }
+    ]" noDataMessage="No hay pagos disponibles." title="Proveedor">
+</app-table>

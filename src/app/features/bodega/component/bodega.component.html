@@ -1,27 +1,13 @@
-<div class="container-sm">
-  <h1 class="text-center fs-1">Módulo de Bodega</h1>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Stock Mínimo</th>
-        <th scope="col">Estado</th>
-        <th scope="col">Producto</th>
-        <th scope="col">EstadoE</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let bodega of bodegas; let i = index">
-        <td>{{ bodega.BOD_ID }}</td>
-        <td>{{ bodega.BOD_STOCK_MINIMO }}</td>
-        <td>{{ bodega.BOD_ESTADO }}</td>
-        <td>{{ bodega.proprov.PROPROV_NOMBRE }}</td> <!-- Muestra el nombre del proveedor -->
-        <td>{{ bodega.BOD_ESTADOE }}</td>
-      </tr>
-    </tbody>
-  </table>
+<app-table
+  [data]="bodegas" [columns]="[
+    { key: 'BOD_ID', label: 'ID'},
+    { key: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo'},
+    { key: 'BOD_ESTADO', label: 'Estado'},
+    { key: 'proprov.PROPROV_NOMBRE', label: 'Producto'},
+    { key: 'BOD_ESTADOE', label: 'EstadoE'}
+  ]"
+  noDataMessage="No hay pagos disponibles."
+  title="Bodega"
+>
 
-  <div *ngIf="bodegas.length === 0">
-    No hay bodegas disponibles.
-  </div>
-</div>
+</app-table>

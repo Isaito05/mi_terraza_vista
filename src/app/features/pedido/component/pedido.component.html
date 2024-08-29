@@ -3,9 +3,10 @@
   [columns]="[
     { key: 'PED_ID', label: 'ID' },
     { key: 'PED_FECHA', label: 'Fecha' },
-    { key: 'PED_PRECIO_TOTAL | currency', label: 'Precio Total' },
-    { key: 'rguUsuario.RGU_NOMBRES', label: 'Usuario' },
+    { key: 'PED_PRECIO_TOTAL', label: 'Precio Total' },
+    { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
+    { key: 'PED_INFO', label: 'Detalles de Pedido' }
   ]"
-  noDataMessage="No hay pedidos disponibles."
+  noDataMessage="No hay pedidos disponibles." title="Pedido"
 >
 </app-table>
