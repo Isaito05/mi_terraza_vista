@@ -7,3 +7,11 @@ h1 {
 table {
     font-family: 'Poppins', sans-serif;
 }
+
+.btnR {
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(62, 62, 113, 1) 53%, rgba(36, 76, 84, 1) 100%);
+    border-radius: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+}
+
