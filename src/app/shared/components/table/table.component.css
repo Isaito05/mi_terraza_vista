@@ -26,12 +26,9 @@ table {
 }
 
 .panel .panel-body .table thead tr th{
-    /* color: #fff; */
-    /* background-color: rgba(255, 255, 255, 0.2); */
     color: white;
     font-size: 16px;
     font-weight: 500;
-    /* text-transform: uppercase; */
     padding: 12px;
     border: none;
 }
