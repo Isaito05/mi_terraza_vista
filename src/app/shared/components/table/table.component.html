@@ -1,12 +1,12 @@
 <div class="container">
   <!-- Título del módulo -->
   <!-- Contenedor de la tabla -->
-  <div class="table-container mt-4">
-    <div class="table-responsive">
-      <table class="table table-borderless">
+  <div class="panel">
+    <div class="panel-body table-responsive">
+      <table class="table table-borderless text-center table-shadow">
         <!-- Encabezado de la tabla -->
          
-        <thead class="table-light">
+        <thead>
           <tr>
             <th *ngFor="let column of columns" scope="col">{{ column.label }}</th>
           </tr>
@@ -37,7 +37,7 @@
       </div>
 
       <!-- Controles de paginación -->
-      <div class="d-flex justify-content-center mt-3">
+      <div class="d-flex justify-content-end me-4">
         <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente">
         </pagination-controls>
       </div>
