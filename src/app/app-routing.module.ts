@@ -32,6 +32,10 @@ const routes: Routes = [
         path :'proprov',
         loadChildren: () => import('./features/proprov/proprov.module').then(m => m.ProprovModule)
       },
+      {
+        path :'prodventa',
+        loadChildren: () => import('./features/prodventa/prodventa.module').then(m => m.ProdventaModule)
+      },
     ]
   },
   // {

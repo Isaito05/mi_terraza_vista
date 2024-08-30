@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
+import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
+
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
@@ -15,7 +17,20 @@ export class ModalComponent {
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
 
   form: FormGroup | undefined;
-  constructor(private fb: FormBuilder, private apiService: UsuarioService) {}
+  private serviceMap:{[key: string]: any} = {}
+  
+  
+
+  constructor(
+    private fb: FormBuilder,
+    private usuarioService: UsuarioService, 
+    private prodventaService: ProdventaService
+  ) {
+    this.serviceMap ={
+      'Usuario': this.usuarioService,
+      'Producto': this.prodventaService
+    }
+  }
 
   ngOnInit() {
     // Crear un formulario con controles para cada campo
@@ -31,19 +46,39 @@ export class ModalComponent {
     this.close.emit();
   }
 
-
   confirm() {
-    const formData = this.data;
+    const formData =  this.data;
     console.log(formData);
-    this.apiService.saveData(formData).subscribe(
-      response => {
-        console.log('Datos guardados:', response);
-        this.save.emit(response);
-        this.closeModal();
-      },
-      error => {
-        console.error('Error al guardar los datos:', error);
-      }
-    );
+  
+    const service = this.getServiceBasedOnContext();
+    if (service) {
+      service.saveData(formData).subscribe(
+        ( response: any) => {
+          console.log('Datos guardados:', response);
+          this.save.emit(response);
+          this.closeModal();
+        },
+        ( error: any) => {
+          console.error('Error al guardar los datos:', error);
+        }
+      );
+    } else {
+      console.error('No se encontró un servicio adecuado para el contexto.');
+    }
+  }
+
+  private getServiceBasedOnContext() {
+    console.log('Title del modal:', this.title);
+
+    if (this.title.includes('Registrar usuario')) {
+      console.log('Devolviendo UsuarioService');
+      return this.serviceMap['Usuario'];
+    } else if (this.title.includes('Registrar Producto')) {
+      console.log('Devolviendo ProdventaService');
+      return this.serviceMap['Producto'];
+    }
+
+    console.error('Contexto no encontrado para el título:', this.title);
+    return null;
   }
 }
