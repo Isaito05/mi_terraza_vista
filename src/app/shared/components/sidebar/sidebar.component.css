@@ -9,7 +9,7 @@
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
-    background-image: url("../../../../assets/images/background-image.jpg") !important;
+    /* background-image: url("../../../../assets/images/background-image.jpg") !important; */
     background-repeat: no-repeat;
     background-position: center bottom;
     background-size: cover;
@@ -30,6 +30,18 @@ li {
     list-style: none;
 }
 
+.i-desing {
+    width: 2rem;
+    font-size: 1.5rem;
+}
+
+.btn {
+    background-color: bisque;
+    width: 2rem;
+    padding: 0.375rem 1.75rem !important;
+    display: contents;
+}
+
 /* Layout skeleton */
 
 .wrapper {
@@ -45,13 +57,13 @@ li {
     box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
     z-index: 1111;
     height: 42.7rem;
-    background-image: url("src/assets/images/background-image.jpg") ;
+    background-image: url("src/assets/images/dark-background-abstract-background-network-3d-background-3840x2160-8324.png");
 }
 
 /* Sidebar collapse */
 
 #sidebar.collapsed {
-    margin-left: -264px;
+    margin-left: -221px;
 }
 
 .main {
