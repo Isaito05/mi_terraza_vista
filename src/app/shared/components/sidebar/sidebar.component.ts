@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
+  // Propiedad para rastrear el estado del icono
   ngOnInit(): void {
     const toggler = document.querySelector('.btn') as HTMLElement;
     const sidebar = document.querySelector('#sidebar') as HTMLElement;
@@ -16,4 +17,11 @@ export class SidebarComponent implements OnInit {
       });
     }
   }
+  isToggled: boolean = false;
+
+  // Método para alternar el estado
+  toggleIcon() {
+    this.isToggled = !this.isToggled;
+  }
+  
 }

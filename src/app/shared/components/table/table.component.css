@@ -19,7 +19,7 @@ table {
 }
 
 .panel .panel-body .table thead {
-    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(62, 62, 113, 1) 53%, rgba(36, 76, 84, 1) 100%);
+    background-image: url("src/assets/images/dark-background-abstract-background-network-3d-background-3840x2160-8324.png");
 }
 
 .panel .panel-body .table thead tr th {
