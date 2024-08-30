@@ -6,4 +6,32 @@ h1 {
 
 table {
     font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave alrededor de la tabla */
+    border-radius: 8px;
+    /* color: white; */
+    border: none;
+}
+
+.panel{
+    /* background: linear-gradient(to right, #2980b9, #2c3e50); */
+    padding: 0;
+    border-radius: 10px;
+    border-top-right-radius: 0;
+    border: none;
+    box-shadow: 4px 7px 0 4px rgba(49, 57, 66, 0.5);
+}
+
+.panel .panel-body .table thead {
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(62,62,113,1) 53%, rgba(36,76,84,1) 100%);
+}
+
+.panel .panel-body .table thead tr th{
+    /* color: #fff; */
+    /* background-color: rgba(255, 255, 255, 0.2); */
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    /* text-transform: uppercase; */
+    padding: 12px;
+    border: none;
 }
