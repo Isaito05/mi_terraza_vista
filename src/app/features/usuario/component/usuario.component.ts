@@ -36,4 +36,19 @@ export class UsuarioComponent implements OnInit {
     // Por ejemplo, si quieres redirigir a una página de edición:
     // this.router.navigate(['/editar-usuario', id]);
   }
+
+  isModalVisible: boolean = false;
+
+  openModal() {
+    this.isModalVisible = true;
+  }
+
+  handleClose() {
+    this.isModalVisible = false;
+  }
+
+  handleConfirm() {
+    console.log('Confirmed!');
+    this.isModalVisible = false;
+  }
 }

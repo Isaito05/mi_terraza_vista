@@ -40,7 +40,20 @@ export class PagoComponent implements OnInit {
     // this.router.navigate(['/editar-pago', id]);
   }
 
-  
+  isModalVisible: boolean = false;
+
+  openModal() {
+    this.isModalVisible = true;
+  }
+
+  handleClose() {
+    this.isModalVisible = false;
+  }
+
+  handleConfirm() {
+    console.log('Confirmed!');
+    this.isModalVisible = false;
+  }
 
   
 

@@ -21,4 +21,19 @@ export class TableComponent {
   }
 
   p: number = 1;
+
+  isModalVisible: boolean = false;
+
+  openModal() {
+    this.isModalVisible = true;
+  }
+
+  handleClose() {
+    this.isModalVisible = false;
+  }
+
+  handleConfirm() {
+    console.log('Confirmed!');
+    this.isModalVisible = false;
+  }
 }

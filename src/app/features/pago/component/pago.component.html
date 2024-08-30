@@ -1,3 +1,9 @@
+<div class="d-flex justify-content-start">
+  <h1 class="text-center fs-1 pt-2">Modulo de pagos</h1>
+</div>
+<div class="d-flex justify-content-start mb-3">
+  <button class="btn btn-success fw-bold" (click)="openModal()">Registrar </button>
+</div>
 <app-table [data]="pagos" [columns]="[
       { key: 'PAGO_ID', label: 'ID' },
       { key: 'PAGO_FECHA', label: 'Fecha' },
@@ -5,5 +11,17 @@
       { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
       { key: 'PAGO_DESCRIPCION', label: 'Descripción' },
       { key: 'PAGO_ESTADO', label: 'Estado' }
-    ]" noDataMessage="No hay pagos disponibles." title="Pago">
+    ]" noDataMessage="No hay pagos disponibles." >
 </app-table>
+<app-modal [title]="'Registrar pago'" [isVisible]="isModalVisible" (close)="handleClose()"
+  (confirmAction)="handleConfirm()" 
+  [fields]="[
+  { id: 'fecha', label: 'Fecha del pago', type: 'text' },
+  { id: 'monto', label: 'Monto', type: 'text' },
+  { id: 'nombre', label: 'Nombre', type: 'text' },
+  { id: 'genero', label: 'Género', type: 'text' },
+  { id: 'descripcion', label: 'Descripción', type: 'text' },
+  { id: 'estado', label: 'Estado', type: 'email' },
+  ]">
+  <p>Your custom content goes here!</p>
+</app-modal>

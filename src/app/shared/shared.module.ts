@@ -4,6 +4,8 @@ import { SharedRoutingModule } from './shared-routing.module';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { TableComponent } from './components/table/table.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ModalComponent } from './components/modal/modal.component';
+import { FormsModule } from '@angular/forms'; // Importa FormsModule aquí
 
 
 
@@ -11,15 +13,20 @@ import { NgxPaginationModule } from 'ngx-pagination';
   imports: [
     CommonModule,
     SharedRoutingModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule
   ],
   declarations: [
     SidebarComponent,
-    TableComponent
+    TableComponent,
+    ModalComponent
+   
+
   ],
   exports: [
     SidebarComponent,
-    TableComponent
+    TableComponent,
+    ModalComponent
   ]
 })
 export class SharedModule { }

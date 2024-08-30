@@ -1,24 +1,27 @@
 <div class="container">
-  <div class="d-flex justify-content-start">
-    <h1 class="text-center fs-1 pt-2">Modulo de {{title}}</h1>
-  </div>
-  <div class="table-container">
+  <!-- Título del módulo -->
+  <!-- Contenedor de la tabla -->
+  <div class="table-container mt-4">
     <div class="table-responsive">
       <table class="table table-borderless">
-        <thead>
+        <!-- Encabezado de la tabla -->
+        <thead class="table-light">
           <tr>
             <th *ngFor="let column of columns" scope="col">{{ column.label }}</th>
           </tr>
         </thead>
+
+        <!-- Cuerpo de la tabla -->
         <tbody>
-          <tr *ngFor="let item of data | paginate: { itemsPerPage: 10, currentPage: p}">
+          <tr *ngFor="let item of data | paginate: { itemsPerPage: 10, currentPage: p }">
             <td *ngFor="let column of columns">
               <ng-container *ngIf="isArray(getPropertyValue(item, column.key)); else singleValue">
                 <span *ngFor="let subItem of getPropertyValue(item, column.key)">
                   Cantidad: {{ subItem.cantidad }}
                 </span>
               </ng-container>
-              <!-- De lo contrario, renderiza como un valor único -->
+
+              <!-- Plantilla para renderizar un valor único -->
               <ng-template #singleValue>
                 {{ getPropertyValue(item, column.key) }}
               </ng-template>
@@ -26,12 +29,17 @@
           </tr>
         </tbody>
       </table>
-      <div class="d-flex justify-content-center">
-        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+
+      <!-- Mensaje de "No hay datos" -->
+      <div *ngIf="data.length === 0" class="text-center mt-3">
+        {{ noDataMessage }}
+      </div>
+
+      <!-- Controles de paginación -->
+      <div class="d-flex justify-content-center mt-3">
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente">
+        </pagination-controls>
       </div>
     </div>
-  </div>
-  <div *ngIf="data.length === 0">
-    {{ noDataMessage }}
   </div>
 </div>

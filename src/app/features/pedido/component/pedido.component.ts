@@ -30,4 +30,18 @@ export class PedidoComponent implements OnInit {
       console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
     });
   }
+  isModalVisible: boolean = false;
+
+  openModal() {
+    this.isModalVisible = true;
+  }
+
+  handleClose() {
+    this.isModalVisible = false;
+  }
+
+  handleConfirm() {
+    console.log('Confirmed!');
+    this.isModalVisible = false;
+  }
 }

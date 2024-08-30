@@ -1,11 +1,29 @@
-<app-table
-  [data]="usuarios"
-  [columns]="[
-    { key: 'RGU_IDENTIFICACION', label: 'Identificacion' },
-    { key: 'RGU_NOMBRES', label: 'Identificacion' },
-    { key: 'RGU_APELLIDOS', label: 'Identificacion' },
-    { key: 'RGU_GENERO', label: 'Identificacion' },
-  ]"
-  noDataMessage="No hay usuarios disponibles." title="Usuarios"
->
+<div class="d-flex justify-content-start">
+  <h1 class="text-center fs-1 pt-2">Modulo de usuario</h1>
+</div>
+<div class="d-flex justify-content-start mb-3">
+  <button class="btn btn-success fw-bold" (click)="openModal()">Registrar </button>
+</div>
+<app-table [data]="usuarios" [columns]="[
+    { key: 'RGU_IDENTIFICACION', label: 'Identificación' },
+    { key: 'RGU_NOMBRES', label: 'Nombres' },
+    { key: 'RGU_APELLIDOS', label: 'Apellidos' },
+    { key: 'RGU_GENERO', label: 'Genero' },
+  ]" noDataMessage="No hay usuarios disponibles." >
 </app-table>
+<app-modal [title]="'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
+  (confirmAction)="handleConfirm()" 
+  [fields]="[
+  { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
+  { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
+  { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
+  { id: 'RGU_GENERO', label: 'Género', type: 'text' },
+  { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
+  { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
+  { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
+  { id: 'RGU_ROL', label: 'Rol', type: 'text' },
+  { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'text' },
+  { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
+  ]">
+  <p>Your custom content goes here!</p>
+</app-modal>

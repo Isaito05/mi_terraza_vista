@@ -1,0 +1,22 @@
+<div class="modal" tabindex="-1" *ngIf="isVisible">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ title }}</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div *ngFor="let field of fields" class="mb-3">
+                        <label [for]="field.id" class="form-label">{{ field.label }}</label>
+                        <input [type]="field.type" class="form-control" [id]="field.id" [name]="field.id"  [(ngModel)]="data[field.id]" >
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+                <button type="button" class="btn btn-primary" (click)="confirm()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
