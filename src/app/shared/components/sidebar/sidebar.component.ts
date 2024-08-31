@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,6 +23,12 @@ export class SidebarComponent implements OnInit {
   // Método para alternar el estado
   toggleIcon() {
     this.isToggled = !this.isToggled;
+  }
+
+  constructor(private router: Router, private route: ActivatedRoute) {}
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
   }
   
 }

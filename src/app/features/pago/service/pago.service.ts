@@ -21,4 +21,8 @@ export class PagoService {
     return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID
   }
 
+  saveData(data: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, data);
+  }
+
 }

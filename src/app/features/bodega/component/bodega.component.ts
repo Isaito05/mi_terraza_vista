@@ -25,4 +25,18 @@ export class BodegaComponent implements OnInit {
     });
   }
 
+  isModalVisible: boolean = false;
+
+  openModal() {
+    this.isModalVisible = true;
+  }
+
+  handleClose() {
+    this.isModalVisible = false;
+  }
+
+  handleConfirm() {
+    console.log('Confirmed!');
+    this.isModalVisible = false;
+  }
 }

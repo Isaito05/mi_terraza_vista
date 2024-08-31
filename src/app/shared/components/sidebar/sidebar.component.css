@@ -56,7 +56,7 @@ li {
     transition: all 0.35s ease-in-out;
     box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
     z-index: 1111;
-    height: 42.7rem;
+    height: 40.rem;
     background-image: url("src/assets/images/dark-background-abstract-background-network-3d-background-3840x2160-8324.png");
 }
 
@@ -133,4 +133,28 @@ a.sidebar-link {
     .content {
         width: auto;
     }
+}
+
+.sidebar-item.active .sidebar-link {
+    font-weight: bold;
+    color: #2199e8;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    width: 40px;
+    height: auto;
+    margin-right: 10px;
+    
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
 }

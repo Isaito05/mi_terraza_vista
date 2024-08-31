@@ -82,3 +82,8 @@
     transition: 0s;
     transform: translate(0, 5%);
 }
+
+/* Clase para deshabilitar el scroll */
+.no-scroll {
+    overflow: hidden;
+}

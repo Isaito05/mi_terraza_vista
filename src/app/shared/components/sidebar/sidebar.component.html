@@ -3,80 +3,48 @@
   <aside id="sidebar">
     <div class="">
       <div class="sidebar-logo">
-        <a href="#">Mi Terraza</a>
+        <img src="assets/images/TERRAZA.png" alt="Logo" class="logo-image" />
+        <a href="#" class="logo-text">Mi Terraza</a>
       </div>
       <!-- Sidebar Navigation -->
       <ul class="sidebar-nav">
-        <li class="sidebar-header">
-          Tools & Components
-        </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/usuario')}">
           <a [routerLink]="['/usuario']" class="sidebar-link">
             <i class="bi bi-person-fill-add pe-2"></i>
             Usuarios
           </a>
         </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/pago')}">
           <a [routerLink]="['/pago']" class="sidebar-link">
             <i class="bi bi-wallet2 pe-2"></i>
             Pagos
           </a>
         </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/bodega')}">
           <a [routerLink]="['/bodega']" class="sidebar-link">
             <i class="bi bi-box-seam-fill pe-2"></i>
             Bodega
           </a>
         </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/proprov')}">
           <a [routerLink]="['/proprov']" class="sidebar-link">
             <i class="bi bi-balloon-heart pe-2"></i>
             Proveedor
           </a>
         </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/pedido')}">
           <a [routerLink]="['/pedido']" class="sidebar-link">
             <i class="bi bi-emoji-smile pe-2"></i>
             Pedido
           </a>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages"
-            aria-expanded="false" aria-controls="pages">
-            <i class="fa-regular fa-file-lines pe-2"></i>
-            Pages
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/prodventa')}">
+          <a [routerLink]="['/prodventa']" class="sidebar-link">
+            <i class="bi bi-box-seam-fill pe-2"></i>
+            Producto
           </a>
-          <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-            <li class="sidebar-item">
-              <a [routerLink]="['/bodega']" class="sidebar-link">
-                <i class="bi bi-box-seam-fill pe-2"></i>
-                Bodega
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Ecommerce</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Crypto</a>
-            </li>
-          </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#auth"
-            aria-expanded="false" aria-controls="auth">
-            <i class="fa-regular fa-user pe-2"></i>
-            Auth
-          </a>
-          <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-            <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Login</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Register</a>
-            </li>
-          </ul>
-        </li>
-        <li class="sidebar-header">
+        <!-- <li class="sidebar-header">
           Multi Level Nav
         </li>
         <li class="sidebar-item">
@@ -101,24 +69,12 @@
               </ul>
             </li>
           </ul>
-        </li>
+        </li> -->
       </ul>
     </div>
   </aside>
   <!-- Main Component -->
   <div class="main">
-    <!-- <nav class="navbar navbar-expand"> -->
-      <!-- <button class="btn" type="button"  (click)="toggleIcon()" data-bs-theme="dark">
-        <i [ngClass]="isToggled ? 'bi bi-caret-right-square' : 'bi bi-caret-left-square'" class="icon-transition i-desing"></i>
-        <span class="navbar-toggler-icon"></span>
-      </button> -->
-    <!-- </nav> -->
-    <!-- <main class="content px-3 py-2">
-      <div class="container-fluid">
-        <div class="mb-3">
-          <h3>Bootstrap Sidebar Tutorial</h3>
-        </div>
-      </div>
-    </main> -->
+    <!-- Content here -->
   </div>
 </div>

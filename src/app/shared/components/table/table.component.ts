@@ -36,4 +36,7 @@ export class TableComponent {
     console.log('Confirmed!');
     this.isModalVisible = false;
   }
+
+  
+
 }

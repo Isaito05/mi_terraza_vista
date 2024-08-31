@@ -2,17 +2,27 @@
   <div class="d-flex justify-content-start b-t">
     <h1 class="text-center fs-1 pt-2">Modulo de Bodega</h1>
   </div>
+
+  <div class="d-flex justify-content-start mb-3">
+    <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
+  </div>
 </div>
+
 <app-table
   [data]="bodegas" [columns]="[
-    { key: 'BOD_ID', label: 'ID'},
     { key: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo'},
     { key: 'BOD_ESTADO', label: 'Estado'},
     { key: 'proprov.PROPROV_NOMBRE', label: 'Producto'},
-    { key: 'BOD_ESTADOE', label: 'EstadoE'}
   ]"
   noDataMessage="No hay pagos disponibles."
   title="Bodega"
 >
-
 </app-table>
+<app-modal [title]="'Registrar bodega'" [isVisible]="isModalVisible" (close)="handleClose()"
+  (confirmAction)="handleConfirm()" [fields]="[
+  { id: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo', type: 'number' },
+  { id: 'BOD_ESTADO', label: 'Estado', type: 'text' },
+  { id: 'BOD_PROPROV_ID', label: 'Producto', type: 'text' },
+  ]">
+  <p>Your custom content goes here!</p>
+</app-modal>

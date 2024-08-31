@@ -19,12 +19,24 @@
   { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
   { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
   { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
-  { id: 'RGU_GENERO', label: 'Género', type: 'text' },
+  { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
+  { value: 'masculino', label: 'Masculino' },
+  { value: 'femenino', label: 'Femenino' },
+  { value: 'no-binario', label: 'No Binario' }
+]},
   { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
   { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
   { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
-  { id: 'RGU_ROL', label: 'Rol', type: 'text' },
-  { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'text' },
+  { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
+  { value: 'admin', label: 'Administrador' },
+  { value: 'trab', label: 'Trabajador' },
+  { value: 'exclavo', label: 'Exclavo' }
+]},
+  { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
+  { value: 'cc', label: 'Cedula nacional' },
+  { value: 'ti', label: 'Tarjeta identidad' },
+  { value: 'ce', label: 'Cedula extranjera' }
+]},
   { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
   ]">
   <p>Your custom content goes here!</p>
