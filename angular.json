@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "mi_terraza_vista:build:production"
+              "buildTarget": "mi_terraza_vista:build:production"
             },
             "development": {
-              "browserTarget": "mi_terraza_vista:build:development"
+              "buildTarget": "mi_terraza_vista:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -71,7 +71,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "mi_terraza_vista:build"
+            "buildTarget": "mi_terraza_vista:build"
           }
         },
         "test": {
