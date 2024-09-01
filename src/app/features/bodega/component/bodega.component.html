@@ -22,7 +22,7 @@
   (confirmAction)="handleConfirm()" [fields]="[
   { id: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo', type: 'number' },
   { id: 'BOD_ESTADO', label: 'Estado', type: 'text' },
-  { id: 'BOD_PROPROV_ID', label: 'Producto', type: 'text' },
+  { id: 'BOD_PROPROV_ID', label: 'Producto', type: 'select', options: productosoOptions },
   ]">
   <p>Your custom content goes here!</p>
 </app-modal>

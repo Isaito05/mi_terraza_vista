@@ -5,6 +5,7 @@ import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.
 import { PagoService } from 'src/app/features/pago/service/pago.service';
 import Swal from 'sweetalert2';
 import { BodegaService } from 'src/app/features/bodega/service/bodega.service';
+import { ProveedorService } from 'src/app/features/proveedor/service/proveedor.service';
 
 @Component({
   selector: 'app-modal',
@@ -38,13 +39,15 @@ export class ModalComponent {
     private prodventaService: ProdventaService,
     private pagoService: PagoService,
     private bodegaService: BodegaService,
+    private proveedorService: ProveedorService
     
   ) {
     this.serviceMap = {
       'Usuario': this.usuarioService,
-      'Producto': this.prodventaService,
+      'ProductoV': this.prodventaService,
       'Pago': this.pagoService,
-      'Bodega': this.bodegaService
+      'Bodega': this.bodegaService,
+      'Proveedor': this.proveedorService
     }
   }
 
@@ -66,13 +69,11 @@ export class ModalComponent {
 
   confirm() {
     const formData = this.data;
-    console.log(formData);
-
     const service = this.getServiceBasedOnContext();
     if (service) {
       service.saveData(formData).subscribe(
+        
         (response: any) => {
-          console.log('Datos guardados:', response);
           this.closeModal()
           this.data = [];
           // Mostrar alerta de éxito
@@ -108,20 +109,18 @@ export class ModalComponent {
 
 
   private getServiceBasedOnContext() {
-    console.log('Title del modal:', this.title);
+
 
     if (this.title.includes('Registrar usuario')) {
-      console.log('Devolviendo UsuarioService');
       return this.serviceMap['Usuario'];
-    } else if (this.title.includes('Registrar Producto')) {
-      console.log('Devolviendo ProdventaService');
-      return this.serviceMap['Producto'];
+    } else if (this.title.includes('Registrar Producto en venta')) {
+      return this.serviceMap['ProductoV'];
     } else if (this.title.includes('Registrar pago')) {
-      console.log('Devolviendo PagoService');
       return this.serviceMap['Pago'];
     } else if (this.title.includes('Registrar bodega')) {
-      console.log('Devolviendo BodegaService');
       return this.serviceMap['Bodega'];
+    }else if (this.title.includes('Registrar proveedor')) {
+      return this.serviceMap['Proveedor'];
     }
 
     console.error('Contexto no encontrado para el título:', this.title);

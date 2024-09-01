@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+
+export interface Usuario {
+  RGU_ID: number;
+  RGU_NOMBRES: string;
+  RGU_APELLIDOS: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +28,17 @@ export class UsuarioService {
 
   saveData(data: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
+  }
+
+  getUsuarios(): Observable<Usuario[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map((usuarios: any[]) => 
+        usuarios.map(usuario => ({
+          RGU_ID: usuario.RGU_ID,
+          RGU_NOMBRES: usuario.RGU_NOMBRES,
+          RGU_APELLIDOS: usuario.RGU_APELLIDOS
+        }))
+      )
+    );
   }
 }

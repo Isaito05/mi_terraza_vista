@@ -14,7 +14,7 @@
 
         <!-- Cuerpo de la tabla -->
         <tbody>
-          <tr *ngFor="let item of data | paginate: { itemsPerPage: 10, currentPage: p }">
+          <tr *ngFor="let item of data | paginate: { itemsPerPage: 5, currentPage: p }">
             <td *ngFor="let column of columns">
               <ng-container *ngIf="isArray(getPropertyValue(item, column.key)); else singleValue">
                 <span *ngFor="let subItem of getPropertyValue(item, column.key)">

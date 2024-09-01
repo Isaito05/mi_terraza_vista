@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="d-flex justify-content-start b-t">
+      <h1 class="text-center fs-1 pt-2">Modulo de proveedor</h1>
+    </div>
+    <div class="d-flex justify-content-start mb-3">
+      <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
+    </div>
+  </div>
+  <app-table
+  [data]="proveedor" [columns]="[
+    { key: 'PROV_NOMBRE', label: 'Nombre' },
+    { key: 'PROV_CORREO', label: 'Correo' },
+    { key: 'PROV_TELEFONO', label: 'Teléfono' },
+    { key: 'PROV_DIRECCION', label: 'Dirección' },
+    { key: 'PROV_NIT', label: 'NIT' }
+  ]"
+  noDataMessage="No hay datos disponibles."
+></app-table>
+<app-modal [title]="'Registrar proveedor'" [isVisible]="isModalVisible" (close)="handleClose()"(confirmAction)="handleConfirm()"
+  [fields]="[
+    { id: 'PROV_NOMBRE', label: 'Nombre', type: 'text',  },
+    { id: 'PROV_CORREO', label: 'Correo', type: 'text',  },
+    { id: 'PROV_TELEFONO', label: 'Teléfono', type: 'text',  },
+    { id: 'PROV_DIRECCION', label: 'Dirección', type: 'text',  },
+    { id: 'PROV_NIT', label: 'NIT', type: 'text',  }
+  ]">
+  
+</app-modal>
+  
+

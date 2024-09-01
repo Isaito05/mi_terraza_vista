@@ -8,16 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProdventaComponent implements OnInit {
   prodventa: any[] = [];
+  productData = {
+    PROD_VENTA_IMAGEN: null
+  };
+  constructor(private http: HttpClient) { }
 
-  constructor(private http: HttpClient){}
+  ngOnInit(): void {
+    this.getProdventa()
+  }
 
-    ngOnInit(): void {
-      this.getProdventa()
-    }
-  
 
-  getProdventa(): void{
-    this.http.get<any[]>('http://localhost:3000/prodventa').subscribe(data =>{
+  getProdventa(): void {
+    this.http.get<any[]>('http://localhost:3000/prodventa').subscribe(data => {
       this.prodventa = data;
     })
   }
@@ -33,7 +35,10 @@ export class ProdventaComponent implements OnInit {
   }
 
   handleConfirm() {
-    console.log('Confirmed!');
+    const formData = new FormData();
+    if (this.productData.PROD_VENTA_IMAGEN) {
+      formData.append('imagen', this.productData.PROD_VENTA_IMAGEN);
+    }
     this.isModalVisible = false;
   }
 }

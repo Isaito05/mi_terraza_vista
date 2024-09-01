@@ -1,30 +1,23 @@
 <div class="container">
-    <div class="d-flex justify-content-start b-t">
-      <h1 class="text-center fs-1 pt-2 ">Módulo de Productos en venta</h1>
-    </div>
-    <div class="d-flex justify-content-start mb-3">
-      <button class="button-86 fw-bold" (click)="openModal()">Registrar</button>
-    </div>
+  <div class="d-flex justify-content-start b-t">
+    <h1 class="text-center fs-1 pt-2 ">Módulo de Productos en venta</h1>
   </div>
-    <app-table 
-      [data]="prodventa" [columns]="[
-        { key: 'PROD_VENTA_ID', label: 'ID' },
+  <div class="d-flex justify-content-start mb-3">
+    <button class="button-86 fw-bold" (click)="openModal()">Registrar</button>
+  </div>
+</div>
+<app-table [data]="prodventa" [columns]="[
         { key: 'PROD_VENTA_NOMBRE', label: 'Nombre' },
         { key: 'PROD_VENTA_DESCRIPCION', label: 'Descripción' },
         { key: 'PROD_VENTA_PRECIO', label: 'Precio' },
-      ]" 
-      noDataMessage="No hay productos disponibles."
-    >
-    </app-table>
-    <app-modal 
-  [title]="'Registrar Producto'" [isVisible]="isModalVisible" (close)="handleClose()"(confirmAction)="handleConfirm()" [fields]="[
+        { key: 'PROD_VENTA_IMAGEN', label: 'imagen' },
+      ]" noDataMessage="No hay productos disponibles.">
+</app-table>
+<app-modal [title]="'Registrar Producto en venta'" [isVisible]="isModalVisible" (close)="handleClose()"
+  (confirmAction)="handleConfirm()" [fields]="[
     { id: 'PROD_VENTA_NOMBRE', label: 'Nombre', type: 'text' },
     { id: 'PROD_VENTA_DESCRIPCION', label: 'Descripción', type: 'text' },
     { id: 'PROD_VENTA_PRECIO', label: 'Precio', type: 'number' },
-    { id: 'PROD_VENTA_IMAGEN', label: 'Imagen URL', type: 'image' }
-  ]"
->
-  <p>Ingresa los detalles del producto aquí.</p>
+    { id: 'PROD_VENTA_IMAGEN', label: 'Imagen URL', type: 'file' }
+  ]">
 </app-modal>
-
-  

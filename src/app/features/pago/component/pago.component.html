@@ -19,7 +19,7 @@
   (confirmAction)="handleConfirm()" [fields]="[
   { id: 'PAGO_FECHA', label: 'Fecha del pago', type: 'date' },
   { id: 'PAGO_MONTO', label: 'Monto', type: 'number' },
-  { id: 'PAGO_RGU_ID', label: 'Nombre', type: 'text' },
+  { id: 'PAGO_RGU_ID', label: 'Trabajador', type: 'select', options: usuarioOptions },
   { id: 'PAGO_DESCRIPCION', label: 'Descripción', type: 'text' }
   ]">
   <p>Your custom content goes here!</p>

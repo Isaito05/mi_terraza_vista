@@ -27,9 +27,9 @@
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/proprov')}">
-          <a [routerLink]="['/proprov']" class="sidebar-link">
+          <a [routerLink]="['/proprov']" class="sidebar-link d-lg-flex" >
             <i class="bi bi-balloon-heart pe-2"></i>
-            Proveedor
+            Poducto de proveedor
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/pedido')}">
@@ -39,9 +39,15 @@
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/prodventa')}">
-          <a [routerLink]="['/prodventa']" class="sidebar-link">
-            <i class="bi bi-box-seam-fill pe-2"></i>
-            Producto
+          <a [routerLink]="['/prodventa']" class="sidebar-link d-lg-flex">
+            <i class="bi bi-box-seam-fill pe-2 "></i>
+            Producto en venta 
+          </a>
+        </li>
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/proveedor')}">
+          <a [routerLink]="['/proveedor']" class="sidebar-link">
+            <i class="bi bi-emoji-smile pe-2"></i>
+            Proveedor
           </a>
         </li>
         <!-- <li class="sidebar-header">

@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; // Importa HttpClient
 import { PagoService } from '../service/pago.service';
+import { UsuarioService } from '../../usuario/service/usuario.service';
 
+export interface Usuario {
+  RGU_ID: number;
+  RGU_NOMBRES: string;
+  RGU_APELLIDOS: string;
+}
 
 @Component({
   selector: 'app-pago',
@@ -14,8 +20,14 @@ export class PagoComponent implements OnInit {
   idpago: number | null = null; // Inicializa idpago como null
   usuario: any[] = [];
   usuarioMap: { [key: number]: string } = {}; // Mapa para relacionar ID con nombre
+  usuarioOptions: { value: string; label: string }[] = [];
 
-  constructor(private pagoService: PagoService,private http: HttpClient) { }
+  
+
+  constructor(private pagoService: PagoService,
+    private http: HttpClient,
+    private usuarioService: UsuarioService,
+  ) { }
 
   ngOnInit(): void {
     this.pagoService.getData().subscribe(data => {
@@ -43,7 +55,15 @@ export class PagoComponent implements OnInit {
   isModalVisible: boolean = false;
 
   openModal() {
-    this.isModalVisible = true;
+    this.usuarioService.getUsuarios().subscribe((usuarios: Usuario[]) => {
+      console.log(usuarios);
+      this.usuarioOptions = usuarios.map((usuario: Usuario) => ({
+        value: usuario.RGU_ID.toString(), // Convierte el id a string
+        label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS}` // Combina nombres y apellidos para la etiqueta
+      }));
+      
+      this.isModalVisible = true;
+    });
   }
 
   handleClose() {
@@ -55,7 +75,7 @@ export class PagoComponent implements OnInit {
     this.isModalVisible = false;
   }
 
-  
+
 
 
 
