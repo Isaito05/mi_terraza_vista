@@ -11,6 +11,7 @@ export class UsuarioComponent implements OnInit {
   usuarios: any[] = []; // Variable para almacenar la lista de usuarios
   usuarioSeleccionado: any; // Variable para almacenar el usuario seleccionado por ID
   idUsuario: number | null = null; // Inicializa idUsuario como null
+  title = 'Modulo de Usuario'
 
   constructor(private usuarioService: UsuarioService) { }
 

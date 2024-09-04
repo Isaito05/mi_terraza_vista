@@ -1,11 +1,9 @@
 <div class="container">
-  <!-- Título del módulo -->
-  <!-- Contenedor de la tabla -->
-  <div class="panel">
-    <div class="panel-body table-responsive">
-      <table class="table table-borderless text-center table-shadow">
-        <!-- Encabezado de la tabla -->
-         
+  <div class="card">
+    <div class="card-body">
+      <!-- <h5 class="card-title">{{title}}</h5> -->
+      <table class="table table-hover">
+        <!-- Encabezado de la tabla -->         
         <thead>
           <tr>
             <th *ngFor="let column of columns" scope="col">{{ column.label }}</th>
@@ -16,16 +14,21 @@
         <tbody>
           <tr *ngFor="let item of data | paginate: { itemsPerPage: 5, currentPage: p }">
             <td *ngFor="let column of columns">
-              <ng-container *ngIf="isArray(getPropertyValue(item, column.key)); else singleValue">
-                <span *ngFor="let subItem of getPropertyValue(item, column.key)">
-                  Cantidad: {{ subItem.cantidad }}
-                </span>
+              <!-- Mostrar imagen si el tipo de columna es 'image' -->
+              <ng-container *ngIf="column.type === 'image'; else defaultCell">
+                <img [src]="getPropertyValue(item, column.key)" alt="Imagen" width="50" height="50">
               </ng-container>
-
-              <!-- Plantilla para renderizar un valor único -->
-              <ng-template #singleValue>
-                {{ getPropertyValue(item, column.key) }}
+              <ng-template #defaultCell>
+                <ng-container *ngIf="isArray(getPropertyValue(item, column.key)); else singleValue">
+                  <span *ngFor="let subItem of getPropertyValue(item, column.key)">
+                    Cantidad: {{ subItem.cantidad }}
+                  </span>
+                </ng-container>
+                <ng-template #singleValue>
+                  {{ getPropertyValue(item, column.key) }}
+                </ng-template>
               </ng-template>
+              <!-- <img src="" alt="assets/images/P.png"> -->
             </td>
           </tr>
         </tbody>
@@ -43,4 +46,5 @@
       </div>
     </div>
   </div>
+  
 </div>

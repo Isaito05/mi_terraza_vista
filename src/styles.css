@@ -3,9 +3,16 @@
 @tailwind components;
 @tailwind utilities; */
 @import '~bootstrap-icons/font/bootstrap-icons.css';
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 /* body {
     background-image: url("src/assets/images/dark-background-abstract-background-network-3d-background-3840x2160-8324.png");
 } */
+.font {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3rem;
+}
 
 .b-t {
     padding: 1rem;
