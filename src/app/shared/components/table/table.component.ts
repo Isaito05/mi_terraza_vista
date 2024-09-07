@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-table',
@@ -10,34 +10,47 @@ export class TableComponent {
   @Input() columns: { key: string, label: string, type?: any }[] = [];
   @Input() noDataMessage: string = 'No hay datos disponibles.';
   @Input() title: string = '';
-
-  getPropertyValue(item: any, key: string): any {
-    const value = key.split('.').reduce((object, property) => object ? object[property] : '', item);
-    // Si el valor es una URL relativa, asegúrate de que comience con '/assets/'
-    return typeof value === 'string' && value.startsWith('assets/') ? '/' + value : value;
-  }
-
-  isArray(value: any): boolean {
-    return Array.isArray(value);
-  }
-
+  @Output() edit = new EventEmitter<any>();
+  
+  
   p: number = 1;
-
+  
   isModalVisible: boolean = false;
 
+  onEdit(item: any) {
+    console.log('Editar usuario:', item);
+    this.edit.emit(item);
+  }
+  
   openModal() {
     this.isModalVisible = true;
   }
-
+  
   handleClose() {
     this.isModalVisible = false;
   }
-
+  
   handleConfirm() {
     console.log('Confirmed!');
     this.isModalVisible = false;
   }
+  
+  // Obtiene el valor de la propiedad de un objeto dinámicamente
+  getPropertyValue(item: any, key: string): any {
+    const value = key.split('.').reduce((object, property) => object ? object[property] : '', item);
+    
+    // Verifica si es una URL de imagen completa
+    if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+      return value; 
+    }
 
+    // Retorna el valor original para otros casos
+    return value;
+  }
+  
+  isArray(value: any): boolean {
+    return Array.isArray(value);
+  }
   
 
 }

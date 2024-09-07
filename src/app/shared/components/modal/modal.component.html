@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ title }}</h5>
+                <h5 class="modal-title">{{ isEditing ? 'Editar usuario' : 'Registrar usuario' }}</h5>
                 <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
@@ -11,27 +11,35 @@
                         <label [for]="field.id" class="form-label">{{ field.label }}</label>
 
                         <!-- Renderiza un input normal para text, number, date, etc. -->
-                        <input *ngIf="field.type !== 'select' && field.type !== 'image'" [type]="field.type"
-                            class="form-control" [id]="field.id" [name]="field.id" [(ngModel)]="data[field.id]" />
+                        <input *ngIf="field.type !== 'select' && field.type !== 'image'"
+                   [type]="field.type"
+                   class="form-control"
+                   [id]="field.id"
+                   [formControlName]="field.id" />
 
-                        <!-- Renderiza un select para los campos de tipo 'select' -->
-                        <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id" [name]="field.id"
-                            [(ngModel)]="data[field.id]">
-                            <option *ngFor="let option of field.options" [value]="option.value">
-                                {{ option.label }}
-                            </option>
-                        </select>
+            <select *ngIf="field.type === 'select'"
+                    class="form-select"
+                    [id]="field.id"
+                    [formControlName]="field.id">
+              <option *ngFor="let option of field.options" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
 
-                        <!-- Renderiza un input tipo archivo para imágenes -->
-                        <input *ngIf="field.type === 'image'" type="file" class="form-control" [id]="field.id"
-                            [name]="field.id" (change)="handleFileInputChange($event, field.id)"
-                            [accept]="field.accept || 'image/*'" />
+            <input *ngIf="field.type === 'image'"
+                   type="file"
+                   class="form-control"
+                   [id]="field.id"
+                   (change)="handleFileInputChange($event, field.id)"
+                   [accept]="field.accept || 'image/*'" />
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="button" class="btn btn-primary" (click)="confirm()">Guardar</button>
+                <button type="button" class="btn btn-primary" (click)="confirm()">
+                  {{ isEditing ? 'Actualizar' : 'Guardar' }}
+                </button>
             </div>
         </div>
     </div>

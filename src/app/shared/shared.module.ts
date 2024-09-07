@@ -5,7 +5,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { TableComponent } from './components/table/table.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ModalComponent } from './components/modal/modal.component';
-import { FormsModule } from '@angular/forms'; // Importa FormsModule aquí
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Importa FormsModule aquí
 import { HeaderComponent } from './components/header/header.component';
 
 
@@ -16,7 +16,8 @@ import { HeaderComponent } from './components/header/header.component';
     SharedRoutingModule,
     NgxPaginationModule,
     FormsModule,
-    HeaderComponent
+    HeaderComponent,
+    ReactiveFormsModule
   ],
   declarations: [
     SidebarComponent,

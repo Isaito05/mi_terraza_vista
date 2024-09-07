@@ -17,9 +17,10 @@
     { key: 'RGU_APELLIDOS', label: 'Apellidos' },
     { key: 'RGU_GENERO', label: 'Genero' },
   ]" noDataMessage="No hay usuarios disponibles." 
-  [title]="title">
+  [title]="title"
+  (edit)="onEdit($event)">
 </app-table>
-<app-modal [title]="'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
+<app-modal [title]="isEditing ? 'Editar usuario' : 'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
   (confirmAction)="handleConfirm()" 
   [fields]="[
   { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
@@ -44,6 +45,8 @@
   { value: 'ce', label: 'Cedula extranjera' }
 ]},
   { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
-  ]">
+  ]"
+  [isEditing]="isEditing">
+  
   <p>Your custom content goes here!</p>
 </app-modal>

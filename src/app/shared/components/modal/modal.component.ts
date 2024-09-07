@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
@@ -6,6 +6,9 @@ import { PagoService } from 'src/app/features/pago/service/pago.service';
 import Swal from 'sweetalert2';
 import { BodegaService } from 'src/app/features/bodega/service/bodega.service';
 import { ProveedorService } from 'src/app/features/proveedor/service/proveedor.service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { ImageUploadService } from 'src/app/core/services/image-upload.service';
 
 @Component({
   selector: 'app-modal',
@@ -25,6 +28,7 @@ export class ModalComponent {
   @Input() data: { [key: string]: any } = {}; // Define el tipo aquí// 
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
+  @Input() isEditing = false; // Asegúrate de declarar isEditing
 
   @Output() onRegisterSuccess = new EventEmitter<any>();
 
@@ -35,7 +39,9 @@ export class ModalComponent {
 
   constructor(
     private fb: FormBuilder,
+    private http: HttpClient,
     private usuarioService: UsuarioService,
+    private imageUploadService: ImageUploadService,
     private prodventaService: ProdventaService,
     private pagoService: PagoService,
     private bodegaService: BodegaService,
@@ -49,6 +55,7 @@ export class ModalComponent {
       'Bodega': this.bodegaService,
       'Proveedor': this.proveedorService
     }
+    this.form = this.fb.group({});
   }
 
   ngOnInit() {
@@ -59,8 +66,23 @@ export class ModalComponent {
         return acc;
       }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
     );
-
+    this.initializeForm();
     
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && !changes['data'].firstChange) {
+      this.initializeForm();
+    }
+  }
+
+  private initializeForm() {
+    this.form = this.fb.group(
+      this.fields.reduce((acc, field) => {
+        acc[field.id] = [this.data[field.id] || ''];
+        return acc;
+      }, {} as { [key: string]: any })
+    );
   }
 
   closeModal() {
@@ -128,16 +150,31 @@ export class ModalComponent {
   }
 
   handleFieldChange(fieldId: string, value: any) {
-    this.data[fieldId] = value; // Actualizamos los datos del formulario con el nuevo valor del campo
+    if (this.form) {
+      this.form.get(fieldId)?.setValue(value); // Actualizamos el valor en el formulario
+    }
   }
 
   // Método para manejar el cambio de input de archivo (imagen)
   handleFileInputChange(event: any, fieldId: string) {
     const file = event.target.files[0];
     if (file) {
-      // Opcional: Convertir el archivo a una URL de objeto para vista previa
-      this.data[fieldId] = file;
-      console.log(`Archivo seleccionado para ${fieldId}:`, file);
+      this.imageUploadService.uploadImage(file).subscribe(
+        (response: any) => {
+          // Suponiendo que la respuesta contiene la URL de la imagen guardada
+          this.data[fieldId] = response.imageUrl; 
+          console.log('URL de la imagen:', this.data[fieldId]); // Verificar la URL de la imagen
+        },
+        (error: any) => {
+          console.error('Error al subir la imagen:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo cargar la imagen',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      );
     }
   }
   

@@ -3,3 +3,7 @@
 tbody {
     text-transform: lowercase;
 }
+
+tbody, td, tfoot, th, thead, tr {
+    border-style: hidden !important
+}
