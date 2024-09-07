@@ -32,7 +32,7 @@ export class ModalComponent {
 
   @Output() onRegisterSuccess = new EventEmitter<any>();
 
-  form: FormGroup | undefined;
+  form: FormGroup;
   private serviceMap: { [key: string]: any } = {}
 
 

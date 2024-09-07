@@ -6,25 +6,27 @@
                 <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form [formGroup]="form">
                     <div *ngFor="let field of fields" class="mb-3">
                         <label [for]="field.id" class="form-label">{{ field.label }}</label>
 
                         <!-- Renderiza un input normal para text, number, date, etc. -->
+                        <!-- Input genérico (no select ni imagen) -->
                         <input *ngIf="field.type !== 'select' && field.type !== 'image'"
-                   [type]="field.type"
-                   class="form-control"
-                   [id]="field.id"
-                   [formControlName]="field.id" />
+                        [type]="field.type"
+                        class="form-control"
+                        [id]="field.id"
+                        [formControlName]="field.id" />
 
-            <select *ngIf="field.type === 'select'"
-                    class="form-select"
-                    [id]="field.id"
-                    [formControlName]="field.id">
-              <option *ngFor="let option of field.options" [value]="option.value">
-                {{ option.label }}
-              </option>
-            </select>
+                        <!-- Selector de opciones -->
+                        <select *ngIf="field.type === 'select'"
+                                class="form-select"
+                                [id]="field.id"
+                                [formControlName]="field.id">
+                        <option *ngFor="let option of field.options" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                        </select>
 
             <input *ngIf="field.type === 'image'"
                    type="file"
