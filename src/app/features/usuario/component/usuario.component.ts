@@ -8,14 +8,17 @@ import { UsuarioService } from '../service/usuario.service'; // Importa el servi
   styleUrls: ['./usuario.component.css']
 })
 export class UsuarioComponent implements OnInit {
-  usuarios: any[] = []; // Variable para almacenar la lista de usuarios
-  usuarioSeleccionado: any; // Variable para almacenar el usuario seleccionado por ID
-  idUsuario: number | null = null; // Inicializa idUsuario como null
+  usuarios: any[] = []; // Lista de usuarios
+  usuarioSeleccionado: any; // Usuario seleccionado para editar o crear
+  idUsuario: number | null = null; // ID del usuario seleccionado
   title = 'Modulo de Usuario';
   isEditing = false; // Estado para saber si estamos editando
   editingUser: any = {}; // Datos del usuario que se está editando
 
-  constructor(private usuarioService: UsuarioService) { }
+  isModalVisible: boolean = false; // Estado para controlar la visibilidad del modal
+  modalFields: any[] = []; // Campos del modal
+
+  constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
     this.usuarioService.getData().subscribe(data => {
@@ -24,44 +27,27 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
-  // Actualiza el método para aceptar un parámetro ID
-  buscarUsuarioPorId(id: number): void {
-    this.usuarioService.getUsuarioById(id).subscribe(data => {
-      this.usuarioSeleccionado = data; // Asigna el usuario seleccionado
-      console.log(this.usuarioSeleccionado); // Muestra el usuario en la consola para verificar
-    });
-  }
-
-  // Métodos para crear y actualizar usuario
-  createUser(userData: any) {
-    // Lógica para crear usuario
-  }
-
-  updateUser(userData: any) {
-    // Lógica para actualizar usuario
-  }
-
-  isModalVisible: boolean = false;
-
   openModal(user?: any) {
     console.log('Abrir modal con usuario:', user);
-    this.isEditing = !!user; // Si hay un usuario, estamos en modo de edición
-    this.editingUser = user || {}; // Llena el formulario con los datos del usuario
+    this.isEditing = !!user; // Determina si estamos en modo de edición
+    this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
     this.isModalVisible = true;
+
+    // Emite los datos hacia el componente del modal
+    this.modalFields = this.getFieldsForModal(); // Asigna los campos necesarios para el modal
   }
 
   handleClose() {
     this.isModalVisible = false;
   }
 
-  // Lógica para confirmar (guardar o actualizar)
   confirm() {
     if (this.isEditing) {
-      // Actualiza el usuario
-      this.updateUser(this.usuarioSeleccionado);
+      // Lógica para actualizar el usuario
+      // this.updateUser(this.editingUser);
     } else {
-      // Crea un nuevo usuario
-      this.createUser(this.usuarioSeleccionado);
+      // Lógica para crear un nuevo usuario
+      // this.createUser(this.editingUser);
     }
     this.handleClose();
   }
@@ -75,4 +61,53 @@ export class UsuarioComponent implements OnInit {
     console.log('Confirmed!');
     this.isModalVisible = false;
   }
+
+  getFieldsForModal() {
+    return [
+      { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
+      { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
+      { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
+      { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
+      { value: 'masculino', label: 'Masculino' },
+      { value: 'femenino', label: 'Femenino' },
+      { value: 'no-binario', label: 'No Binario' }
+    ]},
+      { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
+      { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
+      { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
+      { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
+      { value: 'admin', label: 'Administrador' },
+      { value: 'trab', label: 'Trabajador' },
+      { value: 'exclavo', label: 'Exclavo' }
+    ]},
+      { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
+      { value: 'cc', label: 'Cedula nacional' },
+      { value: 'ti', label: 'Tarjeta identidad' },
+      { value: 'ce', label: 'Cedula extranjera' }
+    ]},
+      { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
+    ]
+  }
+
+  // createUser(userData: any) {
+  //   // Lógica para crear un usuario
+  //   this.usuarioService.createUser(userData).subscribe(
+  //     response => {
+  //       console.log('Usuario creado:', response);
+  //       this.handleClose();
+  //     },
+  //     error => console.error('Error al crear usuario:', error)
+  //   );
+  // }
+
+  // updateUser(userData: any) {
+  //   // Lógica para actualizar un usuario
+  //   this.usuarioService.updateUser(userData).subscribe(
+  //     response => {
+  //       console.log('Usuario actualizado:', response);
+  //       this.handleClose();
+  //     },
+  //     error => console.error('Error al actualizar usuario:', error)
+  //   );
+  // }
 }

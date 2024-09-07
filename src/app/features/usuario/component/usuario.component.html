@@ -20,33 +20,38 @@
   [title]="title"
   (edit)="onEdit($event)">
 </app-table>
-<app-modal [title]="isEditing ? 'Editar usuario' : 'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
+<app-modal 
+  [title]="isEditing ? 'Editar usuario' : 'Registrar usuario'" 
+  [isVisible]="isModalVisible" 
+  (close)="handleClose()"
   (confirmAction)="handleConfirm()" 
   [fields]="[
-  { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
-  { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
-  { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
-  { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
-  { value: 'masculino', label: 'Masculino' },
-  { value: 'femenino', label: 'Femenino' },
-  { value: 'no-binario', label: 'No Binario' }
-]},
-  { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
-  { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
-  { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
-  { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
-  { value: 'admin', label: 'Administrador' },
-  { value: 'trab', label: 'Trabajador' },
-  { value: 'exclavo', label: 'Exclavo' }
-]},
-  { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
-  { value: 'cc', label: 'Cedula nacional' },
-  { value: 'ti', label: 'Tarjeta identidad' },
-  { value: 'ce', label: 'Cedula extranjera' }
-]},
-  { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
-  ]"
-  [isEditing]="isEditing">
+      { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
+      { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
+      { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
+      { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
+      { value: 'masculino', label: 'Masculino' },
+      { value: 'femenino', label: 'Femenino' },
+      { value: 'no-binario', label: 'No Binario' }
+    ]},
+      { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
+      { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
+      { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
+      { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
+      { value: 'admin', label: 'Administrador' },
+      { value: 'trab', label: 'Trabajador' },
+      { value: 'exclavo', label: 'Exclavo' }
+    ]},
+      { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
+      { value: 'cc', label: 'Cedula nacional' },
+      { value: 'ti', label: 'Tarjeta identidad' },
+      { value: 'ce', label: 'Cedula extranjera' }
+    ]},
+      { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
+    ]"
+  [isEditing]="isEditing"
+  [data]="editingUser"
+  (save)="confirm()">
   
   <p>Your custom content goes here!</p>
 </app-modal>

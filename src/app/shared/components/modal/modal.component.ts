@@ -66,24 +66,21 @@ export class ModalComponent {
         return acc;
       }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
     );
-    this.initializeForm();
     
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && !changes['data'].firstChange) {
-      this.initializeForm();
+    if (changes['data'] && changes['data'].currentValue) {
+      // Crear un formulario con controles para cada campo basado en los datos actuales
+      this.form = this.fb.group(
+        this.fields.reduce((acc, field) => {
+          acc[field.id] = [this.data[field.id] || '']; // Inicializar con el valor correspondiente
+          return acc;
+        }, {} as { [key: string]: any })
+      );
     }
   }
-
-  private initializeForm() {
-    this.form = this.fb.group(
-      this.fields.reduce((acc, field) => {
-        acc[field.id] = [this.data[field.id] || ''];
-        return acc;
-      }, {} as { [key: string]: any })
-    );
-  }
+  
 
   closeModal() {
     this.close.emit();

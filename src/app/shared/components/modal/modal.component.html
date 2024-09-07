@@ -6,34 +6,26 @@
                 <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="form">
+                <form>
                     <div *ngFor="let field of fields" class="mb-3">
                         <label [for]="field.id" class="form-label">{{ field.label }}</label>
 
                         <!-- Renderiza un input normal para text, number, date, etc. -->
-                        <!-- Input genérico (no select ni imagen) -->
-                        <input *ngIf="field.type !== 'select' && field.type !== 'image'"
-                        [type]="field.type"
-                        class="form-control"
-                        [id]="field.id"
-                        [formControlName]="field.id" />
+                        <input *ngIf="field.type !== 'select' && field.type !== 'image'" [type]="field.type"
+                            class="form-control" [id]="field.id" [name]="field.id" [(ngModel)]="data[field.id]" />
 
-                        <!-- Selector de opciones -->
-                        <select *ngIf="field.type === 'select'"
-                                class="form-select"
-                                [id]="field.id"
-                                [formControlName]="field.id">
-                        <option *ngFor="let option of field.options" [value]="option.value">
-                            {{ option.label }}
-                        </option>
+                        <!-- Renderiza un select para los campos de tipo 'select' -->
+                        <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id" [name]="field.id"
+                            [(ngModel)]="data[field.id]">
+                            <option *ngFor="let option of field.options" [value]="option.value">
+                                {{ option.label }}
+                            </option>
                         </select>
 
-            <input *ngIf="field.type === 'image'"
-                   type="file"
-                   class="form-control"
-                   [id]="field.id"
-                   (change)="handleFileInputChange($event, field.id)"
-                   [accept]="field.accept || 'image/*'" />
+                        <!-- Renderiza un input tipo archivo para imágenes -->
+                        <input *ngIf="field.type === 'image'" type="file" class="form-control" [id]="field.id"
+                            [name]="field.id" (change)="handleFileInputChange($event, field.id)"
+                            [accept]="field.accept || 'image/*'" />
                     </div>
                 </form>
             </div>
