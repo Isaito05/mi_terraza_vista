@@ -30,6 +30,17 @@ export class UsuarioService {
     return this.http.post<any>(this.apiUrl, data);
   }
 
+  updateData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data.RGU_ID}`;
+    return this.http.put<any>(url, data);
+  }
+
+  deleteData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data}`;
+    const body = { RGU_ESTADO: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    return this.http.put<any>(url, body);
+  }
+
   getUsuarios(): Observable<Usuario[]> {
     return this.http.get<any[]>(this.apiUrl).pipe(
       map((usuarios: any[]) => 

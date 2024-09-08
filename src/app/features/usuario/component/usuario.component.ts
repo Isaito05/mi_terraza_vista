@@ -1,6 +1,7 @@
 // usuario.component.ts
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../service/usuario.service'; // Importa el servicio
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-usuario',
@@ -22,7 +23,8 @@ export class UsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.usuarioService.getData().subscribe(data => {
-      this.usuarios = data; // Asigna los datos recibidos a la variable usuarios
+      //Filtra los datos para incluir solo aquellos con RGU_ESTADO igual a 1
+      this.usuarios = data.filter((item: { RGU_ESTADO: number; }) => item.RGU_ESTADO === 1);
       console.log(this.usuarios); // Muestra los datos en la consola para verificar
     });
   }
@@ -32,9 +34,6 @@ export class UsuarioComponent implements OnInit {
     this.isEditing = !!user; // Determina si estamos en modo de edición
     this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
     this.isModalVisible = true;
-
-    // Emite los datos hacia el componente del modal
-    this.modalFields = this.getFieldsForModal(); // Asigna los campos necesarios para el modal
   }
 
   handleClose() {
@@ -43,11 +42,7 @@ export class UsuarioComponent implements OnInit {
 
   confirm() {
     if (this.isEditing) {
-      // Lógica para actualizar el usuario
-      // this.updateUser(this.editingUser);
     } else {
-      // Lógica para crear un nuevo usuario
-      // this.createUser(this.editingUser);
     }
     this.handleClose();
   }
@@ -57,57 +52,35 @@ export class UsuarioComponent implements OnInit {
     this.openModal(user);
   }
 
+  onDelete(user: any) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Eliminarás al usuario: ${user.RGU_NOMBRES}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usuarioService.deleteData(user.RGU_ID).subscribe(
+          (response) => {
+            Swal.fire('Eliminado!', 'El usuario ha sido eliminado.', 'success').then(() => {
+              // Recarga la página solo después de que el usuario haga clic en el botón OK del mensaje
+              location.reload();
+            });
+          },
+          (error) => {
+            console.error('Error al eliminar:', error);
+            Swal.fire('Error', 'Hubo un problema al eliminar el usuario.', 'error');
+          }
+        );
+      }
+    });
+  }
+
   handleConfirm() {
     console.log('Confirmed!');
     this.isModalVisible = false;
   }
-
-  getFieldsForModal() {
-    return [
-      { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
-      { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
-      { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
-      { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
-      { value: 'masculino', label: 'Masculino' },
-      { value: 'femenino', label: 'Femenino' },
-      { value: 'no-binario', label: 'No Binario' }
-    ]},
-      { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
-      { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
-      { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
-      { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
-      { value: 'admin', label: 'Administrador' },
-      { value: 'trab', label: 'Trabajador' },
-      { value: 'exclavo', label: 'Exclavo' }
-    ]},
-      { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
-      { value: 'cc', label: 'Cedula nacional' },
-      { value: 'ti', label: 'Tarjeta identidad' },
-      { value: 'ce', label: 'Cedula extranjera' }
-    ]},
-      { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
-    ]
-  }
-
-  // createUser(userData: any) {
-  //   // Lógica para crear un usuario
-  //   this.usuarioService.createUser(userData).subscribe(
-  //     response => {
-  //       console.log('Usuario creado:', response);
-  //       this.handleClose();
-  //     },
-  //     error => console.error('Error al crear usuario:', error)
-  //   );
-  // }
-
-  // updateUser(userData: any) {
-  //   // Lógica para actualizar un usuario
-  //   this.usuarioService.updateUser(userData).subscribe(
-  //     response => {
-  //       console.log('Usuario actualizado:', response);
-  //       this.handleClose();
-  //     },
-  //     error => console.error('Error al actualizar usuario:', error)
-  //   );
-  // }
 }

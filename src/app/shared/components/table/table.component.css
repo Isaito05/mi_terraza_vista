@@ -7,3 +7,7 @@ tbody {
 tbody, td, tfoot, th, thead, tr {
     border-style: hidden !important
 }
+
+.btn:focus{
+    box-shadow: none;
+}

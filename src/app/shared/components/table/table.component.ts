@@ -11,6 +11,7 @@ export class TableComponent {
   @Input() noDataMessage: string = 'No hay datos disponibles.';
   @Input() title: string = '';
   @Output() edit = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
   
   
   p: number = 1;
@@ -20,6 +21,11 @@ export class TableComponent {
   onEdit(item: any) {
     console.log('Editar usuario:', item);
     this.edit.emit(item);
+  }
+
+  onDelete(item: any) {
+    console.log('usuario a elimianr:', item);
+    this.delete.emit(item);
   }
   
   openModal() {

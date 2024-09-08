@@ -89,38 +89,72 @@ export class ModalComponent {
   confirm() {
     const formData = this.data;
     const service = this.getServiceBasedOnContext();
+  
     if (service) {
-      service.saveData(formData).subscribe(
-        
-        (response: any) => {
-          this.closeModal()
-          this.data = [];
-          // Mostrar alerta de éxito
-          Swal.fire({
-            title: 'Éxito',
-            text: 'Registro guardado satisfactoriamente',
-            icon: 'success',
-            confirmButtonText: 'OK'
-            
-          }).then(() => {
-            this.save.emit(response);
-            location.reload();
-            ;
-          });
-
-        },
-        (error: any) => {
-          console.error('Error al guardar los datos:', error);
-
-          // Mostrar alerta de error
-          Swal.fire({
-            title: 'Error',
-            text: 'No se pudo guardar el registro',
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
-        }
-      );
+      
+      // Si está en modo de edición
+      if (this.isEditing) {
+        console.log(formData , 'yei');
+        service.updateData(formData).subscribe(
+          (response: any) => {
+            this.closeModal();
+            this.data = [];
+  
+            // Mostrar alerta de éxito
+            Swal.fire({
+              title: 'Éxito',
+              text: 'Registro editado satisfactoriamente',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              this.save.emit(response);
+              location.reload();
+            });
+          },
+          (error: any) => {
+            console.error('Error al editar los datos:', error);
+  
+            // Mostrar alerta de error
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo editar el registro',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        );
+      } 
+      // Si no está en modo de edición (es un registro nuevo)
+      else {
+        service.saveData(formData).subscribe(
+          (response: any) => {
+            this.closeModal();
+            this.data = [];
+  
+            // Mostrar alerta de éxito
+            Swal.fire({
+              title: 'Éxito',
+              text: 'Registro guardado satisfactoriamente',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              this.save.emit(response);
+              location.reload();
+            });
+          },
+          (error: any) => {
+            console.error('Error al guardar los datos:', error);
+  
+            // Mostrar alerta de error
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo guardar el registro',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        );
+      }
     } else {
       console.error('No se encontró un servicio adecuado para el contexto.');
     }
@@ -140,6 +174,8 @@ export class ModalComponent {
       return this.serviceMap['Bodega'];
     }else if (this.title.includes('Registrar proveedor')) {
       return this.serviceMap['Proveedor'];
+    }else if (this.title.includes('Editar usuario')) {
+      return this.serviceMap['Usuario'];
     }
 
     console.error('Contexto no encontrado para el título:', this.title);

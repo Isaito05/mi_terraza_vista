@@ -18,7 +18,8 @@
     { key: 'RGU_GENERO', label: 'Genero' },
   ]" noDataMessage="No hay usuarios disponibles." 
   [title]="title"
-  (edit)="onEdit($event)">
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)">
 </app-table>
 <app-modal 
   [title]="isEditing ? 'Editar usuario' : 'Registrar usuario'" 
@@ -30,28 +31,28 @@
       { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
       { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
       { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
-      { value: 'masculino', label: 'Masculino' },
-      { value: 'femenino', label: 'Femenino' },
-      { value: 'no-binario', label: 'No Binario' }
+      { value: 'Masculino', label: 'Masculino' },
+      { value: 'Femenino', label: 'Femenino' },
+      { value: 'No_binario', label: 'No Binario' }
     ]},
       { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
       { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
       { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
       { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
-      { value: 'admin', label: 'Administrador' },
-      { value: 'trab', label: 'Trabajador' },
-      { value: 'exclavo', label: 'Exclavo' }
+      { value: 'Administrador', label: 'Administrador' },
+      { value: 'Trabajador', label: 'Trabajador' },
+      { value: 'Cliente', label: 'Cliente' }
     ]},
       { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
-      { value: 'cc', label: 'Cedula nacional' },
-      { value: 'ti', label: 'Tarjeta identidad' },
+      { value: 'Cedula', label: 'Cedula nacional' },
+      { value: 'Tarjeta_Identidad', label: 'Tarjeta identidad' },
       { value: 'ce', label: 'Cedula extranjera' }
     ]},
       { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
     ]"
   [isEditing]="isEditing"
   [data]="editingUser"
-  (save)="confirm()">
+ >
   
   <p>Your custom content goes here!</p>
 </app-modal>

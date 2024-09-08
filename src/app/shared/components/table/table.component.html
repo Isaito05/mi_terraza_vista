@@ -2,11 +2,12 @@
   <div class="card">
     <div class="card-body">
       <!-- <h5 class="card-title">{{title}}</h5> -->
-      <table class="table table-hover">
+      <table class="table table-hover text-center">
         <!-- Encabezado de la tabla -->         
         <thead>
           <tr>
             <th *ngFor="let column of columns" scope="col">{{ column.label }}</th>
+            <th>Acciones</th>
           </tr>
         </thead>
 
@@ -33,14 +34,14 @@
             </td>
              <!-- Columna para los botones de acción -->
              <td>
-              <button class="btn btn-primary btn-sm me-2" (click)="onEdit(item)">
-                <i class="bi bi-pencil-fill"></i> <!-- Icono de editar -->
+              <button class="btn pt-0" (click)="onEdit(item)">
+                <i class="bi bi-pencil fs-5"></i> <!-- Icono de editar -->
               </button>
-              <button class="btn btn-danger btn-sm me-2" >
-                <i class="fas fa-trash"></i> <!-- Icono de eliminar -->
+              <button class="btn pt-0" (click)="onDelete(item)">
+                <i class="bi bi-trash fs-5"></i> <!-- Icono de eliminar -->
               </button>
-              <button class="btn btn-info btn-sm">
-                <i class="fas fa-info-circle"></i> <!-- Icono de detalles -->
+              <button class="btn pt-0">
+                <i class="bi bi-journal-text fs-5"></i><!-- Icono de detalles -->
               </button>
             </td>
           </tr>
