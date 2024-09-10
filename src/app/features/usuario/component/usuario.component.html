@@ -19,10 +19,12 @@
   ]" noDataMessage="No hay usuarios disponibles." 
   [title]="title"
   (edit)="onEdit($event)"
-  (delete)="onDelete($event)">
+  (delete)="onDelete($event)"
+  (detail)="onDetail($event)"
+  >
 </app-table>
 <app-modal 
-  [title]="isEditing ? 'Editar usuario' : 'Registrar usuario'" 
+  [title]="isViewingDetails ? 'Detalles del usuario' : (isEditing ? 'Editar usuario' : 'Registrar usuario')" 
   [isVisible]="isModalVisible" 
   (close)="handleClose()"
   (confirmAction)="handleConfirm()" 
@@ -51,6 +53,7 @@
       { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
     ]"
   [isEditing]="isEditing"
+  [isViewingDetails]="isViewingDetails"
   [data]="editingUser"
  >
   

@@ -12,6 +12,7 @@ export class TableComponent {
   @Input() title: string = '';
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
+  @Output() detail = new EventEmitter<any>();
   
   
   p: number = 1;
@@ -26,6 +27,11 @@ export class TableComponent {
   onDelete(item: any) {
     console.log('usuario a elimianr:', item);
     this.delete.emit(item);
+  }
+
+  onDetail(item: any) {
+    console.log('usuario detalle:', item);
+    this.detail.emit(item);
   }
   
   openModal() {

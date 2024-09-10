@@ -20,7 +20,7 @@
                 <img [src]="getPropertyValue(item, column.key)" alt="Imagen" width="100" height="100" />
               </ng-container>
               <!-- Si no es imagen, muestra el texto normalmente -->
-              <ng-template #textContent>{{ getPropertyValue(item, column.key) }}</ng-template>
+              <ng-template #textContent>{{ getPropertyValue(item, column.key) }}</ng-template>              
               <ng-template #defaultCell>
                 <ng-container *ngIf="isArray(getPropertyValue(item, column.key)); else singleValue">
                   <span *ngFor="let subItem of getPropertyValue(item, column.key)">
@@ -40,7 +40,7 @@
               <button class="btn pt-0" (click)="onDelete(item)">
                 <i class="bi bi-trash fs-5"></i> <!-- Icono de eliminar -->
               </button>
-              <button class="btn pt-0">
+              <button class="btn pt-0" (click)="onDetail(item)">
                 <i class="bi bi-journal-text fs-5"></i><!-- Icono de detalles -->
               </button>
             </td>

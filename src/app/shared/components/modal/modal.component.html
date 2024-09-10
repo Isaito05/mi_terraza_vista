@@ -2,7 +2,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ isEditing ? 'Editar usuario' : 'Registrar usuario' }}</h5>
+                <h5 class="modal-title">
+                    {{ isViewingDetails ? 'Detalles del usuario' : (isEditing ? 'Editar usuario' : 'Registrar usuario') }}
+                </h5>
                 <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
@@ -12,11 +14,12 @@
 
                         <!-- Renderiza un input normal para text, number, date, etc. -->
                         <input *ngIf="field.type !== 'select' && field.type !== 'image'" [type]="field.type"
-                            class="form-control" [id]="field.id" [name]="field.id" [(ngModel)]="data[field.id]" />
+                            class="form-control" [id]="field.id" [name]="field.id"
+                            [(ngModel)]="data[field.id]" [disabled]="isViewingDetails" />
 
                         <!-- Renderiza un select para los campos de tipo 'select' -->
                         <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id" [name]="field.id"
-                            [(ngModel)]="data[field.id]">
+                            [(ngModel)]="data[field.id]" [disabled]="isViewingDetails">
                             <option *ngFor="let option of field.options" [value]="option.value">
                                 {{ option.label }}
                             </option>
@@ -25,13 +28,13 @@
                         <!-- Renderiza un input tipo archivo para imágenes -->
                         <input *ngIf="field.type === 'image'" type="file" class="form-control" [id]="field.id"
                             [name]="field.id" (change)="handleFileInputChange($event, field.id)"
-                            [accept]="field.accept || 'image/*'" />
+                            [accept]="field.accept || 'image/*'" [disabled]="isViewingDetails" />
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="button" class="btn btn-primary" (click)="confirm()">
+                <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()">
                   {{ isEditing ? 'Actualizar' : 'Guardar' }}
                 </button>
             </div>

@@ -29,6 +29,7 @@ export class ModalComponent {
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
   @Input() isEditing = false; // Asegúrate de declarar isEditing
+  @Input() isViewingDetails: boolean = false;
 
   @Output() onRegisterSuccess = new EventEmitter<any>();
 
@@ -162,8 +163,6 @@ export class ModalComponent {
 
 
   private getServiceBasedOnContext() {
-
-
     if (this.title.includes('Registrar usuario')) {
       return this.serviceMap['Usuario'];
     } else if (this.title.includes('Registrar Producto en venta')) {

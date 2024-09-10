@@ -14,6 +14,7 @@ export class UsuarioComponent implements OnInit {
   idUsuario: number | null = null; // ID del usuario seleccionado
   title = 'Modulo de Usuario';
   isEditing = false; // Estado para saber si estamos editando
+  isViewingDetails = false;
   editingUser: any = {}; // Datos del usuario que se está editando
 
   isModalVisible: boolean = false; // Estado para controlar la visibilidad del modal
@@ -32,7 +33,15 @@ export class UsuarioComponent implements OnInit {
   openModal(user?: any) {
     console.log('Abrir modal con usuario:', user);
     this.isEditing = !!user; // Determina si estamos en modo de edición
+    this.isViewingDetails = false;
     this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
+    this.isModalVisible = true;
+  }
+
+  viewDetails(user: any) {
+    this.isViewingDetails = true; // Activa el modo de visualización de detalles
+    this.isEditing = false;
+    this.editingUser = { ...user }; // Carga los datos del usuario en modo solo lectura
     this.isModalVisible = true;
   }
 
@@ -50,6 +59,11 @@ export class UsuarioComponent implements OnInit {
   onEdit(user: any) {
     console.log('Evento de edición recibido:', user);
     this.openModal(user);
+  }
+  
+  onDetail(user: any) {
+    console.log('Evento de detalle recibido:', user);
+    this.viewDetails(user);
   }
 
   onDelete(user: any) {
