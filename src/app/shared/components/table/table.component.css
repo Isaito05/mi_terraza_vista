@@ -11,3 +11,7 @@ tbody, td, tfoot, th, thead, tr {
 .btn:focus{
     box-shadow: none;
 }
+
+table {
+    border-bottom: 0 !important;
+}

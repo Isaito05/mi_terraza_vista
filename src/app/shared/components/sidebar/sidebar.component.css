@@ -7,12 +7,14 @@
 }
 
 body {
+    height: 100%;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     /* background-image: url("../../../../assets/images/background-image.jpg") !important; */
     background-repeat: no-repeat;
     background-position: center bottom;
     background-size: cover;
+    background: linear-gradient(180deg, #ffffff, #f6f7fb);
 }
 
 h3 {
@@ -47,17 +49,19 @@ li {
 .wrapper {
     align-items: stretch;
     display: flex;
-    width: 100%;
+    height: 100%;
 }
 
 #sidebar {
     max-width: 264px;
     min-width: 220px;
     transition: all 0.35s ease-in-out;
-    box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
+    /* box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5); */
+    background: linear-gradient(180deg, #f0e4ff, #ffffff);
+    border-right: 1px solid #e0e0e0;
     z-index: 1111;
-    height: 40.rem;
-    background-image: url("src/assets/images/dark-background-abstract-background-network-3d-background-3840x2160-8324.png");
+    /* height: 100vh; */
+    overflow-y: auto;
 }
 
 /* Sidebar collapse */
@@ -71,7 +75,7 @@ li {
     flex-direction: column;
     min-height: 100vh;
     width: 100%;
-    overflow: hidden;
+    overflow: auto;
     transition: all 0.35s ease-in-out;
 }
 
@@ -80,7 +84,7 @@ li {
 }
 
 .sidebar-logo a {
-    color: #e9ecef;
+    color: black;
     font-size: 1.25rem;
     font-weight: 600;
 }
@@ -97,7 +101,7 @@ li {
 
 a.sidebar-link {
     padding: .625rem 1.625rem;
-    color: #e9ecef;
+    color: black;
     position: relative;
     display: block;
     font-size: 1rem;
@@ -135,9 +139,19 @@ a.sidebar-link {
     }
 }
 
+/* Hover y estilo activo */
+a.sidebar-link:hover,
+.sidebar-link.active {
+    background-color: #e8e8e8; /* Fondo claro en hover o activo */
+    color: #333;
+}
+
 .sidebar-item.active .sidebar-link {
     font-weight: bold;
-    color: #2199e8;
+    color: black;
+    background-color: #e8e8e8;
+    border-radius: 9px;
+    margin: 0.5rem
 }
 
 .sidebar-logo {

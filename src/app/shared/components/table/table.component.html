@@ -13,7 +13,7 @@
 
         <!-- Cuerpo de la tabla -->
         <tbody>
-          <tr *ngFor="let item of data | paginate: { itemsPerPage: 5, currentPage: p }">
+          <tr *ngFor="let item of data | paginate: { itemsPerPage: 10, currentPage: p }">
             <td *ngFor="let column of columns">
                <!-- Verifica si el tipo de columna es 'image' para mostrar una imagen -->
               <ng-container *ngIf="column.type === 'image'; else textContent">
@@ -52,13 +52,11 @@
       <div *ngIf="data.length === 0" class="text-center mt-3">
         {{ noDataMessage }}
       </div>
-
-      <!-- Controles de paginación -->
-      <div class="d-flex justify-content-end me-4">
-        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente">
-        </pagination-controls>
-      </div>
     </div>
   </div>
-  
+  <!-- Controles de paginación -->
+  <div class="d-flex justify-content-end me-4 mt-4">
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente">
+    </pagination-controls>
+  </div>
 </div>

@@ -9,21 +9,8 @@
   <!-- <div class="d-block p-2 bg-dark text-white fs-2 mb-1">Modulo de Usuarios</div> -->
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
-</div>
-</div>
-<app-table [data]="usuarios" [columns]="[
-    { key: 'RGU_IDENTIFICACION', label: 'Identificación' },
-    { key: 'RGU_NOMBRES', label: 'Nombres' },
-    { key: 'RGU_APELLIDOS', label: 'Apellidos' },
-    { key: 'RGU_GENERO', label: 'Genero' },
-  ]" noDataMessage="No hay usuarios disponibles." 
-  [title]="title"
-  (edit)="onEdit($event)"
-  (delete)="onDelete($event)"
-  (detail)="onDetail($event)"
-  >
-</app-table>
-<app-modal 
+  </div>
+  <app-modal 
   [title]="isViewingDetails ? 'Detalles del usuario' : (isEditing ? 'Editar usuario' : 'Registrar usuario')" 
   [isVisible]="isModalVisible" 
   (close)="handleClose()"
@@ -56,6 +43,17 @@
   [isViewingDetails]="isViewingDetails"
   [data]="editingUser"
  >
-  
-  <p>Your custom content goes here!</p>
 </app-modal>
+</div>
+<app-table [data]="usuarios" [columns]="[
+    { key: 'RGU_IDENTIFICACION', label: 'Identificación' },
+    { key: 'RGU_NOMBRES', label: 'Nombres' },
+    { key: 'RGU_APELLIDOS', label: 'Apellidos' },
+    { key: 'RGU_GENERO', label: 'Genero' },
+  ]" noDataMessage="No hay usuarios disponibles." 
+  [title]="title"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)"
+  (detail)="onDetail($event)"
+  >
+</app-table>

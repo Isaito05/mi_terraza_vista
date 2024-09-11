@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+body {
+    background-color: #f6f7fb;
+    /* Fondo claro para todo el cuerpo */
+    font-family: 'Poppins', sans-serif;
+    /* Fuente personalizada */
+}
+
+.card-group {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra suave para las tarjetas */
+}
+
+.btn-link {
+    color: #007bff;
+    /* Color de enlace personalizado */
+    text-decoration: none;
+    /* Sin subrayado */
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+    /* Subrayado al pasar el ratón */
+}
+
+.bg-primary {
+    background-color: #4f6efb !important;
+    /* Color de fondo azul oscuro */
+}
+
+.text-white {
+    color: #fff !important;
+    /* Texto blanco */
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+.typing-title {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: typing 2s steps(40, end) forwards;
+    /* font-size: 24px; */
+    font-family: 'Poppins', sans-serif;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 5em;
+        /* Ajusta el ancho según el contenido del texto */
+    }
+}
