@@ -1,9 +1,14 @@
 <div class="container">
-  <div class="d-flex justify-content-start b-t">
-    <h1 class="text-center fs-1 pt-2 ">Módulo de Productos en venta</h1>
+  <div class="d-flex">
+    <ul class="nav justify-content-center">
+      <li class="nav-item">
+        <span class="font">Modulo de Productos en Venta</span>
+      </li>
+    </ul>
   </div>
+  <!-- <div class="d-block p-2 bg-dark text-white fs-2 mb-1">Modulo de Usuarios</div> -->
   <div class="d-flex justify-content-start mb-3">
-    <button class="button-86 fw-bold" (click)="openModal()">Registrar</button>
+    <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
   <app-modal [title]="isViewingDetails ? 'Detalles del producto en venta' : (isEditing ? 'Editar producto en venta' : 'Registrar producto en venta')"
    [isVisible]="isModalVisible" (close)="handleClose()"

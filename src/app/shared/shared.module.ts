@@ -23,8 +23,6 @@ import { HeaderComponent } from './components/header/header.component';
     SidebarComponent,
     TableComponent,
     ModalComponent
-   
-
   ],
   exports: [
     SidebarComponent,

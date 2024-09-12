@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-table',
@@ -13,11 +14,28 @@ export class TableComponent {
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() detail = new EventEmitter<any>();
+  // Definir un arreglo de claves para truncar
+  fieldsToTruncate: string[] = ['PROD_VENTA_DESCRIPCION', 'PAGO_DESCRIPCION', 'PROPROV_DESCRIPCION']; // Ajusta las claves según tus necesidades
+
   
   
   p: number = 1;
   
   isModalVisible: boolean = false;
+
+  ngAfterViewInit() {
+    // Asegúrate de que los tooltips se inicialicen solo cuando el DOM esté completamente cargado
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  }
+
+  getTruncatedText(text: string, maxLength: number): string {
+    if (!text) return ''; // Maneja casos donde el texto sea nulo o indefinido
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  }
+  
 
   onEdit(item: any) {
     console.log('Editar usuario:', item);
