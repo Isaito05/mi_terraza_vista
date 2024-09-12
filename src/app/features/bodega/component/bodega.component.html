@@ -6,12 +6,22 @@
       </li>
     </ul>
   </div>
-
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
+  <app-modal [title]="isViewingDetails ? 'Detalles del bodega' : (isEditing ? 'Editar bodega' : 'Registrar bodega')" 
+  [isVisible]="isModalVisible" (close)="handleClose()"
+    (confirmAction)="handleConfirm()" [fields]="[
+    { id: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo', type: 'number' },
+    { id: 'BOD_ESTADO', label: 'Estado', type: 'text' },
+    { id: 'BOD_PROPROV_ID', label: 'Producto', type: 'select', options: productosoOptions },
+    ]"
+    [isEditing]="isEditing"
+    [isViewingDetails]="isViewingDetails"
+    [data]="editingBodega">>
+    <p>Your custom content goes here!</p>
+  </app-modal>
 </div>
-
 <app-table
   [data]="bodegas" [columns]="[
     { key: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo'},
@@ -19,14 +29,8 @@
     { key: 'proprov.PROPROV_NOMBRE', label: 'Producto'},
   ]"
   noDataMessage="No hay pagos disponibles."
-  title="Bodega"
->
+  [title]="title"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)"
+  (detail)="onDetail($event)">
 </app-table>
-<app-modal [title]="'Registrar bodega'" [isVisible]="isModalVisible" (close)="handleClose()"
-  (confirmAction)="handleConfirm()" [fields]="[
-  { id: 'BOD_STOCK_MINIMO', label: 'Stock Mínimo', type: 'number' },
-  { id: 'BOD_ESTADO', label: 'Estado', type: 'text' },
-  { id: 'BOD_PROPROV_ID', label: 'Producto', type: 'select', options: productosoOptions },
-  ]">
-  <p>Your custom content goes here!</p>
-</app-modal>

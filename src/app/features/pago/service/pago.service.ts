@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PagoService {
-
   private apiUrl = 'http://localhost:3000/pago';
   constructor(private http: HttpClient) { }
 
@@ -23,6 +22,17 @@ export class PagoService {
 
   saveData(data: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
+  }
+
+  updateData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data.PAGO_ID}`;
+    return this.http.put<any>(url, data);
+  }
+
+  deleteData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data}`;
+    const body = { PAGO_ESTADO: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    return this.http.put<any>(url, body);
   }
 
 }

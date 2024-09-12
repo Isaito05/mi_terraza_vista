@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; // Importa HttpClient
 import { PagoService } from '../service/pago.service';
 import { UsuarioService } from '../../usuario/service/usuario.service';
+import Swal from 'sweetalert2';
 
 export interface Usuario {
   RGU_ID: number;
@@ -19,9 +20,12 @@ export class PagoComponent implements OnInit {
   pagoSeleccionado: any; // Variable para almacenar el pago seleccionadso por ID
   idpago: number | null = null; // Inicializa idpago como null
   usuario: any[] = [];
+  title = 'Modulo de Pagos';
   usuarioMap: { [key: number]: string } = {}; // Mapa para relacionar ID con nombre
   usuarioOptions: { value: string; label: string }[] = [];
-
+  isEditing = false; // Estado para saber si estamos editando
+  isViewingDetails = false;
+  editingPago: any = {};
   
 
   constructor(private pagoService: PagoService,
@@ -31,7 +35,7 @@ export class PagoComponent implements OnInit {
 
   ngOnInit(): void {
     this.pagoService.getData().subscribe(data => {
-      this.pagos = data; // Asigna los datos recibidos a la variable pagos
+      this.pagos = data.filter((item: { PAGO_ESTADO: number; }) => item.PAGO_ESTADO === 1); // Asigna los datos recibidos a la variable pagos
       console.log(this.pagos); // Muestra los datos en la consola para verificar
     });
   }
@@ -54,16 +58,24 @@ export class PagoComponent implements OnInit {
 
   isModalVisible: boolean = false;
 
-  openModal() {
+  openModal(user?: any) {
     this.usuarioService.getUsuarios().subscribe((usuarios: Usuario[]) => {
-      console.log(usuarios);
-      this.usuarioOptions = usuarios.map((usuario: Usuario) => ({
-        value: usuario.RGU_ID.toString(), // Convierte el id a string
-        label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS}` // Combina nombres y apellidos para la etiqueta
+    this.usuarioOptions = usuarios.map((usuario: Usuario) => ({
+      value: usuario.RGU_ID.toString(), // Convierte el id a string
+      label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS}` // Combina nombres y apellidos para la etiqueta
       }));
-      
+      this.isEditing = !!user; // Determina si estamos en modo de edición
+      this.isViewingDetails = false;
+      this.editingPago = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
       this.isModalVisible = true;
     });
+  }
+
+  viewDetails(user: any) {
+    this.isViewingDetails = true; // Activa el modo de visualización de detalles
+    this.isEditing = false;
+    this.editingPago = { ...user }; // Carga los datos del usuario en modo solo lectura
+    this.isModalVisible = true;
   }
 
   handleClose() {
@@ -75,7 +87,43 @@ export class PagoComponent implements OnInit {
     this.isModalVisible = false;
   }
 
+  onEdit(user: any) {
+    console.log('Evento de edición recibido:', user);
+    this.openModal(user);
+  }
 
+  onDetail(user: any) {
+    console.log('Evento de detalle recibido:', user);
+    this.viewDetails(user);
+  }
+
+  onDelete(user: any) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Eliminarás al usuario: ${user.rguUsuario.RGU_NOMBRES}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log(user.rguUsuario.RGU_NOMBRES, 'eta vaina tiene '),
+        this.pagoService.deleteData(user.PAGO_ID).subscribe(
+          (response) => {
+            Swal.fire('Eliminado!', 'El usuario ha sido eliminado.', 'success').then(() => {
+              // Recarga la página solo después de que el usuario haga clic en el botón OK del mensaje
+              location.reload();
+            });
+          },
+          (error) => {
+            console.error('Error al eliminar:', error);
+            Swal.fire('Error', 'Hubo un problema al eliminar el usuario.', 'error');
+          }
+        );
+      }
+    });
+  }
 
 
 

@@ -176,6 +176,10 @@ export class ModalComponent {
       return this.serviceMap['Proprov'];
     }else if (this.title.includes('Editar usuario')) {
       return this.serviceMap['Usuario'];
+    } else if (this.title.includes('Editar pago')) {
+      return this.serviceMap['Pago'];
+    } else if (this.title.includes('Editar bodega')) {
+      return this.serviceMap['Bodega'];
     }
     console.error('Contexto no encontrado para el título:', this.title);
     return null;

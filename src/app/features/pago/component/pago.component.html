@@ -9,22 +9,33 @@
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
+  <app-modal 
+[title]="isViewingDetails ? 'Detalles del pago' : (isEditing ? 'Editar pago' : 'Registrar pago')"
+[isVisible]="isModalVisible" 
+(close)="handleClose()"
+(confirmAction)="handleConfirm()" 
+[fields]="[
+  { id: 'PAGO_FECHA', label: 'Fecha del pago', type: 'date' },
+  { id: 'PAGO_MONTO', label: 'Monto', type: 'number' },
+  { id: 'PAGO_RGU_ID', label: 'Trabajador', type: 'select', options: usuarioOptions },
+  { id: 'PAGO_DESCRIPCION', label: 'Descripción', type: 'text' }
+  ]"
+  [isEditing]="isEditing"
+  [isViewingDetails]="isViewingDetails"
+  [data]="editingPago">
+  <p>Your custom content goes here!</p>
+</app-modal>
 </div>
-<app-table [data]="pagos" [columns]="[
+  <app-table [data]="pagos" [columns]="[
       { key: 'PAGO_ID', label: 'ID' },
       { key: 'PAGO_FECHA', label: 'Fecha' },
       { key: 'PAGO_MONTO', label: 'Monto' },
       { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
       { key: 'PAGO_DESCRIPCION', label: 'Descripción' },
       { key: 'PAGO_ESTADO', label: 'Estado' }
-    ]" noDataMessage="No hay pagos disponibles.">
+    ]" noDataMessage="No hay pagos disponibles."
+    [title]="title"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (detail)="onDetail($event)">
 </app-table>
-<app-modal [title]="'Registrar pago'" [isVisible]="isModalVisible" (close)="handleClose()"
-  (confirmAction)="handleConfirm()" [fields]="[
-  { id: 'PAGO_FECHA', label: 'Fecha del pago', type: 'date' },
-  { id: 'PAGO_MONTO', label: 'Monto', type: 'number' },
-  { id: 'PAGO_RGU_ID', label: 'Trabajador', type: 'select', options: usuarioOptions },
-  { id: 'PAGO_DESCRIPCION', label: 'Descripción', type: 'text' }
-  ]">
-  <p>Your custom content goes here!</p>
-</app-modal>
