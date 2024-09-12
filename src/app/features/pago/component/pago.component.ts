@@ -25,13 +25,14 @@ export class PagoComponent implements OnInit {
   usuarioOptions: { value: string; label: string }[] = [];
   isEditing = false; // Estado para saber si estamos editando
   isViewingDetails = false;
-  editingPago: any = {};
-  
+  editingUser: any = {};
+  isModalVisible: boolean = false;
 
-  constructor(private pagoService: PagoService,
+  constructor(
+    private pagoService: PagoService,
     private http: HttpClient,
     private usuarioService: UsuarioService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.pagoService.getData().subscribe(data => {
@@ -48,34 +49,28 @@ export class PagoComponent implements OnInit {
     });
   }
 
-  // Método para manejar la edición de un pago
-  editarpago(id: number): void {
-    console.log(`Editar pago con ID: ${id}`);
-    // Aquí puedes agregar la lógica para redirigir a una página de edición o abrir un formulario modal
-    // Por ejemplo, si quieres redirigir a una página de edición:
-    // this.router.navigate(['/editar-pago', id]);
-  }
-
-  isModalVisible: boolean = false;
-
-  openModal(user?: any) {
+  openModal(user?: any, isDetailView: boolean = false) {
     this.usuarioService.getUsuarios().subscribe((usuarios: Usuario[]) => {
     this.usuarioOptions = usuarios.map((usuario: Usuario) => ({
       value: usuario.RGU_ID.toString(), // Convierte el id a string
       label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS}` // Combina nombres y apellidos para la etiqueta
       }));
-      this.isEditing = !!user; // Determina si estamos en modo de edición
-      this.isViewingDetails = false;
-      this.editingPago = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
+
+        // Determina el modo de operación
+      if (isDetailView) {
+        this.isViewingDetails = true;  // Modo de visualización de detalles
+        this.isEditing = false;
+      } else {
+        this.isEditing = !!user; // Modo edición
+        this.isViewingDetails = false; // Desactiva el modo de visualización de detalles
+      }
+      this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
       this.isModalVisible = true;
     });
   }
 
   viewDetails(user: any) {
-    this.isViewingDetails = true; // Activa el modo de visualización de detalles
-    this.isEditing = false;
-    this.editingPago = { ...user }; // Carga los datos del usuario en modo solo lectura
-    this.isModalVisible = true;
+    this.openModal(user, true);
   }
 
   handleClose() {
@@ -124,8 +119,4 @@ export class PagoComponent implements OnInit {
       }
     });
   }
-
-
-
 }
-
