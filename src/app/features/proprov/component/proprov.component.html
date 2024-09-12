@@ -5,6 +5,23 @@
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
+  <app-modal [title]="isViewingDetails ? 'Detalles del producto de proveedor' : (isEditing ? 'Editar producto de proveedor' : 'Registrar producto de proveedor')" 
+  [isVisible]="isModalVisible" 
+  (close)="handleClose()"
+  (confirmAction)="handleConfirm()"
+    [fields]="[
+      { id: 'PROPROV_NOMBRE', label: 'Nombre', type: 'text',  },
+      { id: 'PROPROV_CANTIDAD', label: 'Cantidad', type: 'text',  },
+      { id: 'PROPROV_FCH_INGRESO', label: 'Fecha ingreso', type: 'date',  },
+      { id: 'PROPROV_PRECIO_UNITARIO', label: 'Precio unitario', type: 'text',  },
+      { id: 'PROPROV_DESCRIPCION', label: 'Descripcion', type: 'text',  },
+      { id: 'PROPROV_PROV_ID', label: 'Proveedor', type: 'select', options: proveedoresOptions  }
+    ]"
+    [isEditing]="isEditing"
+    [isViewingDetails]="isViewingDetails"
+    [data]="editingProprov">>
+    
+  </app-modal>
 </div>
 <app-table [data]="proprovs" [columns]="[
       { key: 'PROPROV_ID', label: 'ID' },
@@ -14,16 +31,9 @@
       { key: 'PROPROV_PRECIO_UNITARIO', label: 'Precio Unitario' },
       { key: 'PROPROV_DESCRIPCION', label: 'Descripción' },
       { key: 'proveedor.PROV_NOMBRE', label: 'Proveedor' }
-    ]" noDataMessage="No hay pagos disponibles." title="Proveedor">
+    ]" noDataMessage="No hay pagos disponibles." 
+    [title]="title"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (detail)="onDetail($event)">
 </app-table>
-<app-modal [title]="'Registrar producto proveedor'" [isVisible]="isModalVisible" (close)="handleClose()"(confirmAction)="handleConfirm()"
-  [fields]="[
-    { id: 'PROPROV_NOMBRE', label: 'Nombre', type: 'text',  },
-    { id: 'PROPROV_CANTIDAD', label: 'Cantidad', type: 'text',  },
-    { id: 'PROPROV_FCH_INGRESO', label: 'Fecha ingreso', type: 'date',  },
-    { id: 'PROPROV_PRECIO_UNITARIO', label: 'Precio unitario', type: 'text',  },
-    { id: 'PROPROV_DESCRIPCION', label: 'Descripcion', type: 'text',  },
-    { id: 'PROPROV_PROV_ID', label: 'Proveedor', type: 'select', options: proveedoresOptions  }
-  ]">
-  
-</app-modal>

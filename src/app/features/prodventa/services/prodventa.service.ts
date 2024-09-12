@@ -7,10 +7,9 @@ import { Observable, of } from 'rxjs';
 })
 export class ProdventaService {
   private apiUrl = 'http://localhost:3000/prodventa';
-  
   constructor(private http:HttpClient) { }
 
-  getdata(): Observable<any>{
+  getData(): Observable<any>{
     return this.http.get<any>(this.apiUrl)
   }
 
@@ -25,16 +24,27 @@ export class ProdventaService {
   //   return this.http.post<any>(`${this.apiUrl}/src/img/${PROD_VENTA_ID}`, formData);
   // }
 
-  uploadImage(PROD_VENTA_ID: number, imageFile: File | null): Observable<any> {
-    if (!imageFile) {
-        // Puedes manejar el caso en que no hay archivo
-        return of({ message: 'No file provided' }); // Retorna un observable vacío o algún valor predeterminado
-    }
+//   uploadImage(PROD_VENTA_ID: number, imageFile: File | null): Observable<any> {
+//     if (!imageFile) {
+//         // Puedes manejar el caso en que no hay archivo
+//         return of({ message: 'No file provided' }); // Retorna un observable vacío o algún valor predeterminado
+//     }
 
-    const formData = new FormData();
-    formData.append('imagen', imageFile); // Asegúrate de que el nombre del campo coincida con el esperado en el backend
+//     const formData = new FormData();
+//     formData.append('imagen', imageFile); // Asegúrate de que el nombre del campo coincida con el esperado en el backend
 
-    return this.http.post<any>(`${this.apiUrl}/upload/${PROD_VENTA_ID}`, formData);
+//     return this.http.post<any>(`${this.apiUrl}/upload/${PROD_VENTA_ID}`, formData);
+// }
+
+updateData(data: any): Observable<any> {
+  const url = `${this.apiUrl}/${data.PROD_VENTA_ID}`;
+  return this.http.put<any>(url, data);
+}
+
+deleteData(data: any): Observable<any> {
+  const url = `${this.apiUrl}/${data}`;
+  const body = { PROD_VENTA_ESTADO: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+  return this.http.put<any>(url, body);
 }
 
 }

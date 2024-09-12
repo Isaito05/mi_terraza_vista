@@ -9,6 +9,20 @@
     <div class="d-flex justify-content-start mb-3">
       <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
     </div>
+    <app-modal [title]="isViewingDetails ? 'Detalles del proveedor' : (isEditing ? 'Editar proveedor' : 'Registrar proveedor')" 
+     [isVisible]="isModalVisible" (close)="handleClose()"(confirmAction)="handleConfirm()"
+      [fields]="[
+        { id: 'PROV_NOMBRE', label: 'Nombre', type: 'text',  },
+        { id: 'PROV_CORREO', label: 'Correo', type: 'text',  },
+        { id: 'PROV_TELEFONO', label: 'Teléfono', type: 'text',  },
+        { id: 'PROV_DIRECCION', label: 'Dirección', type: 'text',  },
+        { id: 'PROV_NIT', label: 'NIT', type: 'text',  }
+      ]"
+       [isEditing]="isEditing"
+       [isViewingDetails]="isViewingDetails"
+       [data]="editingProv">
+      
+    </app-modal>
   </div>
   <app-table
   [data]="proveedor" [columns]="[
@@ -18,17 +32,10 @@
     { key: 'PROV_DIRECCION', label: 'Dirección' },
     { key: 'PROV_NIT', label: 'NIT' }
   ]"
-  noDataMessage="No hay datos disponibles."
+ noDataMessage="No hay pagos disponibles."
+ [title]="title"
+ (edit)="onEdit($event)"
+ (delete)="onDelete($event)"
+ (detail)="onDetail($event)"
 ></app-table>
-<app-modal [title]="'Registrar proveedor'" [isVisible]="isModalVisible" (close)="handleClose()"(confirmAction)="handleConfirm()"
-  [fields]="[
-    { id: 'PROV_NOMBRE', label: 'Nombre', type: 'text',  },
-    { id: 'PROV_CORREO', label: 'Correo', type: 'text',  },
-    { id: 'PROV_TELEFONO', label: 'Teléfono', type: 'text',  },
-    { id: 'PROV_DIRECCION', label: 'Dirección', type: 'text',  },
-    { id: 'PROV_NIT', label: 'NIT', type: 'text',  }
-  ]">
-  
-</app-modal>
-  
 

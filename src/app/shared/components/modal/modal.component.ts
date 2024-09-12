@@ -168,6 +168,8 @@ export class ModalComponent {
       return this.serviceMap['ProductoV'];
     } else if (this.title.includes('Registrar pago')) {
       return this.serviceMap['Pago'];
+    } else if (this.title.includes('Registrar pago')) {
+      return this.serviceMap['Pago'];
     } else if (this.title.includes('Registrar bodega')) {
       return this.serviceMap['Bodega'];
     }else if (this.title.includes('Registrar proveedor')) {
@@ -180,6 +182,10 @@ export class ModalComponent {
       return this.serviceMap['Pago'];
     } else if (this.title.includes('Editar bodega')) {
       return this.serviceMap['Bodega'];
+    } else if (this.title.includes('Editar producto de proveedor')) {
+      return this.serviceMap['Proprov'];
+    } else if (this.title.includes('Editar proveedor')) {
+      return this.serviceMap['Proveedor'];
     }
     console.error('Contexto no encontrado para el título:', this.title);
     return null;

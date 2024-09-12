@@ -32,6 +32,16 @@ export class ProveedorService {
         }))
       )
     );
-   
+  }
+
+  updateData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data.PROV_ID}`;
+    return this.http.put<any>(url, data);
+  }
+
+  deleteData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data}`;
+    const body = { PROV_ESTADO: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    return this.http.put<any>(url, body);
   }
 }

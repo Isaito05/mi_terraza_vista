@@ -19,18 +19,29 @@ export class ProprovService {
     return this.http.get<any>(this.apiUrl);
   }
 
+  // Método para obtener un usuario por ID
+  getProprovById(id: number): Observable<any> {
+    const url = `${this.apiUrl}/${id}`; // Construye la URL con el ID
+    return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID
+  }
+
   saveData(data: any): Observable<any> {
     console.log(data)
     console.log(this.http.post<any>(this.apiUrl, data))
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  // Método para obtener un usuario por ID
-  getProprovById(id: number): Observable<any> {
-    const url = `${this.apiUrl}/${id}`; // Construye la URL con el ID
-    return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID
+  updateData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data.PROPROV_ID}`;
+    return this.http.put<any>(url, data);
   }
   
+  deleteData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data}`;
+    const body = {PROPROV_ESTADO: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    return this.http.put<any>(url, body);
+  }
+
   getProprov(): Observable<ProProv[]> {
     return this.http.get<any[]>(this.apiUrl).pipe(
       map((productos: any[]) =>
@@ -42,5 +53,6 @@ export class ProprovService {
     );
    
   }
+
   
 }
