@@ -14,7 +14,7 @@
       ]" noDataMessage="No hay productos disponibles.">
 </app-table>
 <app-modal [title]="'Registrar Producto en venta'" [isVisible]="isModalVisible" (close)="handleClose()"
-  (confirmAction)="handleConfirm()" [fields]="[
+  (confirmAction)="handleConfirm()"  [fields]="[
     { id: 'PROD_VENTA_NOMBRE', label: 'Nombre', type: 'text' },
     { id: 'PROD_VENTA_DESCRIPCION', label: 'Descripción', type: 'text' },
     { id: 'PROD_VENTA_PRECIO', label: 'Precio', type: 'number' },

@@ -3,40 +3,36 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
 import { PagoService } from 'src/app/features/pago/service/pago.service';
-import Swal from 'sweetalert2';
 import { BodegaService } from 'src/app/features/bodega/service/bodega.service';
 import { ProveedorService } from 'src/app/features/proveedor/service/proveedor.service';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ImageUploadService } from 'src/app/core/services/image-upload.service';
+import Swal from 'sweetalert2';
+import { ProprovService } from 'src/app/features/proprov/service/proprov.service';
 
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
+
 export class ModalComponent {
   @Input() isVisible: boolean = false; // Controla la visibilidad del modal
   @Input() title: string = ''; // Título del modal
-  @Input() fields: {
-    id: string;
-    label: string;
-    type: string;
-    options?: { value: string; label: string }[];
-    accept?: string; // Añadido para especificar tipos de archivos permitidos para imágenes
-  }[] = []; // Campos del formulario
+  @Input() fields: { id: string; label: string; type: string; options?: { value: string; label: string }[]; accept?: string; }[] = []; // Campos del formulario
   @Input() data: { [key: string]: any } = {}; // Define el tipo aquí// 
+  
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
   @Input() isEditing = false; // Asegúrate de declarar isEditing
   @Input() isViewingDetails: boolean = false;
 
   @Output() onRegisterSuccess = new EventEmitter<any>();
+  @Output() confirmAction = new EventEmitter<void>();
 
   form: FormGroup;
   private serviceMap: { [key: string]: any } = {}
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +42,8 @@ export class ModalComponent {
     private prodventaService: ProdventaService,
     private pagoService: PagoService,
     private bodegaService: BodegaService,
-    private proveedorService: ProveedorService
+    private proveedorService: ProveedorService,
+    private proprovService: ProprovService
     
   ) {
     this.serviceMap = {
@@ -54,7 +51,8 @@ export class ModalComponent {
       'ProductoV': this.prodventaService,
       'Pago': this.pagoService,
       'Bodega': this.bodegaService,
-      'Proveedor': this.proveedorService
+      'Proveedor': this.proveedorService,
+      'Proprov': this.proprovService,
     }
     this.form = this.fb.group({});
   }
@@ -88,6 +86,7 @@ export class ModalComponent {
   }
 
   confirm() {
+
     const formData = this.data;
     const service = this.getServiceBasedOnContext();
   
@@ -173,10 +172,11 @@ export class ModalComponent {
       return this.serviceMap['Bodega'];
     }else if (this.title.includes('Registrar proveedor')) {
       return this.serviceMap['Proveedor'];
+    }else if (this.title.includes('Registrar producto proveedor')) {
+      return this.serviceMap['Proprov'];
     }else if (this.title.includes('Editar usuario')) {
       return this.serviceMap['Usuario'];
     }
-
     console.error('Contexto no encontrado para el título:', this.title);
     return null;
   }
@@ -189,6 +189,7 @@ export class ModalComponent {
 
   // Método para manejar el cambio de input de archivo (imagen)
   handleFileInputChange(event: any, fieldId: string) {
+    // const file = event.target.files[0];
     const file = event.target.files[0];
     if (file) {
       this.imageUploadService.uploadImage(file).subscribe(

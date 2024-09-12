@@ -19,6 +19,12 @@ export class ProprovService {
     return this.http.get<any>(this.apiUrl);
   }
 
+  saveData(data: any): Observable<any> {
+    console.log(data)
+    console.log(this.http.post<any>(this.apiUrl, data))
+    return this.http.post<any>(this.apiUrl, data);
+  }
+
   // Método para obtener un usuario por ID
   getProprovById(id: number): Observable<any> {
     const url = `${this.apiUrl}/${id}`; // Construye la URL con el ID

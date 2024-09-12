@@ -1,10 +1,9 @@
 <div class="container">
-  <<div class="d-flex">
-    <ul class="nav justify-content-center">
-      <li class="nav-item">
-        <span class="font">Modulo de Productos Por Proveedor</span>
-      </li>
-    </ul>
+  <div class="d-flex justify-content-start b-t">
+    <h1 class="text-center fs-1 pt-2">Modulo de Producto proveedor</h1>
+  </div>
+  <div class="d-flex justify-content-start mb-3">
+    <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
 </div>
 <app-table [data]="proprovs" [columns]="[
@@ -17,3 +16,14 @@
       { key: 'proveedor.PROV_NOMBRE', label: 'Proveedor' }
     ]" noDataMessage="No hay pagos disponibles." title="Proveedor">
 </app-table>
+<app-modal [title]="'Registrar producto proveedor'" [isVisible]="isModalVisible" (close)="handleClose()"(confirmAction)="handleConfirm()"
+  [fields]="[
+    { id: 'PROPROV_NOMBRE', label: 'Nombre', type: 'text',  },
+    { id: 'PROPROV_CANTIDAD', label: 'Cantidad', type: 'text',  },
+    { id: 'PROPROV_FCH_INGRESO', label: 'Fecha ingreso', type: 'date',  },
+    { id: 'PROPROV_PRECIO_UNITARIO', label: 'Precio unitario', type: 'text',  },
+    { id: 'PROPROV_DESCRIPCION', label: 'Descripcion', type: 'text',  },
+    { id: 'PROPROV_PROV_ID', label: 'Proveedor', type: 'select', options: proveedoresOptions  }
+  ]">
+  
+</app-modal>
