@@ -9,14 +9,14 @@
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
-  <app-modal [title]="'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
+  <app-modal [title]="isViewingDetails ? 'Detalles del pedido' : (isEditing ? 'Editar pedido' : 'Registrar pedido')" 
+  [isVisible]="isModalVisible" (close)="handleClose()"
     (confirmAction)="handleConfirm()" 
     [fields]="[
     { id: 'PED_ID', label: 'Id', type: 'text' },
     { id: 'PED_FECHA', label: 'Fecha', type: 'date' },
     { id: 'PED_PRECIO_TOTAL', label: 'Precio', type: 'text' },
     { id: 'PED_RGU_ID', label: 'usuario', type: 'select', options: usuarioOptions },
-    { id: 'PED_INFO', label: 'Informacion', type: 'text' },
     ]"
     [isEditing]="isEditing"
     [isViewingDetails]="isViewingDetails"
@@ -29,9 +29,8 @@
   [columns]="[
     { key: 'PED_ID', label: 'ID' },
     { key: 'PED_FECHA', label: 'Fecha' },
-    { key: 'PED_PRECIO_TOTAL', label: 'Precio Total' },
+    { key: 'PED_PRECIO_TOTAL', label: 'Precio Total', format: 'currencyFormat' },
     { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
-    { key: 'PED_INFO', label: 'Detalles de Pedido' }
   ]"noDataMessage="No hay pedidos disponibles."
   [title]="title"
   (edit)="onEdit($event)"

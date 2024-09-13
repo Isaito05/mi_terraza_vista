@@ -20,6 +20,8 @@
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
-    max-height: 80vh; /* Ajusta la altura máxima del contenido */
-    overflow-y: auto; /* Activa el scroll vertical si el contenido es demasiado alto */
+    max-height: 80vh;
+    /* Ajusta la altura máxima del contenido */
+    overflow-y: auto;
+    /* Activa el scroll vertical si el contenido es demasiado alto */
 }

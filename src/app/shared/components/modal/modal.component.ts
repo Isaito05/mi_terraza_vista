@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { ImageUploadService } from 'src/app/core/services/image-upload.service';
 import Swal from 'sweetalert2';
 import { ProprovService } from 'src/app/features/proprov/service/proprov.service';
+import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
 
 @Component({
   selector: 'app-modal',
@@ -22,7 +23,7 @@ export class ModalComponent {
   @Input() title: string = ''; // Título del modal
   @Input() fields: { id: string; label: string; type: string; options?: { value: string; label: string }[]; accept?: string; }[] = []; // Campos del formulario
   @Input() data: { [key: string]: any } = {}; // Define el tipo aquí// 
-  
+
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
   @Input() isEditing = false; // Asegúrate de declarar isEditing
@@ -30,6 +31,10 @@ export class ModalComponent {
 
   @Output() onRegisterSuccess = new EventEmitter<any>();
   @Output() confirmAction = new EventEmitter<void>();
+
+  pedidos: any[] = [];
+  result: any[] = [];
+  acc: any[] = [];
 
   form: FormGroup;
   private serviceMap: { [key: string]: any } = {}
@@ -43,8 +48,8 @@ export class ModalComponent {
     private pagoService: PagoService,
     private bodegaService: BodegaService,
     private proveedorService: ProveedorService,
-    private proprovService: ProprovService
-    
+    private proprovService: ProprovService,
+    private pedidoService: PedidoService
   ) {
     this.serviceMap = {
       'Usuario': this.usuarioService,
@@ -65,21 +70,43 @@ export class ModalComponent {
         return acc;
       }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
     );
-    
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && changes['data'].currentValue) {
+    if (changes['data'] && changes['data'].currentValue && changes['data'] && this.title === 'Detalles del pedido') {
       // Crear un formulario con controles para cada campo basado en los datos actuales
       this.form = this.fb.group(
         this.fields.reduce((acc, field) => {
-          acc[field.id] = [this.data[field.id] || '']; // Inicializar con el valor correspondiente
+          acc[field.id] = [this.data[field.id] || ''];
+          this.Tablapedido(this.data['PED_ID']);
+          console.log(this.data['PED_ID']); // Inicializar con el valor correspondiente
           return acc;
+
         }, {} as { [key: string]: any })
       );
+
     }
   }
+
+  formatCurrency(value: any): string {
+    if (value == null) {
+      return '';
+    }
   
+    if (typeof value === 'number') {
+      return `${value.toLocaleString('es-ES')}`;
+    }
+  
+    // Convertir cadenas numéricas a número
+    const numericValue = parseFloat(value.toString().replace(/[^0-9.-]+/g, ''));
+    if (!isNaN(numericValue)) {
+      return `${numericValue.toLocaleString('es-ES')}`;
+    }
+  
+    // Si no es un número, devolver el valor como cadena
+    return value.toString();
+  }
 
   closeModal() {
     this.close.emit();
@@ -89,17 +116,17 @@ export class ModalComponent {
 
     const formData = this.data;
     const service = this.getServiceBasedOnContext();
-  
+
     if (service) {
-      
+
       // Si está en modo de edición
       if (this.isEditing) {
-        console.log(formData , 'yei');
+        console.log(formData, 'yei');
         service.updateData(formData).subscribe(
           (response: any) => {
             this.closeModal();
             this.data = [];
-  
+
             // Mostrar alerta de éxito
             Swal.fire({
               title: 'Éxito',
@@ -113,7 +140,7 @@ export class ModalComponent {
           },
           (error: any) => {
             console.error('Error al editar los datos:', error);
-  
+
             // Mostrar alerta de error
             Swal.fire({
               title: 'Error',
@@ -123,14 +150,14 @@ export class ModalComponent {
             });
           }
         );
-      } 
+      }
       // Si no está en modo de edición (es un registro nuevo)
       else {
         service.saveData(formData).subscribe(
           (response: any) => {
             this.closeModal();
             this.data = [];
-  
+
             // Mostrar alerta de éxito
             Swal.fire({
               title: 'Éxito',
@@ -144,7 +171,7 @@ export class ModalComponent {
           },
           (error: any) => {
             console.error('Error al guardar los datos:', error);
-  
+
             // Mostrar alerta de error
             Swal.fire({
               title: 'Error',
@@ -172,11 +199,11 @@ export class ModalComponent {
       return this.serviceMap['Pago'];
     } else if (this.title.includes('Registrar bodega')) {
       return this.serviceMap['Bodega'];
-    }else if (this.title.includes('Registrar proveedor')) {
+    } else if (this.title.includes('Registrar proveedor')) {
       return this.serviceMap['Proveedor'];
-    }else if (this.title.includes('Registrar producto proveedor')) {
+    } else if (this.title.includes('Registrar producto proveedor')) {
       return this.serviceMap['Proprov'];
-    }else if (this.title.includes('Editar usuario')) {
+    } else if (this.title.includes('Editar usuario')) {
       return this.serviceMap['Usuario'];
     } else if (this.title.includes('Editar pago')) {
       return this.serviceMap['Pago'];
@@ -205,7 +232,7 @@ export class ModalComponent {
       this.imageUploadService.uploadImage(file).subscribe(
         (response: any) => {
           // Suponiendo que la respuesta contiene la URL de la imagen guardada
-          this.data[fieldId] = response.imageUrl; 
+          this.data[fieldId] = response.imageUrl;
           console.log('URL de la imagen:', this.data[fieldId]); // Verificar la URL de la imagen
         },
         (error: any) => {
@@ -220,5 +247,58 @@ export class ModalComponent {
       );
     }
   }
+
+
+  Tablapedido(pedId: any) {
+    this.pedidoService.getData().subscribe(data => {
+      console.log(pedId, 'idiota');
+      const pedidosFiltrados = data.filter((pedido: { PED_ID: number; }) => pedido.PED_ID === pedId);
   
+      const productosMap = new Map<string, number>(); // Para evitar duplicados
+  
+      pedidosFiltrados.forEach((pedido: { PED_INFO: string | any[]; }) => {
+        if (typeof pedido.PED_INFO === 'string') {
+          try {
+            const pedInfoArray = JSON.parse(pedido.PED_INFO);
+            pedInfoArray.forEach((info: { id: string; cantidad: number; }) => {
+              const id = info.id;
+              const cantidad = info.cantidad;
+              if (productosMap.has(id)) {
+                productosMap.set(id, productosMap.get(id)! + cantidad); // Sumar la cantidad si ya existe
+              } else {
+                productosMap.set(id, cantidad); // Agregar nuevo producto
+              }
+            });
+          } catch (error) {
+            console.error('Error parsing PED_INFO JSON', error);
+          }
+        }
+      });
+  
+      // Convertir el Map a un array de promesas para obtener los detalles de los productos
+      const productPromises = Array.from(productosMap.keys()).map(id =>
+        this.prodventaService.getProVenById(id).toPromise().then(data => ({
+          nombre: data.PROD_VENTA_NOMBRE,
+          precio: data.PROD_VENTA_PRECIO,
+          descripcion:data.PROD_VENTA_DESCRIPCION,
+          cantidad: productosMap.get(id)!,
+          subtotal: data.PROD_VENTA_PRECIO * productosMap.get(id)!
+        })).catch(error => {
+          console.error('Error al obtener los datos:', error);
+          return null; // Manejar el error
+        })
+      );
+  
+      // Esperar a que todas las promesas se resuelvan
+      Promise.all(productPromises).then(results => {
+        this.pedidos = results.filter(result => result !== null); // Filtrar resultados nulos en caso de error
+      });
+    });
+  }
+
+  getTotal(): number {
+    return this.pedidos.reduce((acc, item) => acc + item.subtotal, 0);
+  }
+
+
 }

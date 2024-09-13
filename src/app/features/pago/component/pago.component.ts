@@ -8,6 +8,7 @@ export interface Usuario {
   RGU_ID: number;
   RGU_NOMBRES: string;
   RGU_APELLIDOS: string;
+  RGU_ROL: string;
 }
 
 @Component({
@@ -51,9 +52,13 @@ export class PagoComponent implements OnInit {
 
   openModal(user?: any, isDetailView: boolean = false) {
     this.usuarioService.getUsuarios().subscribe((usuarios: Usuario[]) => {
-    this.usuarioOptions = usuarios.map((usuario: Usuario) => ({
-      value: usuario.RGU_ID.toString(), // Convierte el id a string
-      label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS}` // Combina nombres y apellidos para la etiqueta
+      // this.usuarios = usuarios.filter((item: { RGU_ROL: string; }) => item.RGU_ROL === 'Trabajador');
+      console.log();
+      const trabajadores = usuarios.filter((item: { RGU_ROL: string; }) => item.RGU_ROL === 'Trabajador');
+      this.usuarioOptions = trabajadores.map((usuario: Usuario) => ({
+        
+        value: usuario.RGU_ID.toString(), // Convierte el id a string
+        label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS}` // Combina nombres y apellidos para la etiqueta
       }));
 
         // Determina el modo de operación

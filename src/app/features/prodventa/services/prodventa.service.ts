@@ -36,6 +36,11 @@ export class ProdventaService {
 //     return this.http.post<any>(`${this.apiUrl}/upload/${PROD_VENTA_ID}`, formData);
 // }
 
+getProVenById(id: any): Observable<any> {
+  const url = `${this.apiUrl}/${id}`; // Construye la URL con el ID
+  return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID
+}
+
 updateData(data: any): Observable<any> {
   const url = `${this.apiUrl}/${data.PROD_VENTA_ID}`;
   return this.http.put<any>(url, data);

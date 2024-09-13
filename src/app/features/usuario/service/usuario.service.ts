@@ -6,6 +6,7 @@ export interface Usuario {
   RGU_ID: number;
   RGU_NOMBRES: string;
   RGU_APELLIDOS: string;
+  RGU_ROL: string;
 }
 
 @Injectable({
@@ -47,7 +48,8 @@ export class UsuarioService {
         usuarios.map(usuario => ({
           RGU_ID: usuario.RGU_ID,
           RGU_NOMBRES: usuario.RGU_NOMBRES,
-          RGU_APELLIDOS: usuario.RGU_APELLIDOS
+          RGU_APELLIDOS: usuario.RGU_APELLIDOS,
+          RGU_ROL: usuario.RGU_ROL
         }))
       )
     );

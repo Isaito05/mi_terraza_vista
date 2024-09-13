@@ -14,8 +14,8 @@
 
                         <!-- Renderiza un input normal para text, number, date, etc. -->
                         <input *ngIf="field.type !== 'select' && field.type !== 'image'" [type]="field.type"
-                            class="form-control" [id]="field.id" [name]="field.id"
-                            [(ngModel)]="data[field.id]" [disabled]="isViewingDetails" />
+                            class="form-control" [id]="field.id" [name]="field.id" [(ngModel)]="data[field.id]"
+                            [disabled]="isViewingDetails" />
 
                         <!-- Renderiza un select para los campos de tipo 'select' -->
                         <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id" [name]="field.id"
@@ -30,14 +30,45 @@
                             [name]="field.id" (change)="handleFileInputChange($event, field.id)"
                             [accept]="field.accept || 'image/*'" [disabled]="isViewingDetails" />
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()">
-                  {{ isEditing ? 'Actualizar' : 'Guardar' }}
-                </button>
-            </div>
+                    <div *ngIf="title === 'Detalles del pedido'">
+                        <h6>Información adicional</h6>
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre del producto</th>
+                                        <th>Descripción</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of pedidos">
+                                        <td>{{ item.nombre }}</td>
+                                        <td>{{ item.descripcion }}</td>
+                                        <td>{{ formatCurrency(item.precio) }}</td>
+                                        <td>{{ item.cantidad }}</td>
+                                        <td>{{ formatCurrency(item.subtotal) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex align-items-end flex-column">
+                            <div>
+                                <p><b>Total: </b>{{ formatCurrency(getTotal()) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+            <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()">
+                {{ isEditing ? 'Actualizar' : 'Guardar' }}
+            </button>
         </div>
     </div>
+</div>
 </div>
