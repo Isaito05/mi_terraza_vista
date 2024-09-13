@@ -8,7 +8,7 @@ import * as bootstrap from 'bootstrap';
 })
 export class TableComponent {
   @Input() data: any[] = [];
-  @Input() columns: { key: string, label: string, type?: any }[] = [];
+  @Input() columns: { key: string, label: string, type?: any, format?: string }[] = [];
   @Input() noDataMessage: string = 'No hay datos disponibles.';
   @Input() title: string = '';
   @Output() edit = new EventEmitter<any>();
@@ -20,6 +20,27 @@ export class TableComponent {
   
   
   p: number = 1;
+
+  formatCurrency(value: any): string {
+    if (value == null) {
+      return '';
+    }
+  
+    if (typeof value === 'number') {
+      return `$ ${value.toLocaleString('es-ES')}`;
+    }
+  
+    // Convertir cadenas numéricas a número
+    const numericValue = parseFloat(value.toString().replace(/[^0-9.-]+/g, ''));
+    if (!isNaN(numericValue)) {
+      return `$ ${numericValue.toLocaleString('es-ES')}`;
+    }
+  
+    // Si no es un número, devolver el valor como cadena
+    return value.toString();
+  }
+  
+
   
   isModalVisible: boolean = false;
 
@@ -64,15 +85,17 @@ export class TableComponent {
     console.log('Confirmed!');
     this.isModalVisible = false;
   }
+
+ 
   
   // Obtiene el valor de la propiedad de un objeto dinámicamente
   getPropertyValue(item: any, key: string): any {
     const value = key.split('.').reduce((object, property) => object ? object[property] : '', item);
-    
+    console.log('Valor obtenido:', value);
     // Verifica si es una URL de imagen completa
-    if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
-      return value; 
-    }
+    // if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+    //   return value; 
+    // }
 
     // Retorna el valor original para otros casos
     return value;
