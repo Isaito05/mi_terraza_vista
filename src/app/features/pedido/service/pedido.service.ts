@@ -20,5 +20,19 @@ export class PedidoService {
     return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID
   }
 
+  saveData(data: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, data);
+  }
+
+  updateData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data.PED_ID}`;
+    return this.http.put<any>(url, data);
+  }
+
+  deleteData(data: any): Observable<any> {
+    const url = `${this.apiUrl}/${data}`;
+    const body = { PED_ESTADOE: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    return this.http.put<any>(url, body);
+  }
  
 }

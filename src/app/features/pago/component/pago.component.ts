@@ -95,7 +95,7 @@ export class PagoComponent implements OnInit {
   onDelete(user: any) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Eliminarás al usuario: ${user.rguUsuario.RGU_NOMBRES}`,
+      text: `Eliminarás el pago de: ${user.rguUsuario.RGU_NOMBRES}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -106,14 +106,14 @@ export class PagoComponent implements OnInit {
         console.log(user.rguUsuario.RGU_NOMBRES, 'eta vaina tiene '),
         this.pagoService.deleteData(user.PAGO_ID).subscribe(
           (response) => {
-            Swal.fire('Eliminado!', 'El usuario ha sido eliminado.', 'success').then(() => {
+            Swal.fire('Eliminado!', 'El pago ha sido eliminado.', 'success').then(() => {
               // Recarga la página solo después de que el usuario haga clic en el botón OK del mensaje
               location.reload();
             });
           },
           (error) => {
             console.error('Error al eliminar:', error);
-            Swal.fire('Error', 'Hubo un problema al eliminar el usuario.', 'error');
+            Swal.fire('Error', 'Hubo un problema al eliminar el pago.', 'error');
           }
         );
       }

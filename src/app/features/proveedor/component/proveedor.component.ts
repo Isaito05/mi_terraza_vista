@@ -83,7 +83,7 @@ export class ProveedorComponent implements OnInit {
           },
           (error) => {
             console.error('Error al eliminar:', error);
-            Swal.fire('Error', 'Hubo un problema al eliminar el usuario.', 'error');
+            Swal.fire('Error', 'Hubo un problema al eliminar el proveedor.', 'error');
           }
         );
       }

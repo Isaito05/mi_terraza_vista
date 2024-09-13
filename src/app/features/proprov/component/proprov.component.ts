@@ -77,7 +77,7 @@ export class ProprovComponent implements OnInit {
   onDelete(user: any) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Eliminarás al usuario: ${user.proveedor.PROV_NOMBRE}`,
+      text: `Eliminarás el producto del proveedor: ${user.proveedor.PROV_NOMBRE}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

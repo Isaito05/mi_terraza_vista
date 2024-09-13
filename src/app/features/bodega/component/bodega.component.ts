@@ -24,6 +24,7 @@ export class BodegaComponent implements OnInit {
   isEditing = false; // Estado para saber si estamos editando
   isViewingDetails = false;
   editingBodega: any = {};
+  isModalVisible: boolean = false;
 
   constructor(private http: HttpClient,
     private proporvService: ProprovService,
@@ -43,28 +44,30 @@ export class BodegaComponent implements OnInit {
     });
   }
 
-  isModalVisible: boolean = false;
+  
 
 
-  openModal(user?: any) {
+  openModal(user?: any, isDetailView: boolean = false) {
     this.proporvService.getProprov().subscribe((productos: ProProv[]) => {
       this.productosoOptions = productos.map((producto: ProProv) => ({
         value: producto.PROPROV_ID.toString(), // Convierte el id a string
         label: `${producto.PROPROV_NOMBRE}` // Combina nombres y apellidos para la etiqueta
       }));
-      console.log(productos);
-      this.isEditing = !!user; // Determina si estamos en modo de edición
-      this.isViewingDetails = false;
-      this.editingBodega = user ? { ...user } : {};
+
+      if (isDetailView) {
+        this.isViewingDetails = true;  // Modo de visualización de detalles
+        this.isEditing = false;
+      } else {
+        this.isEditing = !!user; // Modo edición
+        this.isViewingDetails = false; // Desactiva el modo de visualización de detalles
+      }
+      this.editingBodega = user ?{ ...user } : {};
       this.isModalVisible = true;
     });
   }
 
   viewDetails(user: any) {
-    this.isViewingDetails = true; // Activa el modo de visualización de detalles
-    this.isEditing = false;
-    this.editingBodega = { ...user }; // Carga los datos del usuario en modo solo lectura
-    this.isModalVisible = true;
+    this.openModal(user, true);
   }
 
   handleClose() {
@@ -89,7 +92,7 @@ export class BodegaComponent implements OnInit {
   onDelete(user: any) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Eliminarás al usuario: ${user.proprov.PROPROV_NOMBRE}`,
+      text: `Eliminarás el producto en bodega: ${user.proprov.PROPROV_NOMBRE}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -100,14 +103,14 @@ export class BodegaComponent implements OnInit {
         console.log(user.proprov.PROPROV_NOMBRE, 'eta vaina tiene '),
         this.bodegaService.deleteData(user.BOD_ID).subscribe(
           (response) => {
-            Swal.fire('Eliminado!', 'El usuario ha sido eliminado.', 'success').then(() => {
+            Swal.fire('Eliminado!', 'El producto en bodega ha sido eliminado.', 'success').then(() => {
               // Recarga la página solo después de que el usuario haga clic en el botón OK del mensaje
               location.reload();
             });
           },
           (error) => {
             console.error('Error al eliminar:', error);
-            Swal.fire('Error', 'Hubo un problema al eliminar el usuario.', 'error');
+            Swal.fire('Error', 'Hubo un problema al eliminar el producto en bodega.', 'error');
           }
         );
       }

@@ -9,6 +9,20 @@
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
   </div>
+  <app-modal [title]="'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
+    (confirmAction)="handleConfirm()" 
+    [fields]="[
+    { id: 'PED_ID', label: 'Id', type: 'text' },
+    { id: 'PED_FECHA', label: 'Fecha', type: 'date' },
+    { id: 'PED_PRECIO_TOTAL', label: 'Precio', type: 'text' },
+    { id: 'PED_RGU_ID', label: 'usuario', type: 'select', options: usuarioOptions },
+    { id: 'PED_INFO', label: 'Informacion', type: 'text' },
+    ]"
+    [isEditing]="isEditing"
+    [isViewingDetails]="isViewingDetails"
+    [data]="editingPed">
+    <p>Your custom content goes here!</p>
+  </app-modal>
 </div>
 <app-table
   [data]="pedidos"
@@ -18,17 +32,9 @@
     { key: 'PED_PRECIO_TOTAL', label: 'Precio Total' },
     { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
     { key: 'PED_INFO', label: 'Detalles de Pedido' }
-  ]"
-  noDataMessage="No hay pedidos disponibles." 
->
+  ]"noDataMessage="No hay pedidos disponibles."
+  [title]="title"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)"
+  (detail)="onDetail($event)">
 </app-table>
-<app-modal [title]="'Registrar usuario'" [isVisible]="isModalVisible" (close)="handleClose()"
-  (confirmAction)="handleConfirm()" 
-  [fields]="[
-  { id: 'fecha', label: 'Fecha', type: 'date' },
-  { id: 'precio', label: 'Precio', type: 'number' },
-  { id: 'nombre', label: 'Nombres', type: 'text' },
-  { id: 'info', label: 'Informacio', type: 'text' },
-  ]">
-  <p>Your custom content goes here!</p>
-</app-modal>
