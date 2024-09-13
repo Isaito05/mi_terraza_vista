@@ -151,6 +151,7 @@ a.sidebar-link:hover,
     color: black;
     background-color: #e8e8e8;
     border-radius: 9px;
+    border-left: 3px solid #e0e0e0c7;
     margin: 0.5rem
 }
 

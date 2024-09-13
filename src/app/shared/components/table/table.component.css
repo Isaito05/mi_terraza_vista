@@ -12,6 +12,10 @@ tbody, td, tfoot, th, thead, tr {
     box-shadow: none;
 }
 
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    border-color: transparent;
+}
+
 table {
     border-bottom: 0 !important;
 }

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UsuarioRoutingModule } from './usuario-routing.module';
 import { UsuarioComponent } from './component/usuario.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     UsuarioRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxLoadingModule.forRoot({})
   ]
 })
 export class UsuarioModule { }

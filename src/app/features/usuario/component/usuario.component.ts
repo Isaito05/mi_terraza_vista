@@ -19,14 +19,23 @@ export class UsuarioComponent implements OnInit {
 
   isModalVisible: boolean = false; // Estado para controlar la visibilidad del modal
   modalFields: any[] = []; // Campos del modal
+  loading: boolean = true;
 
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(
+    private usuarioService: UsuarioService,
+    
+  ) {}
 
   ngOnInit(): void {
-    this.usuarioService.getData().subscribe(data => {
-      //Filtra los datos para incluir solo aquellos con RGU_ESTADO igual a 1
-      this.usuarios = data.filter((item: { RGU_ESTADO: number; }) => item.RGU_ESTADO === 1);
-      console.log(this.usuarios); // Muestra los datos en la consola para verificar
+    this.usuarioService.getData().subscribe({
+      next: (data) => {
+        this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);
+        this.loading = false
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+      }
     });
   }
 

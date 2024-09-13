@@ -1,3 +1,4 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
 <div class="container">
   <div class="d-flex">
     <ul class="nav justify-content-center">
@@ -45,15 +46,16 @@
  >
 </app-modal>
 </div>
-<app-table [data]="usuarios" [columns]="[
-    { key: 'RGU_IDENTIFICACION', label: 'Identificación' },
-    { key: 'RGU_NOMBRES', label: 'Nombres' },
-    { key: 'RGU_APELLIDOS', label: 'Apellidos' },
-    { key: 'RGU_GENERO', label: 'Genero' },
-  ]" noDataMessage="No hay usuarios disponibles." 
-  [title]="title"
-  (edit)="onEdit($event)"
-  (delete)="onDelete($event)"
-  (detail)="onDetail($event)"
-  >
-</app-table>
+<div *ngIf="!loading">
+  <app-table [data]="usuarios" [columns]="[
+      { key: 'RGU_IDENTIFICACION', label: 'Identificación' },
+      { key: 'RGU_NOMBRES', label: 'Nombres' },
+      { key: 'RGU_APELLIDOS', label: 'Apellidos' },
+      { key: 'RGU_GENERO', label: 'Genero' }
+    ]" noDataMessage="No hay usuarios disponibles." 
+    [title]="title"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (detail)="onDetail($event)">
+  </app-table>
+</div>

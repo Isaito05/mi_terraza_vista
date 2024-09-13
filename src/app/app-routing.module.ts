@@ -19,30 +19,37 @@ const routes: Routes = [
     children: [
       {
         path: 'usuario',
+        title: 'Usuarios',
         loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule) // Carga perezosa del módulo Feature1
       },
       {
         path: 'bodega',
+        title: 'Bodega',
         loadChildren: () => import('./features/bodega/bodega.module').then(m => m.BodegaModule) // Carga perezosa del módulo Feature1
       },
       {
         path: 'pago',
+        title: 'Pagos',
         loadChildren: () => import('./features/pago/pago.module').then(m => m.PagoModule)
       },
       {
         path: 'pedido',
+        title: 'Pedidos',
         loadChildren: () => import('./features/pedido/pedido.module').then(m => m.PedidoModule)
       },
       {
         path: 'proprov',
+        title: 'Producto por Proveedor',
         loadChildren: () => import('./features/proprov/proprov.module').then(m => m.ProprovModule)
       },
       {
         path: 'prodventa',
+        title: 'Productos en Venta',
         loadChildren: () => import('./features/prodventa/prodventa.module').then(m => m.ProdventaModule)
       },
       {
         path: 'proveedor',
+        title: 'Proveedor',
         loadChildren: () => import('./features/proveedor/proveedor.module').then(m => m.ProveedorModule)
       },
     ]
