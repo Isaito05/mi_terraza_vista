@@ -31,7 +31,8 @@ export class PedidoService {
 
   deleteData(data: any): Observable<any> {
     const url = `${this.apiUrl}/${data}`;
-    const body = { PED_ESTADOE: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    const body = {PED_ESTADOE: 2}; // El cuerpo de la solicitud contiene solo el campo a actualizar
+    console.log(this.http.put<any>(url, body))
     return this.http.put<any>(url, body);
   }
  

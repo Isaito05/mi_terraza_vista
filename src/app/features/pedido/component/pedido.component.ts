@@ -27,19 +27,19 @@ export class PedidoComponent implements OnInit {
   ngOnInit(): void {
     this.pedidoservice.getData().subscribe(data => {
       // Supongamos que `data` es un array de pedidos
-      this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1);
-      this.pedidos = data.map((pedidos: { PED_INFO: string | never[]; }) => {
-        // Parsear `PED_INFO` si es una cadena JSON
-        if (typeof pedidos.PED_INFO === 'string') {
-          try {
-            pedidos.PED_INFO = JSON.parse(pedidos.PED_INFO);
-          } catch (error) {
-            console.error('Error parsing PED_INFO JSON', error);
-            pedidos.PED_INFO = []; // Asigna un array vacío en caso de error
-          }
-        }
-        return pedidos;
-      });
+      this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1)
+      // .map((pedidos: { PED_INFO: string | never[]; }) => {
+      //   // Parsear `PED_INFO` si es una cadena JSON
+      //   if (typeof pedidos.PED_INFO === 'string') {
+      //     try {
+      //       pedidos.PED_INFO = JSON.parse(pedidos.PED_INFO);
+      //     } catch (error) {
+      //       console.error('Error parsing PED_INFO JSON', error);
+      //       pedidos.PED_INFO = []; // Asigna un array vacío en caso de error
+      //     }
+      //   }
+      //   return pedidos;
+      // });
       console.log(this.pedidos);
       console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
     });
@@ -91,7 +91,7 @@ export class PedidoComponent implements OnInit {
   onDelete(user: any) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Eliminarás el pago de: ${user.rguUsuario.RGU_NOMBRES}`,
+      text: `Eliminarás el pedido de: ${user.rguUsuario.RGU_NOMBRES}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -100,16 +100,17 @@ export class PedidoComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed){
         console.log(user.rguUsuario.RGU_NOMBRES, 'eta vaina tiene '),
-        this.pedidoservice.deleteData(user.PAGO_ID).subscribe(
+        console.log('eta vaina tiene ', user.PED_ID),
+        this.pedidoservice.deleteData(user.PED_ID).subscribe(
           (response) => {
-            Swal.fire('Eliminado!', 'El pago ha sido eliminado.', 'success').then(() => {
+            Swal.fire('Eliminado!', 'El pedido ha sido eliminado.', 'success').then(() => {
               // Recarga la página solo después de que el usuario haga clic en el botón OK del mensaje
               location.reload();
             });
           },
           (error) => {
             console.error('Error al eliminar:', error);
-            Swal.fire('Error', 'Hubo un problema al eliminar el pago.', 'error');
+            Swal.fire('Error', 'Hubo un problema al eliminar el pedido.', 'error');
           }
         );
       }

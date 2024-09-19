@@ -58,6 +58,7 @@ export class ModalComponent {
       'Bodega': this.bodegaService,
       'Proveedor': this.proveedorService,
       'Proprov': this.proprovService,
+      'Pedido': this.pedidoService,
     }
     this.form = this.fb.group({});
   }
@@ -213,6 +214,8 @@ export class ModalComponent {
       return this.serviceMap['Proprov'];
     } else if (this.title.includes('Editar proveedor')) {
       return this.serviceMap['Proveedor'];
+    } else if (this.title.includes('Editar pedido')) {
+      return this.serviceMap['Pedido'];
     }
     console.error('Contexto no encontrado para el título:', this.title);
     return null;

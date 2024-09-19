@@ -91,7 +91,7 @@ export class TableComponent {
   // Obtiene el valor de la propiedad de un objeto dinámicamente
   getPropertyValue(item: any, key: string): any {
     const value = key.split('.').reduce((object, property) => object ? object[property] : '', item);
-    console.log('Valor obtenido:', value);
+    // console.log('Valor obtenido:', value);
     // Verifica si es una URL de imagen completa
     // if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
     //   return value; 
