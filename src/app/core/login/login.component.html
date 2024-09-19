@@ -1,50 +1,42 @@
-<div class="container min-vh-100 d-flex align-items-center justify-content-center">
-  <div class="row w-100 justify-content-center">
-    <div class="col-lg-10 col-xl-8">
-      <div class="card-group">
-        <!-- Card de Login -->
-        <div class="card p-4">
-          <div class="card-body">
-            <form (ngSubmit)="login()">
-              <h1 class="mb-3 typing-title">Mi terraza</h1>
-              <p class="text-muted mb-4">Inicia sesion con tu cuenta</p>
-              <!-- Campo de Usuario -->
-              <div class="input-group mb-3">
-                <span class="input-group-text">
-                  <i class="bi bi-person-circle"></i> <!-- Bootstrap Icons -->
-                </span>
-                <input [(ngModel)]="email" type="text" id="email" name="email" class="form-control" placeholder="Correo" autocomplete="username">
-              </div>
-              <!-- Campo de Contraseña -->
-              <div class="input-group mb-4">
-                <span class="input-group-text">
-                  <i class="bi bi-key-fill"></i> <!-- Bootstrap Icons -->
-                </span>
-                <input [(ngModel)]="password" type="password" id="password" name="password" class="form-control" placeholder="Contraseña" autocomplete="current-password">
-              </div>
-              <!-- Botones de Acciones -->
-              <div class="row g-0">
-                <div class="col-6 col-md-4">
-                  <button class="btn btn-primary px-4" type="submit">Entrar</button>
-                </div>
-                <div class="col-sm-6  col-md-8 text-end">
-                  <button class="btn btn-link px-0" type="button">Olvidaste tu contraseña?</button>
-                </div>
-              </div>
-            </form>
-          </div>
+<div class="container-fluid background-pattern">
+  <div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="login-box p-4 shadow">
+      <h2 class="mb-4 text-center">Registrate o incia sesión en segundos</h2>
+      <p class="text-muted text-center mb-3">Utiliza tu email o tu contraseña y correo para continuar en Mi Terraza</p>
+      
+      <div class="d-grid gap-3">
+        <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center">
+          <i class="bi bi-google me-2"></i> Continue with Google
+        </button>
+        <!-- <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center">
+          <i class="bi bi-facebook me-2"></i> Continue with Facebook
+        </button>
+        <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center">
+          <i class="bi bi-envelope me-2"></i> Continue with Email
+        </button> -->
+      </div>
+      
+      <p class="text-center my-3">or</p>
+      
+      <form (ngSubmit)="login()">
+        <div class="input-group mb-3">
+          <span class="input-group-text">
+            <i class="bi bi-person-circle"></i>
+          </span>
+          <input [(ngModel)]="email" type="text" id="email" name="email" class="form-control" placeholder="Correo" autocomplete="username">
         </div>
-        <!-- Card de Sign up -->
-        <div class="card text-white py-5 d-md-down-none" style="min-width: 44%;">
-          <div class="card-body text-center">
-            <div>
-              <!-- <h2>Registrate!</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-              <a href="/register" class="btn btn-light mt-3">Registrate Ahora!</a> -->
-              <img src="assets/images/TERRAZA.png" alt="no logo" style="width: 91%;">
-            </div>
-          </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">
+            <i class="bi bi-key-fill"></i>
+          </span>
+          <input [(ngModel)]="password" type="password" id="password" name="password" class="form-control" placeholder="Contraseña" autocomplete="current-password">
         </div>
+        <div class="d-grid">
+          <button class="btn btn-primary btn-lg" type="submit">Entrar</button>
+        </div>
+      </form>
+      <div class="text-center mt-3">
+        <a href="#">¿Olvidaste tu contraseña?</a>
       </div>
     </div>
   </div>
