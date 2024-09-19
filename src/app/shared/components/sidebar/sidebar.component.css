@@ -59,7 +59,7 @@ li {
     /* box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5); */
     background: linear-gradient(180deg, #f0e4ff, #ffffff);
     border-right: 1px solid #e0e0e0;
-    z-index: 1111;
+    /* z-index: 1111; */
     /* height: 100vh; */
     overflow-y: auto;
 }

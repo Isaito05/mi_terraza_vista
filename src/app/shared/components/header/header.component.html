@@ -1,13 +1,19 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
 <nav class="nav bd-highlight">
   <div class="flex-grow-1 bd-highlight p-2 ms-2">
+    <i class="bi bi-person-workspace t-icon"></i>
     <span>
-      <span>Tierrooo</span> / <span style="font-weight: bold;">Administrador</span>
-  </span>
+      <span class="m-text"> {{ username }} </span> <span class="m-text">{{ apellido }}</span> / <span class="m-text" style="font-weight: bold;">{{ role }}</span>
+    </span>
   </div>
   <div class="aling-items-end p-2 me-3">
     <li class="nav-item">
-      <a class="text-decorartion-none text-dark" href="#">
-        <i class="fs-0 bi bi-gear-fill"></i>
+      <a class="text-decoration-none text-dark d-flex aling-items-center" (click)="logOut()">
+        Salir..
+        <!-- <i class="bi bi-box-arrow-in-right"></i> -->
+         <!-- <span> -->
+           <i class="bi bi-door-open-fill m-icon"></i>
+         <!-- </span> -->
       </a>
     </li>
   </div>

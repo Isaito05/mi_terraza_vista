@@ -1,13 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
+import { authGuard } from './core/guard/auth.guard';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'login', // Redirige a la página de login
-    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
-  },
   {
     path: 'login',
     title: 'Inicio de sesión',
@@ -20,39 +16,57 @@ const routes: Routes = [
       {
         path: 'usuario',
         title: 'Usuarios',
-        loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule) // Carga perezosa del módulo Feature1
+        loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule), // Carga perezosa del módulo Feature1
+        canActivate: [authGuard]
       },
       {
         path: 'bodega',
         title: 'Bodega',
-        loadChildren: () => import('./features/bodega/bodega.module').then(m => m.BodegaModule) // Carga perezosa del módulo Feature1
+        loadChildren: () => import('./features/bodega/bodega.module').then(m => m.BodegaModule),
+        canActivate: [authGuard] // Carga perezosa del módulo Feature1
       },
       {
         path: 'pago',
         title: 'Pagos',
-        loadChildren: () => import('./features/pago/pago.module').then(m => m.PagoModule)
+        loadChildren: () => import('./features/pago/pago.module').then(m => m.PagoModule),
+        canActivate: [authGuard]
       },
       {
         path: 'pedido',
         title: 'Pedidos',
-        loadChildren: () => import('./features/pedido/pedido.module').then(m => m.PedidoModule)
+        loadChildren: () => import('./features/pedido/pedido.module').then(m => m.PedidoModule),
+        canActivate: [authGuard]
       },
       {
         path: 'proprov',
         title: 'Producto por Proveedor',
-        loadChildren: () => import('./features/proprov/proprov.module').then(m => m.ProprovModule)
+        loadChildren: () => import('./features/proprov/proprov.module').then(m => m.ProprovModule),
+        canActivate: [authGuard]
       },
       {
         path: 'prodventa',
         title: 'Productos en Venta',
-        loadChildren: () => import('./features/prodventa/prodventa.module').then(m => m.ProdventaModule)
+        loadChildren: () => import('./features/prodventa/prodventa.module').then(m => m.ProdventaModule),
+        canActivate: [authGuard]
       },
       {
         path: 'proveedor',
         title: 'Proveedor',
-        loadChildren: () => import('./features/proveedor/proveedor.module').then(m => m.ProveedorModule)
+        loadChildren: () => import('./features/proveedor/proveedor.module').then(m => m.ProveedorModule),
+        canActivate: [authGuard]
       },
     ]
+  },
+
+  {
+    path: '',
+    redirectTo: 'login', // Redirige a la página de login
+    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
+  },
+  {
+    path: '**',
+    redirectTo: 'login', // Redirige a la página de login
+    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
   },
 ];
 

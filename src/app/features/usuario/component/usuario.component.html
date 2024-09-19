@@ -16,15 +16,15 @@
   [isVisible]="isModalVisible" 
   (close)="handleClose()"
   (confirmAction)="handleConfirm()" 
-  [fields]="[
-      { id: 'RGU_IDENTIFICACION', label: 'Identificación', type: 'number' },
+  [fields]="
+    [
       { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
       { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
       { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
       { value: 'Masculino', label: 'Masculino' },
       { value: 'Femenino', label: 'Femenino' },
       { value: 'No_binario', label: 'No Binario' }
-    ]},
+      ]},
       { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
       { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
       { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
@@ -32,19 +32,20 @@
       { value: 'Administrador', label: 'Administrador' },
       { value: 'Trabajador', label: 'Trabajador' },
       { value: 'Cliente', label: 'Cliente' }
-    ]},
-      { id: 'RGU_TP_DOC', label: 'Tipo de Documento', type: 'select', options: [
+      ]},
+      { id: 'RGU_TP_DOC', label: 'Tipo de identificación', type: 'select', options: [
       { value: 'Cedula', label: 'Cedula nacional' },
       { value: 'Tarjeta_Identidad', label: 'Tarjeta identidad' },
       { value: 'ce', label: 'Cedula extranjera' }
-    ]},
+      ]},
+      { id: 'RGU_IDENTIFICACION', label: 'Nro. de identificación', type: 'number' },
       { id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' },
     ]"
   [isEditing]="isEditing"
   [isViewingDetails]="isViewingDetails"
   [data]="editingUser"
  >
-</app-modal>
+  </app-modal>
 </div>
 <div *ngIf="!loading">
   <app-table [data]="usuarios" [columns]="[

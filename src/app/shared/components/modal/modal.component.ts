@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl  } from '@angular/forms';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
 import { PagoService } from 'src/app/features/pago/service/pago.service';
@@ -67,11 +67,36 @@ export class ModalComponent {
     // Crear un formulario con controles para cada campo
     this.form = this.fb.group(
       this.fields.reduce((acc, field) => {
+        let validators = [];
+        if(field.type === 'email') {
+          validators.push(Validators.required, Validators.email, this.validacionEmail);
+        } else if(field.type === 'text' && field.label.toLowerCase().includes('telefono')) {
+          validators.push(Validators.required, Validators.pattern(/^\d{10}$/));
+        } else if(field.type === 'password') {
+          validators.push(Validators.required, Validators.minLength(8), this.validacionContraseña)
+        }
+
         acc[field.id] = [this.data[field.id] || ''];
         return acc;
       }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
     );
 
+  }
+
+  validacionEmail(control: AbstractControl) {
+    const email = control.value;
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email) ? null : { invalidEmail: true }
+  }
+
+  validacionContraseña(control: AbstractControl) {
+    const password = control.value;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const valid = hasUpperCase && hasNumber && hasSpecialChar;
+    return valid ? null : { weakPassword: true };
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -114,77 +139,80 @@ export class ModalComponent {
   }
 
   confirm() {
-
-    const formData = this.data;
-    const service = this.getServiceBasedOnContext();
-
-    if (service) {
-
-      // Si está en modo de edición
-      if (this.isEditing) {
-        console.log(formData, 'yei');
-        service.updateData(formData).subscribe(
-          (response: any) => {
-            this.closeModal();
-            this.data = [];
-
-            // Mostrar alerta de éxito
-            Swal.fire({
-              title: 'Éxito',
-              text: 'Registro editado satisfactoriamente',
-              icon: 'success',
-              confirmButtonText: 'OK'
-            }).then(() => {
-              this.save.emit(response);
-              location.reload();
-            });
-          },
-          (error: any) => {
-            console.error('Error al editar los datos:', error);
-
-            // Mostrar alerta de error
-            Swal.fire({
-              title: 'Error',
-              text: 'No se pudo editar el registro',
-              icon: 'error',
-              confirmButtonText: 'OK'
-            });
-          }
-        );
-      }
-      // Si no está en modo de edición (es un registro nuevo)
-      else {
-        service.saveData(formData).subscribe(
-          (response: any) => {
-            this.closeModal();
-            this.data = [];
-
-            // Mostrar alerta de éxito
-            Swal.fire({
-              title: 'Éxito',
-              text: 'Registro guardado satisfactoriamente',
-              icon: 'success',
-              confirmButtonText: 'OK'
-            }).then(() => {
-              this.save.emit(response);
-              location.reload();
-            });
-          },
-          (error: any) => {
-            console.error('Error al guardar los datos:', error);
-
-            // Mostrar alerta de error
-            Swal.fire({
-              title: 'Error',
-              text: 'No se pudo guardar el registro',
-              icon: 'error',
-              confirmButtonText: 'OK'
-            });
-          }
-        );
+    if(this.form.valid) {
+      const formData = this.data;
+      const service = this.getServiceBasedOnContext();
+  
+      if (service) {
+  
+        // Si está en modo de edición
+        if (this.isEditing) {
+          console.log(formData, 'yei');
+          service.updateData(formData).subscribe(
+            (response: any) => {
+              this.closeModal();
+              this.data = [];
+  
+              // Mostrar alerta de éxito
+              Swal.fire({
+                title: 'Éxito',
+                text: 'Registro editado satisfactoriamente',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                this.save.emit(response);
+                location.reload();
+              });
+            },
+            (error: any) => {
+              console.error('Error al editar los datos:', error);
+  
+              // Mostrar alerta de error
+              Swal.fire({
+                title: 'Error',
+                text: 'No se pudo editar el registro',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          );
+        }
+        // Si no está en modo de edición (es un registro nuevo)
+        else {
+          service.saveData(formData).subscribe(
+            (response: any) => {
+              this.closeModal();
+              this.data = [];
+  
+              // Mostrar alerta de éxito
+              Swal.fire({
+                title: 'Éxito',
+                text: 'Registro guardado satisfactoriamente',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                this.save.emit(response);
+                location.reload();
+              });
+            },
+            (error: any) => {
+              console.error('Error al guardar los datos:', error);
+  
+              // Mostrar alerta de error
+              Swal.fire({
+                title: 'Error',
+                text: 'No se pudo guardar el registro',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          );
+        }
+      } else {
+        console.error('No se encontró un servicio adecuado para el contexto.');
       }
     } else {
-      console.error('No se encontró un servicio adecuado para el contexto.');
+      console.error('Formulario inválido');
     }
   }
 
@@ -251,7 +279,6 @@ export class ModalComponent {
     }
   }
 
-
   Tablapedido(pedId: any) {
     this.pedidoService.getData().subscribe(data => {
       console.log(pedId, 'idiota');
@@ -302,6 +329,5 @@ export class ModalComponent {
   getTotal(): number {
     return this.pedidos.reduce((acc, item) => acc + item.subtotal, 0);
   }
-
 
 }

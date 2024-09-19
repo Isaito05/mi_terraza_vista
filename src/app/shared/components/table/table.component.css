@@ -19,3 +19,28 @@ tbody, td, tfoot, th, thead, tr {
 table {
     border-bottom: 0 !important;
 }
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+.form-select:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+.f-in {
+    width: 10rem;
+    padding-left: 2rem;
+}
+
+.search-icon {
+    /* position: absolute; */
+    top: 32%;
+    right: 8.2rem; /* Ajusta esta distancia para que el ícono esté más o menos a la derecha */
+    transform: translateY(-50%);
+    font-size: 1.2rem; /* Ajusta el tamaño del ícono */
+    color: #999; /* Cambia el color del ícono */
+    pointer-events: none; /* Evita que el ícono sea clicable y afecte el input */
+}
