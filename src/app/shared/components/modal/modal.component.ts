@@ -81,6 +81,8 @@ export class ModalComponent {
       }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
     );
 
+    
+
   }
 
   validacionEmail(control: AbstractControl) {
@@ -179,7 +181,9 @@ export class ModalComponent {
         }
         // Si no está en modo de edición (es un registro nuevo)
         else {
+          console.log(formData, 'isaac');
           service.saveData(formData).subscribe(
+            
             (response: any) => {
               this.closeModal();
               this.data = [];
@@ -228,6 +232,8 @@ export class ModalComponent {
       return this.serviceMap['Pago'];
     } else if (this.title.includes('Registrar bodega')) {
       return this.serviceMap['Bodega'];
+    } else if (this.title.includes('Registrar pedido')) {
+      return this.serviceMap['Pedido'];
     } else if (this.title.includes('Registrar proveedor')) {
       return this.serviceMap['Proveedor'];
     } else if (this.title.includes('Registrar producto proveedor')) {
@@ -329,5 +335,22 @@ export class ModalComponent {
   getTotal(): number {
     return this.pedidos.reduce((acc, item) => acc + item.subtotal, 0);
   }
+
+  formatDateForDatetimeLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Mes de dos dígitos
+    const day = ('0' + date.getDate()).slice(-2); // Día de dos dígitos
+    const hours = ('0' + date.getHours()).slice(-2); // Horas de dos dígitos
+    const minutes = ('0' + date.getMinutes()).slice(-2); // Minutos de dos dígitos
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  getFormattedDate(fieldId: string): string {
+    const isoDate = this.data[fieldId];
+    return isoDate ? this.formatDateForDatetimeLocal(isoDate) : '';
+  }
+
 
 }

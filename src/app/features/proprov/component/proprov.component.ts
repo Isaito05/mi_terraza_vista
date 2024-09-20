@@ -22,13 +22,42 @@ export class ProprovComponent implements OnInit {
   editingProprov: any = {};
   isModalVisible: boolean = false;
   title = 'Modulo de Proprov';
+  loading: boolean = true;
 
   constructor(private ProprovService: ProprovService, private proveedorService: ProveedorService) { }
 
   ngOnInit(): void {
-    this.ProprovService.getData().subscribe(data => {
-      this.proprovs = data.filter((item: { PROPROV_ESTADO: number; }) => item.PROPROV_ESTADO === 1); // Asigna los datos recibidos a la variable pagos
-      console.log(this.proprovs); // Muestra los datos en la consola para verificar
+    this.ProprovService.getData().subscribe({
+      next: (data) => {
+        this.proprovs = data.filter((item: { PROPROV_ESTADO: number; }) => item.PROPROV_ESTADO === 1); // Asigna los datos recibidos a la variable pagos
+        console.log(this.proprovs); // Muestra los datos en la consola para verificar
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de productos de proveedor.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
+      }
     });
   }
 

@@ -1,8 +1,9 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
 <div class="container">
   <div class="d-flex">
     <ul class="nav justify-content-center">
       <li class="nav-item">
-        <span class="font">Modulo de Productos por Proveedor</span>
+        <span class="font">Modulo de Productos de Proveedor</span>
       </li>
     </ul>
   </div>
@@ -28,17 +29,16 @@
     
   </app-modal>
 </div>
-<app-table [data]="proprovs" [columns]="[
-      { key: 'PROPROV_ID', label: 'ID' },
-      { key: 'PROPROV_NOMBRE', label: 'Nombre' },
-      { key: 'PROPROV_CANTIDAD', label: 'Cantidad' },
-      { key: 'PROPROV_FCH_INGRESO', label: 'Fecha de Ingreso' },
-      { key: 'PROPROV_PRECIO_UNITARIO', label: 'Precio Unitario' },
-      { key: 'PROPROV_DESCRIPCION', label: 'Descripción' },
-      { key: 'proveedor.PROV_NOMBRE', label: 'Proveedor' }
-    ]" noDataMessage="No hay pagos disponibles." 
-    [title]="title"
-    (edit)="onEdit($event)"
-    (delete)="onDelete($event)"
-    (detail)="onDetail($event)">
-</app-table>
+<div *ngIf="!loading">
+  <app-table [data]="proprovs" [columns]="[
+        { key: 'PROPROV_NOMBRE', label: 'Nombre' },
+        { key: 'PROPROV_FCH_INGRESO', label: 'Fecha de Ingreso' },
+        { key: 'PROPROV_PRECIO_UNITARIO', label: 'Precio Unitario', format: 'currencyFormat' },
+        { key: 'proveedor.PROV_NOMBRE', label: 'Proveedor' }
+      ]" noDataMessage="No hay pagos disponibles." 
+      [title]="title"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)"
+      (detail)="onDetail($event)">
+  </app-table>
+</div>

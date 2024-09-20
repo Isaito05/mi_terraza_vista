@@ -37,11 +37,7 @@ export class TableComponent {
   updateFilter(event: any) {
     const val = event.target.value.toLowerCase(); // Obtener el valor del input
     this.filteredData = this.data.filter((item) => {
-      // const nombre = item.RGU_NOMBRES ? item.RGU_NOMBRES.toString().toLowerCase() : '';
-      // const iden = item.RGU_IDENTIFICACION ? item.RGU_IDENTIFICACION.toString().toLowerCase() : '';
-      // const match = nombre.includes(val) || iden.includes(val);
-      // return match;
-      return Object.values(item).some((field: any) => 
+      return Object.values(item).some((field: any) =>
         field.toString().toLowerCase().includes(val) // Verificar si algún valor del objeto incluye el término de búsqueda
       );
     });
@@ -87,17 +83,17 @@ export class TableComponent {
     if (value == null) {
       return '';
     }
-  
+
     if (typeof value === 'number') {
       return `$ ${value.toLocaleString('es-ES')}`;
     }
-  
+
     // Convertir cadenas numéricas a número
     const numericValue = parseFloat(value.toString().replace(/[^0-9.-]+/g, ''));
     if (!isNaN(numericValue)) {
       return `$ ${numericValue.toLocaleString('es-ES')}`;
     }
-  
+
     // Si no es un número, devolver el valor como cadena
     return value.toString();
   }
@@ -129,15 +125,15 @@ export class TableComponent {
     console.log('usuario detalle:', item);
     this.detail.emit(item);
   }
-  
+
   openModal() {
     this.isModalVisible = true;
   }
-  
+
   handleClose() {
     this.isModalVisible = false;
   }
-  
+
   handleConfirm() {
     console.log('Confirmed!');
     this.isModalVisible = false;
@@ -148,10 +144,10 @@ export class TableComponent {
     const value = key.split('.').reduce((object, property) => object ? object[property] : '', item);
     return value;
   }
-  
+
   isArray(value: any): boolean {
     return Array.isArray(value);
-  } 
+  }
 
   onPageChange(page: number) {
     this.p = page;
@@ -160,5 +156,25 @@ export class TableComponent {
   onItemsPerPageChange(event: any) {
     this.itemsPerPage = +event.target.value;
     this.p = 1; // Restablecer a la primera página cuando se cambie el número de ítems por página
+  }
+
+  formatDateForDatetimeLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Mes en formato de dos dígitos
+    const day = ('0' + date.getDate()).slice(-2); // Día en formato de dos dígitos
+
+    // Convertir a formato de 12 horas
+    let hours = date.getHours();
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const ampm = hours >= 12 ? 'p. m.' : 'a. m.';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Si es 0, cambiar a 12
+
+    return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+  }
+  getFormattedDate(fieldId: any): string {
+    const isoDate = this.data[fieldId] || fieldId; // Utilizar `fieldId` si `this.data[fieldId]` no está definido
+    return isoDate ? this.formatDateForDatetimeLocal(isoDate) : '';
   }
 }

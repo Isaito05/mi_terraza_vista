@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProprovRoutingModule } from './proprov-routing.module';
 import { ProprovComponent } from './component/proprov.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     ProprovRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxLoadingModule.forRoot({})
   ]
 })
 export class ProprovModule { }

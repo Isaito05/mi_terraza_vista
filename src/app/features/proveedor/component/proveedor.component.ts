@@ -16,15 +16,44 @@ export class ProveedorComponent implements OnInit {
   editingProv: any = {};
   isModalVisible: boolean = false;
   title = 'Modulo de Proveedor';
+  loading: boolean = true;
 
   constructor(private http: HttpClient, 
     private provService: ProveedorService
     ) { }
 
   ngOnInit(): void {
-    this.provService.getdata().subscribe(data => {
-      this.proveedor = data.filter((item: { PROV_ESTADO: number; }) => item.PROV_ESTADO === 1); 
-      console.log(this.proveedor); 
+    this.provService.getdata().subscribe({
+      next: (data) => {
+        this.proveedor = data.filter((item: { PROV_ESTADO: number; }) => item.PROV_ESTADO === 1); 
+        console.log(this.proveedor);
+        this.loading = false; 
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de proveedor.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
+      }
     });
   }
 

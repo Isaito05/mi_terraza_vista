@@ -22,26 +22,42 @@ export class PedidoComponent implements OnInit {
   isViewingDetails = false;
   editingPed: any = {};
   isModalVisible: boolean = false;
+  loading: boolean = true;
   constructor(private pedidoservice: PedidoService, private usuarioService: UsuarioService ) { }
 
   ngOnInit(): void {
-    this.pedidoservice.getData().subscribe(data => {
-      // Supongamos que `data` es un array de pedidos
-      this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1)
-      // .map((pedidos: { PED_INFO: string | never[]; }) => {
-      //   // Parsear `PED_INFO` si es una cadena JSON
-      //   if (typeof pedidos.PED_INFO === 'string') {
-      //     try {
-      //       pedidos.PED_INFO = JSON.parse(pedidos.PED_INFO);
-      //     } catch (error) {
-      //       console.error('Error parsing PED_INFO JSON', error);
-      //       pedidos.PED_INFO = []; // Asigna un array vacío en caso de error
-      //     }
-      //   }
-      //   return pedidos;
-      // });
-      console.log(this.pedidos);
-      console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
+    this.pedidoservice.getData().subscribe({
+      next: (data) => {
+        this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1)
+        console.log(this.pedidos);
+        console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de pedidos.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });     
+      }
     });
   }
   

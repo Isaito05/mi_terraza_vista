@@ -35,6 +35,27 @@ export class UsuarioComponent implements OnInit {
       error: (error) => {
         console.error(error);
         this.loading = false;
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de usuarios.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
       }
     });
   }

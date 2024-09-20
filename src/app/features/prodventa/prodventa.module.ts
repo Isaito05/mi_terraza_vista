@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProdventaRoutingModule } from './prodventa-routing.module';
 import { ProdventaComponent } from './component/prodventa.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     ProdventaRoutingModule, 
-    SharedModule
+    SharedModule,
+    NgxLoadingModule.forRoot({})
   ]
 })
 export class ProdventaModule { }

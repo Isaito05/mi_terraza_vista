@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProveedorComponent } from './component/proveedor.component';
 import { ProveedorRoutingModule } from './proveedor-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     ProveedorRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxLoadingModule.forRoot({})
   ]
 })
 export class ProveedorModule { }

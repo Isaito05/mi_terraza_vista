@@ -25,6 +25,7 @@ export class BodegaComponent implements OnInit {
   isViewingDetails = false;
   editingBodega: any = {};
   isModalVisible: boolean = false;
+  loading: boolean = true;
 
   constructor(private http: HttpClient,
     private proporvService: ProprovService,
@@ -32,9 +33,37 @@ export class BodegaComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.bodegaService.getData().subscribe(data => {
-      this.bodegas = data.filter((item: { BOD_ESTADOE: number; }) => item.BOD_ESTADOE === 1); // Asigna los datos recibidos a la variable pagos
-      console.log(this.bodegas); // Muestra los datos en la consola para verificar
+    this.bodegaService.getData().subscribe({
+      next: (data) => {
+        this.bodegas = data.filter((item: { BOD_ESTADOE: number; }) => item.BOD_ESTADOE === 1); // Asigna los datos recibidos a la variable pagos
+        console.log(this.bodegas); // Muestra los datos en la consola para verificar
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de bodega.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
+      }
     });
   }
 

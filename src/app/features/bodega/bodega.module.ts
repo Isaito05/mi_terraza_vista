@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { BodegaRoutingModule } from './bodega-routing.module';
 import { BodegaComponent } from './component/bodega.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     BodegaRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxLoadingModule.forRoot({})
   ]
 })
 export class BodegaModule { }

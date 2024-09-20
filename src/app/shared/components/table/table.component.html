@@ -36,19 +36,24 @@
                   </span>
                 </ng-container>
 
+                
+
                 <ng-template #singleValue>
-                  <ng-container *ngIf="fieldsToTruncate.includes(column.key); else defaultText">
+                  <ng-container *ngIf="fieldsToTruncate.includes(column.key); ">
                     {{ getTruncatedText(getPropertyValue(item, column.key), 25) }} <!-- Ajusta el número para truncado -->
                   </ng-container>
-                   <ng-template #defaultText>
-                    <!-- Aplica el Pipe de formato si el campo es de tipo 'currency' -->
-                    <ng-container *ngIf="column.format === 'currencyFormat'; else noFormat">
+                  <ng-container *ngIf="column.type === 'datetime-local'; else currencyFormat">
+                    {{ getFormattedDate(getPropertyValue(item, column.key)) }}
+                  </ng-container>
+                  <ng-template #currencyFormat>
+                    <ng-container *ngIf="column.format === 'currencyFormat'; else defaultText">
                       {{ formatCurrency(getPropertyValue(item, column.key)) }}
                     </ng-container>
-                    <ng-template #noFormat>
+                    <ng-template #defaultText>
                       {{ getPropertyValue(item, column.key) }}
                     </ng-template>
                   </ng-template>
+                  
 
                 </ng-template>
               </ng-template>

@@ -1,3 +1,4 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
 <div class="container">
   <div class="d-flex">
     <ul class="nav justify-content-center">
@@ -26,16 +27,15 @@
   <p>Your custom content goes here!</p>
 </app-modal>
 </div>
+<div *ngIf="!loading">
   <app-table [data]="pagos" [columns]="[
-      { key: 'PAGO_ID', label: 'ID' },
+      { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente',  },
       { key: 'PAGO_FECHA', label: 'Fecha' },
       { key: 'PAGO_MONTO', label: 'Monto', format: 'currencyFormat' },
-      { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente',  },
-      { key: 'PAGO_DESCRIPCION', label: 'Descripción' },
-      { key: 'PAGO_ESTADO', label: 'Estado' }
     ]" noDataMessage="No hay pagos disponibles."
     [title]="title"
     (edit)="onEdit($event)"
     (delete)="onDelete($event)"
     (detail)="onDetail($event)">
 </app-table>
+</div>

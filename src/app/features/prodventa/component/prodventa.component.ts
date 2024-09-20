@@ -23,14 +23,43 @@ export class ProdventaComponent implements OnInit {
   editingprodventa: any = {};
   isModalVisible: boolean = false;
   title = 'Modulo de Producto en venta';
+  loading: boolean = true;
 
   constructor(private http: HttpClient,private prodventaService: ProdventaService) { }
 
   ngOnInit(): void {
-    this.prodventaService.getData().subscribe(data => {
-      //Filtra los datos para incluir solo aquellos con RGU_ESTADO igual a 1
-      this.prodventa = data.filter((item: { PROD_VENTA_ESTADO: number; }) => item.PROD_VENTA_ESTADO === 1);
-      console.log(this.prodventa); // Muestra los datos en la consola para verificar
+    this.prodventaService.getData().subscribe({
+      next: (data) => {
+        //Filtra los datos para incluir solo aquellos con RGU_ESTADO igual a 1
+        this.prodventa = data.filter((item: { PROD_VENTA_ESTADO: number; }) => item.PROD_VENTA_ESTADO === 1);
+        console.log(this.prodventa); // Muestra los datos en la consola para verificar
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error)
+        this.loading = false;
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de productos en venta.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
+      }
     });
   }
 

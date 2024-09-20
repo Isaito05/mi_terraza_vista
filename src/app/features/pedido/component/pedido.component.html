@@ -1,3 +1,4 @@
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
 <div class="container">
   <div class="d-flex">
     <ul class="nav justify-content-center">
@@ -13,7 +14,7 @@
   [isVisible]="isModalVisible" (close)="handleClose()"
     (confirmAction)="handleConfirm()" 
     [fields]="[
-    { id: 'PED_FECHA', label: 'Fecha', type: 'date' },
+    { id: 'PED_FECHA', label: 'Fecha', type: 'datetime-local' },
     { id: 'PED_PRECIO_TOTAL', label: 'Precio', type: 'text' },
     { id: 'PED_RGU_ID', label: 'usuario', type: 'select', options: usuarioOptions },
     ]"
@@ -23,16 +24,17 @@
     <p>Your custom content goes here!</p>
   </app-modal>
 </div>
-<app-table
+<div *ngIf="!loading">
+  <app-table
   [data]="pedidos"
   [columns]="[
-    { key: 'PED_ID', label: 'ID' },
-    { key: 'PED_FECHA', label: 'Fecha' },
-    { key: 'PED_PRECIO_TOTAL', label: 'Precio Total', format: 'currencyFormat' },
-    { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
-  ]"noDataMessage="No hay pedidos disponibles."
-  [title]="title"
-  (edit)="onEdit($event)"
-  (delete)="onDelete($event)"
-  (detail)="onDetail($event)">
-</app-table>
+      { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
+      { key: 'PED_FECHA', label: 'Fecha' ,type: 'datetime-local' },
+      { key: 'PED_PRECIO_TOTAL', label: 'Precio Total', format: 'currencyFormat' },
+    ]"noDataMessage="No hay pedidos disponibles."
+    [title]="title"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (detail)="onDetail($event)">
+  </app-table>
+</div>

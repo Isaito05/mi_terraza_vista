@@ -28,6 +28,7 @@ export class PagoComponent implements OnInit {
   isViewingDetails = false;
   editingUser: any = {};
   isModalVisible: boolean = false;
+  loading: boolean = true;
 
   constructor(
     private pagoService: PagoService,
@@ -36,9 +37,38 @@ export class PagoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pagoService.getData().subscribe(data => {
-      this.pagos = data.filter((item: { PAGO_ESTADO: number; }) => item.PAGO_ESTADO === 1); // Asigna los datos recibidos a la variable pagos
-      console.log(this.pagos); // Muestra los datos en la consola para verificar
+    
+    this.pagoService.getData().subscribe({
+      next: (data) => {
+        this.pagos = data.filter((item: { PAGO_ESTADO: number; }) => item.PAGO_ESTADO === 1); // Asigna los datos recibidos a la variable pagos
+        console.log(this.pagos); // Muestra los datos en la consola para verificar
+        this.loading = false
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false
+        Swal.fire({
+          title: error.error.message || 'Ocurrió un error en el modulo de pagos.',
+          text: "Contacte al Administrador!",
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
+      }
     });
   }
 
