@@ -52,7 +52,7 @@ export class LoginComponent {
           }
         });
         setTimeout(() => {
-          this.router.navigate(['/usuario']);  // Redirige al dashboard o página principal
+          this.router.navigate(['/']);  // Redirige al dashboard o página principal
         },1000);
       },
       error: (err) => {
