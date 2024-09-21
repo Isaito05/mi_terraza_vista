@@ -14,6 +14,16 @@ export class AuthService {
   ) { }
 
   private apiUrl = 'http://localhost:3000/auth/login';
+  private apiUrlF = 'http://localhost:3000/upload/file'; // Cambia el puerto si es necesario
+
+  
+
+  upload(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('files', file, file.name);
+
+    return this.http.post(this.apiUrlF, formData);
+  }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl, { email, password })
@@ -26,6 +36,7 @@ export class AuthService {
     );
   }
 
+
   logout() {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('username');
@@ -37,4 +48,6 @@ export class AuthService {
   public get loggedIn(): boolean {
     return sessionStorage.getItem('token') !== null;
   }
+
+
 }

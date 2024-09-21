@@ -55,6 +55,12 @@ const routes: Routes = [
         loadChildren: () => import('./features/proveedor/proveedor.module').then(m => m.ProveedorModule),
         canActivate: [authGuard]
       },
+      {
+        path: 'upload',
+        title: 'upload',
+        loadChildren: () => import('./core/upload/upload.module').then(m => m.UploadModule), 
+        // canActivate: [authGuard]
+      },
     ]
   },
 

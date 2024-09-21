@@ -1,0 +1,9 @@
+<div>
+    <input type="file" (change)="onFileSelected($event)" />
+</div>
+<div *ngIf="previsualizacion">
+    <img width="100px" [src]="previsualizacion" alt="">
+</div>
+<div>
+    <button (click)="onUpload()">Subir Archivo</button>
+</div>
