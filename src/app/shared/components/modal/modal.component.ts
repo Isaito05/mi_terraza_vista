@@ -11,6 +11,8 @@ import { ImageUploadService } from 'src/app/core/services/image-upload.service';
 import Swal from 'sweetalert2';
 import { ProprovService } from 'src/app/features/proprov/service/proprov.service';
 import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-modal',
@@ -31,6 +33,10 @@ export class ModalComponent {
 
   @Output() onRegisterSuccess = new EventEmitter<any>();
   @Output() confirmAction = new EventEmitter<void>();
+  imageFile: File | null = null;
+  previsualizacion: string | null = null;
+  imageUrl: any
+
 
   pedidos: any[] = [];
   result: any[] = [];
@@ -43,13 +49,15 @@ export class ModalComponent {
     private fb: FormBuilder,
     private http: HttpClient,
     private usuarioService: UsuarioService,
-    private imageUploadService: ImageUploadService,
+    // private imageUploadService: ImageUploadService,
     private prodventaService: ProdventaService,
     private pagoService: PagoService,
     private bodegaService: BodegaService,
     private proveedorService: ProveedorService,
     private proprovService: ProprovService,
-    private pedidoService: PedidoService
+    // private authService: AuthService,
+    private pedidoService: PedidoService,
+    private sanitizer: DomSanitizer,
   ) {
     this.serviceMap = {
       'Usuario': this.usuarioService,
@@ -178,39 +186,86 @@ export class ModalComponent {
               });
             }
           );
-        }
-        // Si no está en modo de edición (es un registro nuevo)
-        else {
+        } else {
           console.log(formData, 'isaac');
-          service.saveData(formData).subscribe(
-            
-            (response: any) => {
-              this.closeModal();
-              this.data = [];
-  
-              // Mostrar alerta de éxito
-              Swal.fire({
-                title: 'Éxito',
-                text: 'Registro guardado satisfactoriamente',
-                icon: 'success',
-                confirmButtonText: 'OK'
-              }).then(() => {
-                this.save.emit(response);
-                location.reload();
-              });
-            },
-            (error: any) => {
-              console.error('Error al guardar los datos:', error);
-  
-              // Mostrar alerta de error
-              Swal.fire({
-                title: 'Error',
-                text: 'No se pudo guardar el registro',
-                icon: 'error',
-                confirmButtonText: 'OK'
-              });
-            }
-          );
+          console.log(this.imageFile)
+          if (this.imageFile) {
+            this.prodventaService.upload(this.imageFile).subscribe(
+              (response: any) => {
+                if(response.filePath){
+                  this.data['PROD_VENTA_IMAGEN'] = response.filePath;
+                }
+                const imageUrl = response.filePath; // Guarda la ruta de la imagen
+
+                console.log(this.imageUrl); // Suponiendo que el servidor devuelve la URL de la imagen
+                // this.data[fieldId] = imageUrl; // Actualiza la propiedad correspondiente en el objeto `data`
+                console.log('Imagen subida exitosamente:', imageUrl);
+                
+                // Aquí puedes continuar con el guardado de otros datos
+                service.saveData(formData).subscribe(
+                  (response: any) => {
+                    this.closeModal();
+                    this.data = [];
+        
+                    // Mostrar alerta de éxito
+                    Swal.fire({
+                      title: 'Éxito',
+                      text: 'Registro guardado satisfactoriamente',
+                      icon: 'success',
+                      confirmButtonText: 'OK'
+                    }).then(() => {
+                      this.save.emit(response);
+                      location.reload();
+                    });
+                  },
+                  (error: any) => {
+                    console.error('Error al guardar los datos:', error);
+        
+                    // Mostrar alerta de error
+                    Swal.fire({
+                      title: 'Error',
+                      text: 'No se pudo guardar el registro',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  }
+                );
+              },
+              (error: any) => {
+                console.error('Error al subir la imagen:', error);
+                // Manejar el error al subir la imagen
+              }
+            );
+          } else {
+            service.saveData(formData).subscribe( 
+              (response: any) => {
+                this.closeModal();
+                this.data = [];
+    
+                // Mostrar alerta de éxito
+                Swal.fire({
+                  title: 'Éxito',
+                  text: 'Registro guardado satisfactoriamente',
+                  icon: 'success',
+                  confirmButtonText: 'OK'
+                }).then(() => {
+                  this.save.emit(response);
+                  location.reload();
+                });
+              },
+              (error: any) => {
+                console.error('Error al guardar los datos:', error);
+    
+                // Mostrar alerta de error
+                Swal.fire({
+                  title: 'Error',
+                  text: 'No se pudo guardar el registro',
+                  icon: 'error',
+                  confirmButtonText: 'OK'
+                });
+              }
+            );
+          }
         }
       } else {
         console.error('No se encontró un servicio adecuado para el contexto.');
@@ -224,7 +279,7 @@ export class ModalComponent {
   private getServiceBasedOnContext() {
     if (this.title.includes('Registrar usuario')) {
       return this.serviceMap['Usuario'];
-    } else if (this.title.includes('Registrar Producto en venta')) {
+    } else if (this.title.includes('Registrar producto en venta')) {
       return this.serviceMap['ProductoV'];
     } else if (this.title.includes('Registrar pago')) {
       return this.serviceMap['Pago'];
@@ -261,27 +316,50 @@ export class ModalComponent {
     }
   }
 
+  extraerBase64 = async ($event: any) => new Promise((resolve, reject) => {
+    try {
+      const unsafeImg = window.URL.createObjectURL($event);
+      const image = this.sanitizer.bypassSecurityTrustUrl(unsafeImg);
+      const reader = new FileReader();
+      reader.readAsDataURL($event);
+      reader.onload = () => {
+        resolve({
+          base: reader.result
+        });
+      };
+      reader.onerror = error => {
+        resolve({
+          base: null
+        })
+      };
+    } catch (e) {
+      // return null;
+      reject(e)
+    }
+  })
+
   // Método para manejar el cambio de input de archivo (imagen)
   handleFileInputChange(event: any, fieldId: string) {
-    // const file = event.target.files[0];
+    console.log('File input changed:', event);
     const file = event.target.files[0];
     if (file) {
-      this.imageUploadService.uploadImage(file).subscribe(
-        (response: any) => {
-          // Suponiendo que la respuesta contiene la URL de la imagen guardada
-          this.data[fieldId] = response.imageUrl;
-          console.log('URL de la imagen:', this.data[fieldId]); // Verificar la URL de la imagen
-        },
-        (error: any) => {
-          console.error('Error al subir la imagen:', error);
-          Swal.fire({
-            title: 'Error',
-            text: 'No se pudo cargar la imagen',
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
-        }
-      );
+      this.imageFile = file;
+      this.extraerBase64(file).then((image: any) => {
+        this.previsualizacion = image.base; // Establece la vista previa
+      }).catch((error) => {
+        console.error('Error al convertir la imagen:', error);
+      });
+  
+      // this.prodventaService.upload(file).subscribe(
+      //   (response: any) => {
+      //     const imageUrl = response.imageUrl; // Suponiendo que el servidor devuelve la URL de la imagen
+      //     this.data[fieldId] = imageUrl; // Actualiza la propiedad correspondiente en el objeto `data`
+      //     console.log('Imagen subida exitosamente:', imageUrl);
+      //   },
+      //   (error: any) => {
+      //     console.error('Error al subir la imagen:', error);
+      //   }
+      // );
     }
   }
 

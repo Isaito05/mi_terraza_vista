@@ -49,19 +49,19 @@ export class UploadComponent {
     }
   })
 
-  onUpload(): any {
-    if (this.archivos) {
-      this.res.upload(this.archivos).subscribe(
-        response => {
-          console.log(response);
-          alert(response.mesg);
-        },
-        error => {
-          console.error(error);
-          alert('Error al cargar el archivo');
-        }
-      );
-    }
-  }
+  // onUpload(): any {
+  //   if (this.archivos) {
+  //     this.res.upload(this.archivos).subscribe(
+  //       response => {
+  //         console.log(response);
+  //         alert(response.mesg);
+  //       },
+  //       error => {
+  //         console.error(error);
+  //         alert('Error al cargar el archivo');
+  //       }
+  //     );
+  //   }
+  // }
 }
 

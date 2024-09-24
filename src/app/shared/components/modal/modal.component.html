@@ -13,7 +13,7 @@
                         <label [for]="field.id" class="form-label">{{ field.label }}</label>
 
                         <input
-                            *ngIf="field.type !== 'select' && field.type !== 'image' && field.type !== 'datetime-local'"
+                            *ngIf="field.type !== 'select' && field.type !== 'file' && field.type !== 'datetime-local'"
                             [type]="field.type" class="form-control" [id]="field.id" [name]="field.id"
                             [(ngModel)]="data[field.id]" [disabled]="isViewingDetails" />
 
@@ -26,14 +26,19 @@
                         </select>
 
                         <!-- Renderiza un input tipo archivo para imágenes -->
-                        <input *ngIf="field.type === 'image'" type="file" class="form-control" [id]="field.id"
+                        <input *ngIf="field.type === 'file'" [type]="field.type" class="form-control" [id]="field.id"
                             [name]="field.id" (change)="handleFileInputChange($event, field.id)"
                             [accept]="field.accept || 'image/*'" [disabled]="isViewingDetails" />
 
+                            <div *ngIf="field.type === 'file' && previsualizacion" class="mt-3">
+                                <img [src]="previsualizacion" alt="Vista previa" class="img-thumbnail" style="max-width: 200px;" />
+                            </div>
                         <!-- Renderiza un input tipo datetime-local para fechas -->
                         <input *ngIf="field.type === 'datetime-local'" type="datetime-local" class="form-control"
                             [id]="field.id" [name]="field.id" [ngModel]="getFormattedDate(field.id)"
                             (ngModelChange)="data[field.id] = $event" [disabled]="isViewingDetails" />
+
+                            <!-- Vista previa de la imagen -->
 
                     </div>
                     <div *ngIf="title === 'Detalles del pedido'">

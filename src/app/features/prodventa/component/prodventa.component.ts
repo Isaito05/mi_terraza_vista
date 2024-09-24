@@ -144,22 +144,7 @@ handleConfirm() {
   formData.append('PROD_VENTA_NOMBRE', this.productData.PROD_VENTA_NOMBRE);
   formData.append('PROD_VENTA_DESCRIPCION', this.productData.PROD_VENTA_DESCRIPCION);
   formData.append('PROD_VENTA_PRECIO', this.productData.PROD_VENTA_PRECIO.toString());
-
-  // Primero, guarda los datos del producto
-  this.prodventaService.saveData(formData).subscribe(response => {
-      const PROD_VENTA_ID = response.PROD_VENTA_ID; // Asumiendo que recibes el ID del nuevo producto
-    
-      // Luego, sube la imagen si está disponible
-      // if (this.productData.PROD_VENTA_IMAGEN) {
-      //     this.prodventaService.uploadImage(PROD_VENTA_ID, this.productData.PROD_VENTA_IMAGEN).subscribe(() => {
-      //         this.isModalVisible = false;
-      //         this.getProdventa(); // Actualizar la lista de productos
-      //     });
-      // } else {
-      //     this.isModalVisible = false;
-      //     this.getProdventa(); // Actualizar la lista de productos
-      // }
-  });
+  
 }
 
 }

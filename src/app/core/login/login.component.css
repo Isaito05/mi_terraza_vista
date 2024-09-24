@@ -1,5 +1,5 @@
 .container-fluid {
-    /* background-image: url('../../../assets/images/fondo-login.jpg') !important; Ruta de la imagen de fondo */
+    background-image: url('../../../assets/images/1727115827177.jpg') !important;
     background-size: cover; /* Ajusta la imagen al tamaño de la pantalla */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
@@ -13,6 +13,30 @@ h2 {
 p {
     font-size: 0.9rem;
     /* Reduce el tamaño del texto secundario */
+}
+
+.fw-t {
+    font-weight: 500;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.form-control {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border: solid #212529 1px !important;
+    /* border-radius: 0; */
+    border-left: none;
+}
+
+.input-group-text {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border: solid #212529 1px !important;
+    border-right: none;
 }
 
 .btn-lg {

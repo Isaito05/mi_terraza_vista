@@ -7,7 +7,16 @@ import { Observable, of } from 'rxjs';
 })
 export class ProdventaService {
   private apiUrl = 'http://localhost:3000/prodventa';
+  private apiUrlF = 'http://localhost:3000/upload/file'; 
+
   constructor(private http:HttpClient) { }
+
+  upload(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('files', file, file.name);
+
+    return this.http.post(this.apiUrlF, formData);
+  }
 
   getData(): Observable<any>{
     return this.http.get<any>(this.apiUrl)
