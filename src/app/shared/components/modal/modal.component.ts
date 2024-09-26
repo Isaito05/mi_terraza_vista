@@ -88,9 +88,6 @@ export class ModalComponent {
         return acc;
       }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
     );
-
-    
-
   }
 
   validacionEmail(control: AbstractControl) {
@@ -152,18 +149,13 @@ export class ModalComponent {
     if(this.form.valid) {
       const formData = this.data;
       const service = this.getServiceBasedOnContext();
-  
       if (service) {
-  
-        // Si está en modo de edición
         if (this.isEditing) {
           console.log(formData, 'yei');
           service.updateData(formData).subscribe(
             (response: any) => {
               this.closeModal();
               this.data = [];
-  
-              // Mostrar alerta de éxito
               Swal.fire({
                 title: 'Éxito',
                 text: 'Registro editado satisfactoriamente',
@@ -176,8 +168,6 @@ export class ModalComponent {
             },
             (error: any) => {
               console.error('Error al editar los datos:', error);
-  
-              // Mostrar alerta de error
               Swal.fire({
                 title: 'Error',
                 text: 'No se pudo editar el registro',
@@ -187,8 +177,6 @@ export class ModalComponent {
             }
           );
         } else {
-          console.log(formData, 'isaac');
-          console.log(this.imageFile)
           if (this.imageFile) {
             this.prodventaService.upload(this.imageFile).subscribe(
               (response: any) => {
@@ -196,18 +184,13 @@ export class ModalComponent {
                   this.data['PROD_VENTA_IMAGEN'] = response.filePath;
                 }
                 const imageUrl = response.filePath; // Guarda la ruta de la imagen
-
                 console.log(this.imageUrl); // Suponiendo que el servidor devuelve la URL de la imagen
                 // this.data[fieldId] = imageUrl; // Actualiza la propiedad correspondiente en el objeto `data`
                 console.log('Imagen subida exitosamente:', imageUrl);
-                
-                // Aquí puedes continuar con el guardado de otros datos
                 service.saveData(formData).subscribe(
                   (response: any) => {
                     this.closeModal();
                     this.data = [];
-        
-                    // Mostrar alerta de éxito
                     Swal.fire({
                       title: 'Éxito',
                       text: 'Registro guardado satisfactoriamente',
@@ -220,8 +203,6 @@ export class ModalComponent {
                   },
                   (error: any) => {
                     console.error('Error al guardar los datos:', error);
-        
-                    // Mostrar alerta de error
                     Swal.fire({
                       title: 'Error',
                       text: 'No se pudo guardar el registro',
@@ -233,7 +214,6 @@ export class ModalComponent {
               },
               (error: any) => {
                 console.error('Error al subir la imagen:', error);
-                // Manejar el error al subir la imagen
               }
             );
           } else {
@@ -241,8 +221,6 @@ export class ModalComponent {
               (response: any) => {
                 this.closeModal();
                 this.data = [];
-    
-                // Mostrar alerta de éxito
                 Swal.fire({
                   title: 'Éxito',
                   text: 'Registro guardado satisfactoriamente',
@@ -255,8 +233,6 @@ export class ModalComponent {
               },
               (error: any) => {
                 console.error('Error al guardar los datos:', error);
-    
-                // Mostrar alerta de error
                 Swal.fire({
                   title: 'Error',
                   text: 'No se pudo guardar el registro',
@@ -275,41 +251,34 @@ export class ModalComponent {
     }
   }
 
-
   private getServiceBasedOnContext() {
-    if (this.title.includes('Registrar usuario')) {
-      return this.serviceMap['Usuario'];
-    } else if (this.title.includes('Registrar producto en venta')) {
-      return this.serviceMap['ProductoV'];
-    } else if (this.title.includes('Registrar pago')) {
-      return this.serviceMap['Pago'];
-    } else if (this.title.includes('Registrar pago')) {
-      return this.serviceMap['Pago'];
-    } else if (this.title.includes('Registrar bodega')) {
-      return this.serviceMap['Bodega'];
-    } else if (this.title.includes('Registrar pedido')) {
-      return this.serviceMap['Pedido'];
-    } else if (this.title.includes('Registrar proveedor')) {
-      return this.serviceMap['Proveedor'];
-    } else if (this.title.includes('Registrar producto proveedor')) {
-      return this.serviceMap['Proprov'];
-    } else if (this.title.includes('Editar usuario')) {
-      return this.serviceMap['Usuario'];
-    } else if (this.title.includes('Editar pago')) {
-      return this.serviceMap['Pago'];
-    } else if (this.title.includes('Editar bodega')) {
-      return this.serviceMap['Bodega'];
-    } else if (this.title.includes('Editar producto de proveedor')) {
-      return this.serviceMap['Proprov'];
-    } else if (this.title.includes('Editar proveedor')) {
-      return this.serviceMap['Proveedor'];
-    } else if (this.title.includes('Editar pedido')) {
-      return this.serviceMap['Pedido'];
+    switch (true) {
+      case this.title.includes('Registrar usuario'):
+      case this.title.includes('Editar usuario'):
+        return this.serviceMap['Usuario'];
+      case this.title.includes('Registrar producto en venta'):
+      case this.title.includes('Editar producto en venta'):
+        return this.serviceMap['ProductoV'];
+      case this.title.includes('Registrar pago'):
+      case this.title.includes('Editar pago'):
+        return this.serviceMap['Pago'];
+      case this.title.includes('Registrar bodega'):
+      case this.title.includes('Editar bodega'):
+        return this.serviceMap['Bodega'];
+      case this.title.includes('Registrar pedido'):
+      case this.title.includes('Editar pedido'):
+        return this.serviceMap['Pedido'];
+      case this.title.includes('Registrar proveedor'):
+      case this.title.includes('Editar proveedor'):
+        return this.serviceMap['Proveedor'];
+      case this.title.includes('Registrar producto proveedor'):
+      case this.title.includes('Editar producto proveedor'):
+        return this.serviceMap['Proprov'];
+      default:
+        console.error('Contexto no encontrado para el título:', this.title);
+      return null;
     }
-    console.error('Contexto no encontrado para el título:', this.title);
-    return null;
   }
-
   handleFieldChange(fieldId: string, value: any) {
     if (this.form) {
       this.form.get(fieldId)?.setValue(value); // Actualizamos el valor en el formulario
@@ -349,17 +318,6 @@ export class ModalComponent {
       }).catch((error) => {
         console.error('Error al convertir la imagen:', error);
       });
-  
-      // this.prodventaService.upload(file).subscribe(
-      //   (response: any) => {
-      //     const imageUrl = response.imageUrl; // Suponiendo que el servidor devuelve la URL de la imagen
-      //     this.data[fieldId] = imageUrl; // Actualiza la propiedad correspondiente en el objeto `data`
-      //     console.log('Imagen subida exitosamente:', imageUrl);
-      //   },
-      //   (error: any) => {
-      //     console.error('Error al subir la imagen:', error);
-      //   }
-      // );
     }
   }
 
@@ -429,6 +387,4 @@ export class ModalComponent {
     const isoDate = this.data[fieldId];
     return isoDate ? this.formatDateForDatetimeLocal(isoDate) : '';
   }
-
-
 }

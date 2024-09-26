@@ -5,9 +5,24 @@
 @import '~bootstrap-icons/font/bootstrap-icons.css';
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-/* body {
-    background-image: url("src/assets/images/dark-background-abstract-background-network-3d-background-3840x2160-8324.png");
-} */
+body {
+    padding: 0 !important;
+}
+
+.ngx-pagination .current {
+    background: rgb(20 110 190) !important;
+    border-radius: 4px !important;
+}
+
+.ngx-pagination a {
+    padding: .1875rem .625rem !important;
+    border-radius: 6px !important;
+    border: solid 1px rgb(20 110 190) !important;
+    margin: 0 0.1rem !important;
+    color: rgb(20 110 190) !important;
+    font-weight: bold;
+  }
+
 .font {
     font-family: "Bebas Neue", sans-serif;
     font-weight: 400;

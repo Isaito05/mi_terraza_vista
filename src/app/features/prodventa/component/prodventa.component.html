@@ -27,8 +27,8 @@
 <div *ngIf="!loading">
   <app-table [data]="prodventa" [columns]="[
     { key: 'PROD_VENTA_NOMBRE', label: 'Nombre' },
-    { key: 'PROD_VENTA_IMAGEN', label: 'imagen' },
     { key: 'PROD_VENTA_PRECIO', label: 'Precio', format: 'currencyFormat' },
+    { key: 'PROD_VENTA_IMAGEN', label: 'imagen' },
     ]" noDataMessage="No hay productos disponibles."
     [title]="title"
     (edit)="onEdit($event)"

@@ -66,9 +66,9 @@ li {
 
 /* Sidebar collapse */
 
-#sidebar.collapsed {
+/* #sidebar.collapsed {
     margin-left: -221px;
-}
+} */
 
 .main {
     display: flex;

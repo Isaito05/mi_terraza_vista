@@ -17,3 +17,19 @@ a {
 .m-text {
     text-transform: uppercase;
 }
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 28px;
+    width: 10px;
+    height: 10px;
+    background-color: green;
+    border: 2px solid white;
+    border-radius: 50%;
+}

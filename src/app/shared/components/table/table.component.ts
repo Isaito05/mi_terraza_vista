@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import * as bootstrap from 'bootstrap';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-table',
@@ -23,6 +24,8 @@ export class TableComponent {
   filteredData: any[] = [...this.data];
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+  chevronLeftIcon = '<i class="fa-solid fa-chevron-left"></i>';
+  chevronRightIcon = '<i class="fa-solid fa-chevron-right"></i>';
 
   ngOnInit() {
     this.filteredData = [...this.data];
@@ -143,6 +146,10 @@ export class TableComponent {
   getPropertyValue(item: any, key: string): any {
     const value = key.split('.').reduce((object, property) => object ? object[property] : '', item);
     return value;
+  }
+
+  getImageUrl(imagePath: string): string {
+    return `${environment.apiUrlHttp}${imagePath}`;
   }
 
   isArray(value: any): boolean {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface Usuario {
   RGU_ID: number;
@@ -13,7 +14,7 @@ export interface Usuario {
   providedIn: 'root'
 })
 export class UsuarioService {
-  private apiUrl = 'http://localhost:3000/rgu-usuario';
+  private apiUrl = `${environment.apiUrlHttp}/rgu-usuario`;
   constructor(private http: HttpClient) { }
 
   // Método para obtener datos de la API

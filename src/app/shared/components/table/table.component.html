@@ -6,7 +6,7 @@
         <i class="bi bi-search position-absolute search-icon"></i>
       </div>
       <!-- <h5 class="card-title">{{title}}</h5> -->
-      <table class="table table-hover text-center">
+      <table class="table table-hover">
         <!-- Encabezado de la tabla -->         
         <thead>
           <tr>
@@ -16,7 +16,7 @@
                 <i *ngIf="sortColumn === column.key" [ngClass]="sortDirection === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
               </span>
             </th>
-            <th>Acciones</th>
+            <!-- <th>Acciones</th> -->
           </tr>
         </thead>
 
@@ -26,7 +26,7 @@
             <td *ngFor="let column of columns">
 
               <ng-container *ngIf="column.key === 'PROD_VENTA_IMAGEN'; else defaultCell">
-                <img [src]="getPropertyValue(item, column.key)" alt="Imagen" width="50" height="50" style="border-radius: 10%;" />
+                <img [src]="getImageUrl(getPropertyValue(item, column.key))" alt="Imagen" width="50" height="40" style="border-radius: 10%;" />
               </ng-container>
         
               <ng-template #defaultCell>
@@ -61,13 +61,13 @@
             <!-- Columna para los botones de acción -->
             <td>
               <button class="btn pt-0" (click)="onEdit(item)" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Top popover">
-                <i class="bi bi-pencil fs-5"></i> <!-- Icono de editar -->
+                <i class="fa-solid fa-file-pen fs-5"></i> <!-- Icono de editar -->
               </button>
               <button class="btn pt-0" (click)="onDelete(item)" data-bs-toggle="popover" data-bs-trigger="hover focus" title="Eliminar" data-bs-content="Edita este elemento">
-                <i class="bi bi-trash fs-5"></i> <!-- Icono de eliminar -->
+                <i class="fa-solid fa-trash-can-arrow-up fs-5"></i> <!-- Icono de eliminar -->
               </button>
               <button class="btn pt-0" (click)="onDetail(item)">
-                <i class="bi bi-journal-text fs-5"></i><!-- Icono de detalles -->
+                <i class="fbi bi-three-dots fs-5"></i><!-- Icono de detalles -->
               </button>
             </td>
           </tr>
@@ -82,9 +82,8 @@
   </div>
   <!-- Controles de paginación -->
   <div class="d-flex justify-content-end me-4 mt-4">
-    <pagination-controls (pageChange)="onPageChange($event)" previousLabel="Anterior" nextLabel="Siguiente">
-    </pagination-controls>
-    <h5 class="text-body-secondary">|</h5>
+    <pagination-controls (pageChange)="onPageChange($event)" [previousLabel]="chevronLeftIcon" [nextLabel]="chevronRightIcon"></pagination-controls>
+    <div class="vr" style="height: 34px;"></div>
     <div class="mb-3">
       <div class="d-flex align-items-center">
         <div class="me-1 ms-1">

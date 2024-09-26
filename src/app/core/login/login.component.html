@@ -1,47 +1,72 @@
 <div class="container-fluid background-pattern">
+  <div class='box'>
+    <div class='wave -one'></div>
+    <div class='wave -two'></div>
+    <div class='wave -three'></div>
+  </div>
   <div class="container min-vh-100 d-flex align-items-center justify-content-center">
     <div class="login-box p-4 shadow">
-      <h2 class="mb-4 text-center fw-normal">Registrate o incia sesión en segundos</h2>
-      <p class="text-muted text-center mb-3 fw-t">Utiliza tu email o tu contraseña y correo para continuar en Mi Terraza</p>
-      
+      <h2 class="mb-4 text-center text-light font-title">Registrate o incia sesión en segundos</h2>
+      <p class="text-center mb-3 fw-t text-light font-title">Utiliza tu email o tu contraseña y correo para continuar en
+        Mi Terraza</p>
+
       <div class="d-grid gap-3">
         <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center">
           <i class="bi bi-google me-2"></i> Continue with Google
         </button>
-        <!-- <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center">
-          <i class="bi bi-facebook me-2"></i> Continue with Facebook
-        </button>
-        <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center">
-          <i class="bi bi-envelope me-2"></i> Continue with Email
-        </button> -->
       </div>
-      
-      <p class="text-center my-3">o</p>
-      
-      <form (ngSubmit)="login()">
-        <div class="input-group mb-3">
-          <span class="input-group-text">
-            <i class="bi bi-person-circle"></i>
-          </span>
-          <input [(ngModel)]="email" type="text" id="email" name="email" class="form-control" placeholder="Correo" autocomplete="username">
-        </div>
-        <!-- Campo de Contraseña -->
-        <div class="input-group mb-4">
-          <span class="input-group-text">
-            <i class="bi bi-key-fill"></i> <!-- Bootstrap Icons -->
-          </span>
-          <input [(ngModel)]="password" type="password" id="password" name="password" class="form-control" placeholder="Contraseña" autocomplete="current-password">
-        </div>
-        <!-- Botones de Acciones -->
-        <div class="row g-0">
-          <div class="col-6 col-md-4">
-            <button class="btn btn-primary px-4" type="submit">Entrar</button>
+
+      <!-- <p class="text-center my-3 text-light">
+        o
+      </p> -->
+
+      <div class="d-flex align-items-center justify-content-center my-3">
+        <hr class="flex-grow-1 me-2 text-light" />
+        <span class="text-light font-title">O</span>
+        <hr class="flex-grow-1 ms-2 text-light" />
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="form-group mb-3 font-title">
+          <label for="email" class="text-light">Correo</label>
+          <div class="d-flex align-items-start flex-column">
+            <input formControlName="email" type="text" id="email" name="email" aria-describedby="emailHelp"
+              class="form-control p-ci" placeholder="Ingresa tu correo.." autocomplete="off">
+            <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              class="text-danger position-absolute property-danger-c">
+              <div *ngIf="loginForm.get('email')?.errors?.['invalidEmail']">
+                Correo inválido, debe contener un dominio valido
+              </div>
+            </div>
+            <i class="fa-solid fa-user-large position-absolute p-icon"></i>
           </div>
-          <div class="col-sm-6 col-md-8 text-end">
-            <button class="btn btn-link px-0" type="button" (click)="redirectToForgotPassword()">Olvidaste tu contraseña?</button>
-          </div>                               
+        </div>
+        <div class="form-group mb-4 font-title">
+          <label for="password" class="text-light">Contraseña</label>
+          <div class="d-flex align-items-start flex-column">
+            <i class="fa-solid p-iconpshow position-absolute"
+              [class]="cmbTipo === 'password' ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
+              (click)="verContrasena()"></i>
+            <input formControlName="password" [type]="cmbTipo" id="password" aria-describedby="passHelp" name="password"
+              class="form-control p-cip" placeholder="Ingresa tu contraseña.." autocomplete="current-password">
+            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              class="text-danger position-absolute property-danger-p">
+              Contraseña inválida
+            </div>
+            <i class="fa-solid fa-unlock-keyhole position-absolute p-iconp"></i>
+          </div>
+          <small id="passHelp" class="form-text text-light font-title">We'll never share your email with anyone
+            else.</small>
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-lg text-light fw-semibold d-flex align-items-center justify-content-center font-title"
+            type="submit" [disabled]="loginForm.invalid || loginForm.disabled">Entrar</button>
         </div>
       </form>
+      <div class="text-center mt-3">
+        <a [routerLink]="['/forgot-password']" >¿Olvidaste tu contraseña?</a>
+      </div>
     </div>
   </div>
 </div>
+<!-- </div> -->

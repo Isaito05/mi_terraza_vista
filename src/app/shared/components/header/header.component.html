@@ -6,15 +6,22 @@
       <span class="m-text"> {{ username }} </span> <span class="m-text">{{ apellido }}</span> / <span class="m-text" style="font-weight: bold;">{{ role }}</span>
     </span>
   </div>
-  <div class="aling-items-end p-2 me-3">
+  <!-- <div class="p-2">
     <li class="nav-item">
-      <a class="text-decoration-none text-dark d-flex aling-items-center" (click)="logOut()">
-        Salir..
-        <!-- <i class="bi bi-box-arrow-in-right"></i> -->
-         <!-- <span> -->
-           <i class="bi bi-door-open-fill m-icon"></i>
-         <!-- </span> -->
-      </a>
+      <i class="bi bi-bell"></i>
     </li>
+  </div> -->
+  <div class="aling-items-end p-2 me-3">
+    <div class="dropdown">
+      <img src="assets/images/1727215005376.jpg" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer" data-bs-toggle="dropdown" aria-expanded="false"/>
+      <span class="status-indicator"></span>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item active" href="#">Another action</a></li>
+        <li><a class="dropdown-item">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i></a></li>
+        <li><a class="dropdown-item" href="#">Notificaciones  <i class="fa-solid fa-bell ms-1"></i></a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item d-flex justify-content-end" (click)="logOut()">Salir  <i class="bi bi-door-open-fill m-icon"></i></a></li>
+      </ul>
+    </div>
   </div>
 </nav>
