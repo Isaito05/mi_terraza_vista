@@ -23,6 +23,11 @@ export class LoginComponent {
     private router: Router
   ) {}
 
+  // Método para redirigir a la página de recuperación de contraseña
+  redirectToForgotPassword() {
+    this.router.navigate(['/forgot-password']); // Redirige al componente de recuperación de contraseña
+  }
+
   login() {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {

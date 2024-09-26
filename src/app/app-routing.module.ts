@@ -2,13 +2,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { authGuard } from './core/guard/auth.guard';
+import { ForgotPasswordComponent } from './core/forgot-password/forgot-password.component';
 
+import { ResetPasswordComponent } from './core/reset-password/reset-password.component';
 const routes: Routes = [
   {
     path: 'login',
     title: 'Inicio de sesión',
     loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule), // Ruta de login fuera del layout
   },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: '',
     component: LayoutComponent,
@@ -17,7 +21,7 @@ const routes: Routes = [
         path: 'usuario',
         title: 'Usuarios',
         loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule), // Carga perezosa del módulo Feature1
-        canActivate: [authGuard]
+        // canActivate: [authGuard]
       },
       {
         path: 'bodega',

@@ -14,7 +14,7 @@ export class AuthService {
   ) { }
 
   private apiUrl = 'http://localhost:3000/auth/login';
-  // Cambia el puerto si es necesario
+  private apiUrl1 = 'http://localhost:3000/';
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl, { email, password })
@@ -40,5 +40,13 @@ export class AuthService {
     return sessionStorage.getItem('token') !== null;
   }
 
+  requestPasswordReset(email: string): Observable<any> {
+    console.log('Requesting password reset for email:', email); 
+    return this.http.post(`${this.apiUrl1}auth/forgot-password`, { email });
+  }
 
+  resetPassword(token: string, password: string): Observable<any> {
+    console.log('Requesting password reset for email:', token, password);
+    return this.http.post(`${this.apiUrl1}auth/reset-password`, { token, password });
+  }
 }

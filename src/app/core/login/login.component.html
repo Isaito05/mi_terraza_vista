@@ -25,19 +25,23 @@
           </span>
           <input [(ngModel)]="email" type="text" id="email" name="email" class="form-control" placeholder="Correo" autocomplete="username">
         </div>
-        <div class="input-group mb-3">
+        <!-- Campo de Contraseña -->
+        <div class="input-group mb-4">
           <span class="input-group-text">
-            <i class="bi bi-key-fill"></i>
+            <i class="bi bi-key-fill"></i> <!-- Bootstrap Icons -->
           </span>
           <input [(ngModel)]="password" type="password" id="password" name="password" class="form-control" placeholder="Contraseña" autocomplete="current-password">
         </div>
-        <div class="d-grid">
-          <button class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center" type="submit">Entrar</button>
+        <!-- Botones de Acciones -->
+        <div class="row g-0">
+          <div class="col-6 col-md-4">
+            <button class="btn btn-primary px-4" type="submit">Entrar</button>
+          </div>
+          <div class="col-sm-6 col-md-8 text-end">
+            <button class="btn btn-link px-0" type="button" (click)="redirectToForgotPassword()">Olvidaste tu contraseña?</button>
+          </div>                               
         </div>
       </form>
-      <div class="text-center mt-3">
-        <a href="#">¿Olvidaste tu contraseña?</a>
-      </div>
     </div>
   </div>
 </div>
