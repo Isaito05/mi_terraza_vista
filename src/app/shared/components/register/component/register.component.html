@@ -1,0 +1,75 @@
+<div class="container form-container">
+  <div class="row g-0 align-items-center" style="min-height: 100vh;">
+    <!-- Sección de la imagen -->
+    <div class="col-md-6 d-none d-md-block text-center">
+      <img src="assets/images/logoTerraza.png" alt="Logo Mi Terraza" class="img-fluid" style="max-width: 70%;">
+    </div>
+
+    <!-- Sección del formulario -->
+    <div class="col-md-6">
+      <div class="p-5">
+        <h2 class="text-left mb-4" style="font-weight: bold;">Regístrate y aprovecha todas nuestras ofertas </h2>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Nombre</label>
+            <input type="text" formControlName="RGU_NOMBRES" class="form-control" id="firstName" placeholder="Ingresa tu nombre" required>
+            <div *ngIf="registerForm.get('RGU_NOMBRES')?.invalid && registerForm.get('RGU_NOMBRES')?.touched" class="text-danger">
+              <div *ngIf="registerForm.get('RGU_NOMBRES')?.hasError('required')">El nombre es obligatorio.</div>
+              <div *ngIf="registerForm.get('RGU_NOMBRES')?.hasError('minlength')">El nombre debe tener al menos 2 caracteres.</div>
+            </div>
+          </div>
+
+          <!-- Apellidos -->
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Apellidos</label>
+            <input type="text" formControlName="RGU_APELLIDOS" class="form-control" id="lastName" placeholder="Ingresa tus apellidos" required>
+            <div *ngIf="registerForm.get('RGU_APELLIDOS')?.invalid && registerForm.get('RGU_APELLIDOS')?.touched" class="text-danger">
+              <div *ngIf="registerForm.get('RGU_APELLIDOS')?.hasError('required')">Los apellidos son obligatorios.</div>
+              <div *ngIf="registerForm.get('RGU_APELLIDOS')?.hasError('minlength')">Los apellidos deben tener al menos 2 caracteres.</div>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" formControlName="RGU_CORREO" class="form-control" id="email" placeholder="Ingresa tu email" required>
+            <div *ngIf="registerForm.get('RGU_CORREO')?.invalid && registerForm.get('RGU_CORREO')?.touched" class="text-danger">
+              <div *ngIf="registerForm.get('RGU_CORREO')?.hasError('required')">El email es obligatorio.</div>
+              <div *ngIf="registerForm.get('RGU_CORREO')?.hasError('email')">Ingresa un email válido.</div>
+            </div>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="mb-3 position-relative">
+            <label for="password" class="form-label">Contraseña</label>
+            <input [type]="cmbTipo" formControlName="RGU_PASSWORD" class="form-control pe-5" id="password" placeholder="Ingresa tu contraseña" required>
+            <i class="fa-solid p-iconpshow position-absolute" [class]="cmbTipo === 'password' ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" (click)="verContrasena()" style="right: 15px; top: 50%; transform: translateY(50%); cursor: pointer;"></i>
+            <div *ngIf="registerForm.get('RGU_PASSWORD')?.invalid && registerForm.get('RGU_PASSWORD')?.touched" class="text-danger">
+              <div *ngIf="registerForm.get('RGU_PASSWORD')?.hasError('required')">La contraseña es obligatoria.</div>
+              <div *ngIf="registerForm.get('RGU_PASSWORD')?.hasError('minlength')">La contraseña debe tener al menos 8 caracteres.</div>
+            </div>
+          </div>
+
+          <!-- Confirmar contraseña -->
+          <div class="mb-3 position-relative">
+            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+            <input [type]="cmbTipo" formControlName="confirmPassword" class="form-control pe-5" id="confirmPassword" placeholder="Confirma tu contraseña" required>
+            <i class="fa-solid p-iconpshow position-absolute" [class]="cmbTipo === 'password' ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" (click)="verContrasena()" style="right: 15px; top: 50%; transform: translateY(50%); cursor: pointer;"></i>
+            <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched" class="text-danger">
+              Las contraseñas no coinciden.
+            </div>
+          </div>
+
+          <br><br>
+
+          <!-- Botón de registro -->
+          <div class="mb-4 text-center">
+            <button type="submit" class="btn btn-warning btn-lg w-100" [disabled]="registerForm.invalid">Registrarme</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

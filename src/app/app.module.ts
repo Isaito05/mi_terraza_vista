@@ -8,6 +8,7 @@ import { SharedModule } from './shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ForgotPasswordComponent } from './core/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './core/reset-password/reset-password.component';
+import { RegisterModule } from './shared/components/register/register.module';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { ResetPasswordComponent } from './core/reset-password/reset-password.com
     SharedModule,
     ReactiveFormsModule,
     ForgotPasswordComponent,
+    RegisterModule, 
     
     
 ],
