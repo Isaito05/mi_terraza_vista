@@ -1,42 +1,44 @@
 import { Component } from '@angular/core'; 
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css',
 })
 export class ForgotPasswordComponent {
   resetForm: FormGroup;
+  intentoFallido: boolean = false;
+  botonHabilitado: boolean = true;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.resetForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, this.validacionEmail]],
     });
+    this.resetForm.valueChanges.subscribe(() => {
+      if (this.intentoFallido) {
+        this.intentoFallido = false // Habilita el formulario cuando hay cambios
+        this.botonHabilitado = true
+      }
+    });
+  }
+
+   // Validador personalizado para el email
+   validacionEmail(control: AbstractControl): { [key: string]: boolean } | null {
+    const emailRegex = (/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|outlook)\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,4})?$/);
+    const email = control.value;
+    return emailRegex.test(email) ? null : { invalidEmail: true }
   }
 
   onSubmit() {
     const email = this.resetForm.value.email;
-
     if (this.resetForm.valid) {
-      // Validación adicional: verificar si hay caracteres después del "@"
-      const emailParts = email.split('@');
-      if (emailParts.length !== 2 || emailParts[1].length === 0) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Formato de correo inválido',
-          text: 'Asegúrate de que hay un carácter después del símbolo "@" en tu dirección de correo electrónico.',
-          confirmButtonText: 'Aceptar',
-        });
-        return; // Salir del método si el formato es inválido
-      }
-
-      // Muestra el spinner mientras se espera la respuesta
       Swal.fire({
         title: 'Enviando...',
         text: 'Por favor, espera mientras procesamos tu solicitud.',
@@ -45,36 +47,40 @@ export class ForgotPasswordComponent {
           Swal.showLoading(); // Muestra el spinner
         }
       });
-  
-      this.authService.requestPasswordReset(email).subscribe(
-        response => {
-          console.log(response);
-          Swal.fire({
-            icon: 'success',
-            title: '¡El email de recuperación ha sido enviado!',
-            html: `
-              <p>Por favor, revisa tu bandeja de entrada o carpeta de spam.</p>
-            `,
-            confirmButtonText: 'Aceptar',
-          });
-        },
-        error => {
-          console.log(error);
-          let errorMessage = 'No se pudo enviar el email.';
-        
-          if (error.status === 404) {
-            errorMessage = 'El email ingresado no está registrado en nuestra base de datos. Verifica e intenta nuevamente.';
+      setTimeout(() => {
+        this.authService.requestPasswordReset(email).subscribe({
+          next: (response) => {
+            console.log(response);
+            Swal.fire({
+              icon: 'success',
+              title: '¡Correo de recuperación enviado!',
+              text: 'Si no encuentras el correo en tu bandeja de entrada, revisa tu carpeta de spam. Para recibir futuras notificaciones, agrega nuestra dirección a tus contactos.',
+              confirmButtonText: 'Aceptar',
+            }).then((result) => {
+              if(result.isConfirmed) {
+                this.router.navigate(['/login']);
+              }
+            });
+            this.intentoFallido = false; 
+            this.botonHabilitado = true;
+          },
+          error: (error) => {
+            console.log(error);
+            let errorMessage = 'No se pudo enviar el email.';        
+            if (error.status === 404) {
+              errorMessage = 'El email ingresado no está registrado en nuestra base de datos. Verifica e intenta nuevamente.';
+            }       
+            Swal.fire({
+              icon: 'error',
+              title: 'No se pudo enviar el email.',
+              text: `${errorMessage}`,
+              confirmButtonText: 'Reintentar',
+            });
+            this.intentoFallido = true; 
+            this.botonHabilitado = false;
           }
-        
-          Swal.fire({
-            icon: 'error',
-            html: `
-              <h3>${errorMessage}</h3>
-            `,
-            confirmButtonText: 'Reintentar',
-          });
-        }
-      );
+        });
+      },2000);
     } else {
       // Si el formulario no es válido, puedes mostrar una alerta aquí también si lo deseas
       Swal.fire({

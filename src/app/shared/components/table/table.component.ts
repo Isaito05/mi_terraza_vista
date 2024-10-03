@@ -39,11 +39,12 @@ export class TableComponent {
 
   updateFilter(event: any) {
     const val = event.target.value.toLowerCase(); // Obtener el valor del input
+    console.log(val)
     this.filteredData = this.data.filter((item) => {
-      return Object.values(item).some((field: any) =>
-        field.toString().toLowerCase().includes(val) // Verificar si algún valor del objeto incluye el término de búsqueda
-      );
-    });
+      return Object.values(item).some((field: any) => {
+        return field && field.toString().toLowerCase().includes(val);
+      });
+    })
   }
 
   sortData(columnKey: string) {

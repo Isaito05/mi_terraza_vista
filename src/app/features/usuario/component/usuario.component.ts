@@ -24,7 +24,9 @@ export class UsuarioComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService,
     
-  ) {}
+  ) {
+    this.camposUsuario();
+  }
 
   ngOnInit(): void {
     this.usuarioService.getData().subscribe({
@@ -66,6 +68,7 @@ export class UsuarioComponent implements OnInit {
     this.isViewingDetails = false;
     this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
     this.isModalVisible = true;
+    this.camposUsuario();
   }
 
   viewDetails(user: any) {
@@ -121,6 +124,37 @@ export class UsuarioComponent implements OnInit {
         );
       }
     });
+  }
+
+  camposUsuario() {
+    this.modalFields = [
+      { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
+      { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
+      { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
+        { value: 'Masculino', label: 'Masculino' },
+        { value: 'Femenino', label: 'Femenino' },
+        { value: 'No_binario', label: 'No Binario' }
+      ]},
+      { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
+      { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
+      { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
+      { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
+        { value: 'Administrador', label: 'Administrador' },
+        { value: 'Trabajador', label: 'Trabajador' },
+        { value: 'Cliente', label: 'Cliente' }
+      ]},
+      { id: 'RGU_TP_DOC', label: 'Tipo de identificación', type: 'select', options: [
+        { value: 'Cedula', label: 'Cédula nacional' },
+        { value: 'Tarjeta_Identidad', label: 'Tarjeta de identidad' },
+        { value: 'ce', label: 'Cédula extranjera' }
+      ]},
+      { id: 'RGU_IDENTIFICACION', label: 'Nro. de identificación', type: 'number' },
+    ];
+
+    // Solo agregar el campo de contraseña si no se está editando ni visualizando detalles
+    if (!this.isEditing && !this.isViewingDetails) {
+      this.modalFields.push({ id: 'RGU_CONTRASENA', label: 'Contraseña', type: 'password' });
+    }
   }
 
   handleConfirm() {

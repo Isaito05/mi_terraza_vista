@@ -6,6 +6,7 @@ import { authGuard } from './core/guard/auth.guard';
 import { ForgotPasswordComponent } from './core/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './core/reset-password/reset-password.component';
 import { RegisterComponent } from './shared/components/register/component/register.component'; 
+import { canDeactivateGuard } from './guard/can-deactivate.guard';
 
 const routes: Routes = [
   {
@@ -13,9 +14,23 @@ const routes: Routes = [
     title: 'Inicio de sesión',
     loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule), // Ruta de login fuera del layout
   },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'register', component: RegisterComponent },
+  { 
+    path: 'forgot-password', 
+    title: 'Recuperar contraseña', 
+    component: ForgotPasswordComponent 
+  },
+  { 
+    path: 'reset-password', 
+    title: 'Cambiar contraseña', 
+    component: ResetPasswordComponent,
+    canDeactivate: [canDeactivateGuard] 
+  },
+  { 
+    path: 'register', 
+    title: 'Registrar usuario', 
+    component: RegisterComponent,
+    canDeactivate: [canDeactivateGuard] 
+  },
   {
     path: '',
     component: LayoutComponent,
@@ -24,7 +39,7 @@ const routes: Routes = [
         path: 'usuario',
         title: 'Usuarios',
         loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule), // Carga perezosa del módulo Feature1
-        // canActivate: [authGuard]
+        canActivate: [authGuard]
       },
       {
         path: 'bodega',

@@ -41,7 +41,7 @@ p {
 
 .form-control:focus {
   box-shadow: none;
-  border: solid #a570ff 1px !important;
+  border: solid #feaa2d 1px !important;
 }
 
 .form-control::placeholder { color: #fff; }
@@ -75,11 +75,11 @@ p {
 }
 
 .btn {
-  background-color: #8b3dff !important;
+  background-color: #FEA116 !important;
 }
 
 .btn:hover {
-  background-color: #7731d8 !important;
+  background-color: #feaf39 !important;
 }
 
 .btn:disabled {
@@ -107,7 +107,7 @@ p {
 }
 
 .container {
-    max-width: 400px;
+    max-width: 499px;
     /* Reduce el tamaño máximo */
     margin: 0 auto;
     /* Centra horizontalmente */
@@ -124,9 +124,30 @@ p {
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
 }
 
+.error-message-container {
+  min-height: 0.4rem;
+}
+
+.error-message-container div.ng-trigger {
+visibility: visible; /* Cuando el mensaje esté presente, será visible */
+}
+
+.input-container {
+  position: relative; /* Asegura que el ícono se posicione en relación al input */
+}
+
+.icon-error {
+  top: 31% !important; /* Sube el icono cuando hay un error */
+}
+
+.icon-error-pass {
+  top: 31% !important; /* Sube el icono cuando hay un error */
+}
+
 .p-icon {
-  top: 55.3%;
-  right: 17.7rem;
+  position: absolute;
+  top: 47%;
+  right: 22.3rem;
   transform: translateY(-50%);
   font-size: 1rem;
   color: #fff;
@@ -134,8 +155,9 @@ p {
 }
 
 .p-iconp {
-  top: 69.5%;
-  right: 17.7rem;
+  position: absolute;
+  top: 49.3%;
+  right: 22.3rem;
   transform: translateY(-50%);
   font-size: 1rem;
   color: #fff;
@@ -144,8 +166,8 @@ p {
 }
 
 .p-iconpshow {
-  top: 69.5%;
-  right: 2.2rem;
+  top: 51.5%;
+  right: 1rem;
   transform: translateY(-50%);
   font-size: 1rem;
   color: #fff;
@@ -154,12 +176,12 @@ p {
 }
 
 .p-ci {
-  width: 18rem;
+  /* width: 18rem; */
   padding-left: 2.5rem !important;
 }
 
 .p-cip {
-  width: 18rem;
+  /* width: 18rem; */
   padding-left: 2.5rem !important;
   padding-right: 2.3rem !important;
 }

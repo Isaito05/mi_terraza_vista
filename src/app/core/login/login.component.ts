@@ -20,6 +20,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   intentoFallido: boolean = false;
   botonHabilitado: boolean = true;
+  loading: boolean = false;
 
   
   constructor(
@@ -45,7 +46,7 @@ export class LoginComponent {
 
   // Validador personalizado para el email
   validacionEmail(control: AbstractControl): { [key: string]: boolean } | null {
-    const emailRegex = (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|co)(\.[a-zA-Z]{2,4})?$/);
+    const emailRegex = (/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|outlook)\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,4})?$/);
     const email = control.value;
     return emailRegex.test(email) ? null : { invalidEmail: true }
   }
@@ -57,13 +58,15 @@ export class LoginComponent {
         next: (response) => {
           // console.log('Login successful');
           const decodedToken: any = jwtDecode(response.access_token);
+          const miNombre = decodedToken.nombre
           sessionStorage.setItem('username', decodedToken.nombre);
           sessionStorage.setItem('role', decodedToken.rol);        
           sessionStorage.setItem('apellido', decodedToken.apellido);        
           Swal.fire({
-            title: "Has iniciado sesión correctamente",
+            title: `¡Bienvenido de nuevo, ${miNombre}!`,
+            text: "Has iniciado sesión correctamente.",
             icon: 'success',
-            timer: 1000,
+            timer: 1500,
             showConfirmButton: false,
             showClass: {
               popup: `
@@ -82,7 +85,7 @@ export class LoginComponent {
           });
           setTimeout(() => {
             this.router.navigate(['/']);  // Redirige al dashboard o página principal
-          },1000);
+          },1500);
           this.intentoFallido = false; 
           this.botonHabilitado = true;
         },
@@ -116,6 +119,16 @@ export class LoginComponent {
       // this.loginForm.disable();
       // this.loginForm.reset();
     }
+  }
+
+  olvidaContrasena(){
+    this.loading = true
+    setTimeout(() => {
+      this.router.navigate(['/forgot-password']).then(() => {
+        this.loading = false
+      })
+    }, 1500);
+
   }
 
   habilitarBoton() {
