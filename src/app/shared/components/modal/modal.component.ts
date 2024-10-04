@@ -24,7 +24,7 @@ export class ModalComponent {
   @Input() isVisible: boolean = false; // Controla la visibilidad del modal
   @Input() title: string = ''; // Título del modal
   @Input() fields: { id: string; label: string; type: string; options?: { value: string; label: string }[]; accept?: string; }[] = []; // Campos del formulario
-  @Input() data: { [key: string]: any } = {}; // Define el tipo aquí// 
+  @Input()  data: { [key: string]: any } = {}; // Define el tipo aquí// 
 
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
@@ -72,6 +72,7 @@ export class ModalComponent {
   }
 
   ngOnInit() {
+    this.initializeForm();
     // Crear un formulario con controles para cada campo
     this.form = this.fb.group(
       this.fields.reduce((acc, field) => {
@@ -107,19 +108,26 @@ export class ModalComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && changes['data'].currentValue && changes['data'] && this.title === 'Detalles del pedido') {
-      // Crear un formulario con controles para cada campo basado en los datos actuales
-      this.form = this.fb.group(
-        this.fields.reduce((acc, field) => {
+    this.initializeForm();
+  }
+
+  private initializeForm() {
+    this.form = this.fb.group(
+      this.fields.reduce((acc, field) => {
+        // Verifica si estamos en modo edición o visualización de detalles
+        if (this.isEditing || this.isViewingDetails) {
           acc[field.id] = [this.data[field.id] || ''];
-          this.Tablapedido(this.data['PED_ID']);
-          console.log(this.data['PED_ID']); // Inicializar con el valor correspondiente
-          return acc;
-
-        }, {} as { [key: string]: any })
-      );
-
-    }
+        } else {
+          acc[field.id] = ['']; // En modo registro, inicializa vacío
+        }
+        return acc;
+      }, {} as { [key: string]: any })
+    );
+  
+    // Carga los pedidos solo si estamos en el modo de detalles
+    if (this.title === 'Detalles del pedido') {
+      this.Tablapedido(this.data['PED_ID']);
+    }  
   }
 
   formatCurrency(value: any): string {
@@ -147,7 +155,10 @@ export class ModalComponent {
 
   confirm() {
     if(this.form.valid) {
+      const formValues = this.form.value; // Obtén los valores del formulario
+      this.data = { ...formValues };
       const formData = this.data;
+      console.log('Datos que se enviarán:', formData);
       const service = this.getServiceBasedOnContext();
       if (service) {
         if (this.isEditing) {

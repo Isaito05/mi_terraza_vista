@@ -33,6 +33,7 @@ export class UsuarioService {
   }
 
   updateData(data: any): Observable<any> {
+    console.log('Datos que se van a enviar para actualizar:', data);
     const url = `${this.apiUrl}/${data.RGU_ID}`;
     return this.http.put<any>(url, data);
   }

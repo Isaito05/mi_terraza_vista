@@ -128,6 +128,7 @@ export class UsuarioComponent implements OnInit {
 
   camposUsuario() {
     this.modalFields = [
+      { id: 'RGU_ID', label: 'ID', type: 'number' },
       { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
       { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
       { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
@@ -153,7 +154,7 @@ export class UsuarioComponent implements OnInit {
 
     // Solo agregar el campo de contraseña si no se está editando ni visualizando detalles
     if (!this.isEditing && !this.isViewingDetails) {
-      this.modalFields.push({ id: 'RGU_CONTRASENA', label: 'Contraseña', type: 'password' });
+      this.modalFields.push({ id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' });
     }
   }
 
