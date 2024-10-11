@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { authGuard } from './core/guard/auth.guard';
+import { HomeComponent } from './shared/components/home/component/home.component'; 
+import { DynamicPageComponent } from './shared/components/dynamic-page/dynamic-page.component';
 
 import { ForgotPasswordComponent } from './core/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './core/reset-password/reset-password.component';
@@ -31,6 +33,8 @@ const routes: Routes = [
     component: RegisterComponent,
     canDeactivate: [canDeactivateGuard] 
   },
+  { path: 'home', component: HomeComponent },
+  { path: 'pages/:pageName', component: DynamicPageComponent },
   {
     path: '',
     component: LayoutComponent,
@@ -88,12 +92,12 @@ const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'login', // Redirige a la página de login
+    redirectTo: 'home', // Redirige a la página de home
     pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
   },
   {
     path: '**',
-    redirectTo: 'login', // Redirige a la página de login
+    redirectTo: 'home', // Redirige a la página de home
     pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
   },
 ];
