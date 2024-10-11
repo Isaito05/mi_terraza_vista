@@ -8,13 +8,13 @@
       </div>
       <!-- Sidebar Navigation -->
       <ul class="sidebar-nav">
-        <li class="sidebar-item" [ngClass]="{'active': isActive('/usuario')}">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/usuario')}" *ngIf="!isWorkerRole()">
           <a [routerLink]="['/usuario']" class="sidebar-link">
             <i class="fa-solid fa-user-group pe-2"></i>
             Usuarios
           </a>
         </li>
-        <li class="sidebar-item" [ngClass]="{'active': isActive('/pago')}">
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/pago')}" *ngIf="!isWorkerRole()">
           <a [routerLink]="['/pago']" class="sidebar-link">
             <i class="fa-solid fa-money-bill-wave pe-2"></i>
             Pagos

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl  } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -23,7 +23,8 @@ export class ModalComponent {
   @Input() isVisible: boolean = false; // Controla la visibilidad del modal
   @Input() title: string = ''; // Título del modal
   @Input() fields: { id: string; label: string; type: string; options?: { value: string; label: string }[]; accept?: string; }[] = []; // Campos del formulario
-  @Input()  data: { [key: string]: any } = {}; // Define el tipo aquí// 
+  @Input() data: { [key: string]: any } = {}; // Define el tipo aquí// 
+  @Input() dataU: any[] = [];
 
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
   @Output() save = new EventEmitter<any>(); // Evento para guardar cambios
@@ -39,9 +40,10 @@ export class ModalComponent {
 
   intentoFallido: boolean = false;
   botonHabilitado: boolean = true;
+  usuarios: any[] = [...this.dataU];
 
   // showProfilePicture: boolean = false;
-  
+
   showProfilePicture: string | ArrayBuffer | null = null;
   pedidos: any[] = [];
   result: any[] = [];
@@ -77,6 +79,7 @@ export class ModalComponent {
   }
 
   ngOnInit() {
+    this.usuariosEmail();
     this.initializeForm();
     this.form.valueChanges.subscribe(() => {
       if (this.intentoFallido) {
@@ -84,6 +87,7 @@ export class ModalComponent {
         this.botonHabilitado = true
       }
     });
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -94,12 +98,12 @@ export class ModalComponent {
     this.form = this.fb.group(
       this.fields.reduce((acc, field) => {
         let validators = [];
-  
+
         // Agregar validadores según el tipo de campo
         if (field.type === 'email') {
           validators.push(Validators.required, Validators.email, this.validacionEmail);
-        // } else if (field.type === 'text' && field.label.toLowerCase().includes('telefono')) {
-        //   validators.push(Validators.required, Validators.pattern(/^\d{10}$/));
+          // } else if (field.type === 'text' && field.label.toLowerCase().includes('telefono')) {
+          //   validators.push(Validators.required, Validators.pattern(/^\d{10}$/));
         } else if (field.type === 'password') {
           validators.push(Validators.required, Validators.minLength(8), this.validacionContrasena);
         } else if (field.type === 'text' && field.label.toLowerCase().includes('nombre')) {
@@ -115,19 +119,19 @@ export class ModalComponent {
         } else if (field.type === 'select') {
           validators.push(Validators.required); // Agregar validador requerido
         }
-  
+
         acc[field.id] = [this.data[field.id] || '', validators];
         return acc;
-      }, {showProfilePicture: [false]} as { [key: string]: any},)
+      }, { showProfilePicture: [false] } as { [key: string]: any },)
     );
-  
+
     if (this.title === 'Detalles del pedido') {
       this.Tablapedido(this.data['PED_ID']);
     }
 
     if (this.data['RGU_IMG_PROFILE']) {
       this.previsualizacion = `${environment.apiUrlHttp}${this.data['RGU_IMG_PROFILE']}`;
-    } else if(this.data['RGU_IMG_PROFILE'] === '') {
+    } else if (this.data['RGU_IMG_PROFILE'] === '') {
       this.previsualizacion = ''
     }
   }
@@ -153,31 +157,31 @@ export class ModalComponent {
     }
 
     if (!hasUpperCase) {
-      return { uppercase: true };    
+      return { uppercase: true };
     } else if (!hasNumber) {
       return { number: true };
     } else if (!hasSpecialChar) {
       return { specialchar: true };
     }
-  
-    return  null;
-  }  
+
+    return null;
+  }
 
   formatCurrency(value: any): string {
     if (value == null) {
       return '';
     }
-  
+
     if (typeof value === 'number') {
       return `${value.toLocaleString('es-ES')}`;
     }
-  
+
     // Convertir cadenas numéricas a número
     const numericValue = parseFloat(value.toString().replace(/[^0-9.-]+/g, ''));
     if (!isNaN(numericValue)) {
       return `${numericValue.toLocaleString('es-ES')}`;
     }
-  
+
     // Si no es un número, devolver el valor como cadena
     return value.toString();
   }
@@ -187,24 +191,24 @@ export class ModalComponent {
   }
 
   confirm() {
-    if(this.form.valid) {
+    if (this.form.valid) {
       const formValues = this.form.value; // Obtén los valores del formulario
       this.data = { ...formValues };
       const formData = this.data;
       const service = this.getServiceBasedOnContext();
       if (service) {
         if (this.isEditing) {
-          if(this.imageFileUsu) {
-            if(this.imageFileUsu){
+          if (this.imageFileUsu) {
+            if (this.imageFileUsu) {
               this.usuarioService.upload(this.imageFileUsu).subscribe(
                 (response: any) => {
-                  if(response.filePath){
+                  if (response.filePath) {
                     this.data['RGU_IMG_PROFILE'] = response.filePath;
                     sessionStorage.setItem('i_perfil', response.filePath);
                   }
                   const imageUrl = response.filePath; // Guarda la ruta de la imagen  
                   delete formData['showProfilePicture'];
-                  this.actualizarDatos(formData);                
+                  this.actualizarDatos(formData);
                 },
                 (error: any) => {
                   console.error('Error al subir la imagen:', error);
@@ -217,15 +221,15 @@ export class ModalComponent {
           }
         } else {
           if (this.imageFile || this.imageFileUsu) {
-            if(this.imageFile){
+            if (this.imageFile) {
               this.prodventaService.upload(this.imageFile).subscribe(
                 (response: any) => {
-                  if(response.filePath){
+                  if (response.filePath) {
                     this.data['PROD_VENTA_IMAGEN'] = response.filePath;
                   }
                   const imageUrl = response.filePath; // Guarda la ruta de la imagen
                   console.log(this.imageUrl); // Suponiendo que el servidor devuelve la URL de la imagen
-                  
+
                   console.log('Imagen subida exitosamente:', imageUrl);
                   this.guardarDatos(formData)
                 },
@@ -234,13 +238,13 @@ export class ModalComponent {
                 }
               );
             }
-            if(this.imageFileUsu){
+            if (this.imageFileUsu) {
               this.usuarioService.upload(this.imageFileUsu).subscribe(
                 (response: any) => {
-                  if(response.filePath){
+                  if (response.filePath) {
                     this.data['RGU_IMG_PROFILE'] = response.filePath;
                   }
-                  const imageUrl = response.filePath;                 
+                  const imageUrl = response.filePath;
                   this.guardarDatos(formData)
                 },
                 (error: any) => {
@@ -249,7 +253,7 @@ export class ModalComponent {
               );
             }
           } else {
-           this.guardarDatos(formData)
+            this.guardarDatos(formData)
           }
         }
       } else {
@@ -260,68 +264,109 @@ export class ModalComponent {
     }
   }
 
-  guardarDatos(formData: any){
-    const service = this.getServiceBasedOnContext();
-    service.saveData(formData).subscribe(
-      (response: any) => {
-        this.closeModal();
-        this.data = [];
-        Swal.fire({
-          title: 'Éxito',
-          text: 'Registro guardado satisfactoriamente',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        }).then(() => {
-          this.save.emit(response);
-          location.reload();
-        });
-        // this.intentoFallido = false; 
-        // this.botonHabilitado = true;
+  usuariosEmail() {
+
+  }
+
+guardarDatos(formData: any) {
+
+    this.usuarioService.getData().subscribe({
+      next: (data) => {
+        this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);
+        const emails = this.usuarios.map((item: { RGU_CORREO: string }) => item.RGU_CORREO);
+
+        if (emails.includes(formData.RGU_CORREO)) {
+          Swal.fire({
+            title: 'Correo duplicado',
+            text: 'Este correo ya existe. No se puede actualizar.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          })
+        } else {
+          const service = this.getServiceBasedOnContext();
+      service.saveData(formData).subscribe(
+        (response: any) => {
+          this.closeModal();
+          this.data = [];
+          Swal.fire({
+            title: 'Éxito',
+            text: 'Registro guardado satisfactoriamente',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            this.save.emit(response);
+            location.reload();
+          });
+          // this.intentoFallido = false; 
+          // this.botonHabilitado = true;
+        },
+        (error: any) => {
+          console.error('Error al guardar los datos:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo guardar el registro',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+          // this.intentoFallido = true; 
+          // this.botonHabilitado = false;
+        }
+
+      );
+        }
       },
-      (error: any) => {
-        console.error('Error al guardar los datos:', error);
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo guardar el registro',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-        // this.intentoFallido = true; 
-        // this.botonHabilitado = false;
+      error: (err) => {
+        console.error('Error obteniendo usuarios:', err);
       }
-    );
+    });
   }
 
   actualizarDatos(formData: any) {
-    const service = this.getServiceBasedOnContext();
-    service.updateData(formData).subscribe(
-      (response: any) => {
-        this.closeModal();
-        this.data = [];
-        Swal.fire({
-          title: 'Éxito',
-          text: 'Registro editado satisfactoriamente',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        }).then(() => {
-          this.save.emit(response);
-          location.reload();
-        });
-        // this.intentoFallido = false; 
-        // this.botonHabilitado = true;
+
+    this.usuarioService.getData().subscribe({
+      next: (data) => {
+        this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);
+        const emails = this.usuarios.map((item: { RGU_CORREO: string }) => item.RGU_CORREO);
+
+        if (emails.includes(formData.RGU_CORREO)) {
+          Swal.fire({
+            title: 'Correo duplicado',
+            text: 'Este correo ya existe. No se puede actualizar.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          })
+        } else {
+          const service = this.getServiceBasedOnContext();
+          service.updateData(formData).subscribe(
+            (response: any) => {
+              this.closeModal();
+              this.data = [];
+              Swal.fire({
+                title: 'Éxito',
+                text: 'Registro editado satisfactoriamente',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                this.save.emit(response);
+                location.reload();
+              });
+            },
+            (error: any) => {
+              console.error('Error al editar los datos:', error);
+              Swal.fire({
+                title: 'Error',
+                text: 'No se pudo editar el registro',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          );
+        }
       },
-      (error: any) => {
-        console.error('Error al editar los datos:', error);
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo editar el registro',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-        // this.intentoFallido = true; 
-        // this.botonHabilitado = false;
+      error: (err) => {
+        console.error('Error obteniendo usuarios:', err);
       }
-    );
+    });
   }
 
   private getServiceBasedOnContext() {
@@ -349,7 +394,7 @@ export class ModalComponent {
         return this.serviceMap['Proprov'];
       default:
         console.error('Contexto no encontrado para el título:', this.title);
-      return null;
+        return null;
     }
   }
   handleFieldChange(fieldId: string, value: any) {
@@ -402,9 +447,9 @@ export class ModalComponent {
     this.pedidoService.getData().subscribe(data => {
       console.log(pedId, 'idiota');
       const pedidosFiltrados = data.filter((pedido: { PED_ID: number; }) => pedido.PED_ID === pedId);
-  
+
       const productosMap = new Map<string, number>(); // Para evitar duplicados
-  
+
       pedidosFiltrados.forEach((pedido: { PED_INFO: string | any[]; }) => {
         if (typeof pedido.PED_INFO === 'string') {
           try {
@@ -423,13 +468,13 @@ export class ModalComponent {
           }
         }
       });
-  
+
       // Convertir el Map a un array de promesas para obtener los detalles de los productos
       const productPromises = Array.from(productosMap.keys()).map(id =>
         this.prodventaService.getProVenById(id).toPromise().then(data => ({
           nombre: data.PROD_VENTA_NOMBRE,
           precio: data.PROD_VENTA_PRECIO,
-          descripcion:data.PROD_VENTA_DESCRIPCION,
+          descripcion: data.PROD_VENTA_DESCRIPCION,
           cantidad: productosMap.get(id)!,
           subtotal: data.PROD_VENTA_PRECIO * productosMap.get(id)!
         })).catch(error => {
@@ -437,7 +482,7 @@ export class ModalComponent {
           return null; // Manejar el error
         })
       );
-  
+
       // Esperar a que todas las promesas se resuelvan
       Promise.all(productPromises).then(results => {
         this.pedidos = results.filter(result => result !== null); // Filtrar resultados nulos en caso de error

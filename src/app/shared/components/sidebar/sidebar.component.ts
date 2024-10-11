@@ -19,16 +19,23 @@ export class SidebarComponent implements OnInit {
     }
   }
   isToggled: boolean = false;
-
+  userRole: any;
   // Método para alternar el estado
   toggleIcon() {
     this.isToggled = !this.isToggled;
   }
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router,
+     private route: ActivatedRoute,
+     
+     ) {this.userRole = sessionStorage.getItem('role') || '';}
 
   isActive(route: string): boolean {
     return this.router.url === route;
+  }
+
+  isWorkerRole(): boolean {
+    return this.userRole === 'Trabajador';
   }
   
 }

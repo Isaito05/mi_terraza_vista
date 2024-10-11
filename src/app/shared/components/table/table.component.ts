@@ -32,7 +32,7 @@ export class TableComponent {
 
   ngOnInit() {
     this.filteredData = [...this.data];
-    console.log(this.title)
+   // console.log(this.filteredData)
 
     // Establecer la columna por defecto para ordenamiento, por ejemplo, la primera columna
     if (this.columns.length > 0) {

@@ -89,12 +89,6 @@ const routes: Routes = [
       },
     ]
   },
-
-  {
-    path: '',
-    redirectTo: 'home', // Redirige a la página de home
-    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
-  },
   {
     path: '**',
     redirectTo: 'home', // Redirige a la página de home

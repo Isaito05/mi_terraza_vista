@@ -18,6 +18,12 @@ tbody, td, tfoot, th, thead, tr {
 
 table {
     border-bottom: 0 !important;
+    
+}
+
+table td, 
+table th {
+    text-transform: capitalize; /* Transforma la primera letra de cada palabra a mayúscula */
 }
 
 .form-control:focus {

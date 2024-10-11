@@ -12,12 +12,13 @@ import { CanComponentDeactivate, CanDeactivateType } from 'src/app/guard/can-dea
 })
 export class RegisterComponent implements OnInit, CanComponentDeactivate {
   registerForm!: FormGroup;
-  cmbTipo = 'password'; 
-  cmbTipoC = 'password'; 
+  cmbTipo = 'password';
+  cmbTipoC = 'password';
   intentoFallido: boolean = false;
   botonHabilitado: boolean = true;
+  usuarios: any[] = [];
 
-  constructor(private fb: FormBuilder,  private router: Router, private usuarioService: UsuarioService) {}
+  constructor(private fb: FormBuilder, private router: Router, private usuarioService: UsuarioService) { }
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -56,87 +57,129 @@ export class RegisterComponent implements OnInit, CanComponentDeactivate {
     }
 
     if (!hasUpperCase) {
-      return { uppercase: true };    
+      return { uppercase: true };
     } else if (!hasNumber) {
       return { number: true };
     } else if (!hasSpecialChar) {
       return { specialchar: true };
     }
-  
-    return  null;
+
+    return null;
   }
 
   passwordsMatchValidator(form: FormGroup) {
     const { RGU_PASSWORD, confirmPassword } = form.controls;
     if (!RGU_PASSWORD || !confirmPassword) {
       return null;
-    } 
+    }
 
     if (RGU_PASSWORD.value !== confirmPassword.value) {
       confirmPassword.setErrors({ mismatch: true });
     } else {
       confirmPassword.setErrors(null);
     }
- 
-    return null; 
+
+    return null;
   }
 
   validacionEmail(control: AbstractControl): { [key: string]: boolean } | null {
     const emailRegex = (/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|outlook)\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,4})?$/);
     const email = control.value;
     return emailRegex.test(email) ? null : { invalidEmail: true }
-  }  
+  }
 
   verContrasena(campo: 'cmbTipo' | 'cmbTipoC'): void {
     this[campo] = this[campo] === 'password' ? 'text' : 'password';
   }
 
-  onSubmit() {
-    if (this.registerForm.valid) {
-      const formData = this.registerForm.value;
-      delete formData.confirmPassword;
+  guardarDatos(formData: any) {
 
-      this.usuarioService.saveData(formData).subscribe(
-      {
-        next: (response) => {
-          console.log('Registro exitoso', response);
+    this.usuarioService.getData().subscribe({
+      next: (data) => {
+        this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);
+        const emails = this.usuarios.map((item: { RGU_CORREO: string }) => item.RGU_CORREO);
+
+        if (emails.includes(formData.RGU_CORREO)) {
           Swal.fire({
-            icon: 'success',
-            title: '¡Registro exitoso!',
-            text: 'Serás redirigido a la página de login.',
-            showConfirmButton: false,
-            timer: 3000 
-          }).then(() => {
-            this.registerForm.reset();
-            this.router.navigate(['/login']);
-          });
-          this.intentoFallido = false; 
-          this.botonHabilitado = true;
-        },
-        error: (error) => {
-          console.error('Error al guardar los datos:', error);
-          Swal.fire({
-            title: 'Error',
-            text: 'No se pudo guardar el registro',
+            title: 'Correo duplicado',
+            text: 'Este correo ya existe. No se puede actualizar.',
             icon: 'error',
             confirmButtonText: 'OK'
-          });
-          this.intentoFallido = true; 
-          this.botonHabilitado = false;
-        }      
-      });
-    }else {
-      console.log('Formulario inválido');
-    }
+          })
+        } else {
+          
+          
+        }
+      },
+      error: (err) => {
+        console.error('Error obteniendo usuarios:', err);
+      }
+    });
   }
 
+  onSubmit() {
+    const formData = this.registerForm.value;
+    this.usuarioService.getData().subscribe({
+      next: (data) => {
+        this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);
+        const emails = this.usuarios.map((item: { RGU_CORREO: string }) => item.RGU_CORREO);
+
+        if (emails.includes(this.registerForm.value.RGU_CORREO)) {
+          Swal.fire({
+            title: 'Correo duplicado',
+            text: 'Este correo ya existe. No se puede actualizar.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          })
+        } else {
+          if (this.registerForm.valid) {  
+            delete formData.confirmPassword;
+            this.usuarioService.saveData(formData).subscribe(
+              {
+                next: (response) => {
+                  console.log('Registro exitoso', response);
+                  Swal.fire({
+                    icon: 'success',
+                    title: '¡Registro exitoso!',
+                    text: 'Serás redirigido a la página de login.',
+                    showConfirmButton: false,
+                    timer: 3000
+                  }).then(() => {
+                    this.registerForm.reset();
+                    this.router.navigate(['/login']);
+                  });
+                  this.intentoFallido = false;
+                  this.botonHabilitado = true;
+                },
+                error: (error) => {
+                  console.error('Error al guardar los datos:', error);
+                  Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo guardar el registro',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                  });
+                  this.intentoFallido = true;
+                  this.botonHabilitado = false;
+                }
+              });
+          } else {
+            console.log('Formulario inválido');
+          }
+        }
+      }
+    })
+    }
+    
+    
+
   canDeactivate(): CanDeactivateType {
-    if (this.registerForm.dirty && !this.registerForm.invalid) {
+      if(this.registerForm.dirty && !this.registerForm.invalid) {
       return confirm('Tienes cambios sin guardar. ¿Estás seguro de que deseas salir?');
     }
     return true;
   }
-  
-} 
- 
+
+}
+
 
