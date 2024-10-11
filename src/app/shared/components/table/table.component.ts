@@ -1,3 +1,4 @@
+import { HtmlParser } from '@angular/compiler';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import * as bootstrap from 'bootstrap';
 import { environment } from 'src/environments/environment';
@@ -24,11 +25,14 @@ export class TableComponent {
   filteredData: any[] = [...this.data];
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
-  chevronLeftIcon = '<i class="fa-solid fa-chevron-left"></i>';
-  chevronRightIcon = '<i class="fa-solid fa-chevron-right"></i>';
+
+  cbTrabajador: boolean = false;
+  cbCliente: boolean = false;
+  private tooltip: bootstrap.Tooltip | null = null;
 
   ngOnInit() {
     this.filteredData = [...this.data];
+    console.log(this.title)
 
     // Establecer la columna por defecto para ordenamiento, por ejemplo, la primera columna
     if (this.columns.length > 0) {
@@ -37,15 +41,75 @@ export class TableComponent {
     }
   }
 
+  getImageTooltip(item: any, key: string): string {
+    const imageUrl = this.getImageUrl(this.getPropertyValue(item, key));
+    return `<img src="${imageUrl}" width="110" height="95" />`;
+  }
+
   updateFilter(event: any) {
-    const val = event.target.value.toLowerCase(); // Obtener el valor del input
-    console.log(val)
+    // Obtener el valor del input de búsqueda (si es un campo de texto)
+    let val = ''; 
+    if (event.target.type === 'text') {
+      val = event.target.value.toLowerCase(); // Solo procesar el valor si es un input de texto
+    }
+  
+    // Variables para los filtros de checkbox
+    const buscarTrabajador = this.cbTrabajador;
+    const buscarCliente = this.cbCliente;
+  
+    console.log("Valor de búsqueda (input):", val);
+    console.log("Estado cbTrabajador:", buscarTrabajador);
+    console.log("Estado cbCliente:", buscarCliente);
+  
+    // Filtrado de datos
     this.filteredData = this.data.filter((item) => {
-      return Object.values(item).some((field: any) => {
+      const cumpleBusqueda = Object.values(item).some((field: any) => {
         return field && field.toString().toLowerCase().includes(val);
       });
-    })
+  
+      const esTrabajador = item.RGU_ROL.toLowerCase() === 'trabajador'; // Asegúrate de que el campo `rol` sea el correcto
+      const esCliente = item.RGU_ROL.toLowerCase() === 'cliente'; // Asegúrate de que el campo `rol` sea el correcto
+  
+      // Verificar el filtro basado en checkboxes
+      const cumpleCheckboxes = 
+        (buscarTrabajador && esTrabajador) || 
+        (buscarCliente && esCliente) || 
+        (!buscarTrabajador && !buscarCliente); // Sin checkbox marcado, mostrar todos
+  
+      // Retornar si cumple con la búsqueda y los checkboxes
+      return cumpleBusqueda && cumpleCheckboxes;
+    });
+  
+    console.log("Registros filtrados:", this.filteredData.length);
   }
+
+  // updateFilter(event: any) {
+  //   let val = ''; // Obtener el valor del input
+  //   if (event.target.type === 'text') {
+  //     val = event.target.value.toLowerCase(); // Solo procesar el valor si es un input de texto
+  //   }
+  //     // Condicionales para modificar el valor de búsqueda basado en los checkboxes
+  //   if (this.cbTrabajador && !this.cbCliente) {
+  //     // Si sólo está marcado Trabajador
+  //     val = val ? `${val} trabajador` : 'trabajador';
+  //   } else if (!this.cbTrabajador && this.cbCliente) {
+  //     // Si sólo está marcado Cliente
+  //     val = val ? `${val} cliente` : 'cliente';
+  //   } else if (this.cbTrabajador && this.cbCliente) {
+  //     // Si ambos están marcados
+  //     val = val ? `${val} trabajador cliente` : 'trabajador cliente';
+  //   } 
+  //   console.log("Valor de búsqueda final:", val);
+
+  // // Filtrado de datos
+  // this.filteredData = this.data.filter((item) => {
+  //   return Object.values(item).some((field: any) => {
+  //     return field && field.toString().toLowerCase().includes(val);
+  //   });
+  // });
+
+  // console.log("Registros filtrados:", this.filteredData.length);
+  // }
 
   sortData(columnKey: string) {
     console.log(columnKey)
@@ -105,8 +169,10 @@ export class TableComponent {
   ngAfterViewInit() {
     // Asegúrate de que los tooltips se inicialicen solo cuando el DOM esté completamente cargado
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl, {
+        html: true, // Permitir HTML en el tooltip
+      });
     });
   }
 

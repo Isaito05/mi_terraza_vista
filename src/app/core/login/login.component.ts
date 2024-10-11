@@ -62,6 +62,7 @@ export class LoginComponent {
           sessionStorage.setItem('username', decodedToken.nombre);
           sessionStorage.setItem('role', decodedToken.rol);        
           sessionStorage.setItem('apellido', decodedToken.apellido);        
+          sessionStorage.setItem('i_perfil', decodedToken.i_perfil);        
           Swal.fire({
             title: `¡Bienvenido de nuevo, ${miNombre}!`,
             text: "Has iniciado sesión correctamente.",

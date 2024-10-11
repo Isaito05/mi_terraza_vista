@@ -21,7 +21,15 @@ body {
     margin: 0 0.1rem !important;
     color: rgb(20 110 190) !important;
     font-weight: bold;
-  }
+}
+
+.tooltip-inner {
+    background-color: transparent !important;
+
+}
+.tooltip-inner img {
+    border-radius: 9px !important;
+}
 
 .font {
     font-family: "Bebas Neue", sans-serif;

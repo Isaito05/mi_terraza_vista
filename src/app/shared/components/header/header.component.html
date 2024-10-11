@@ -6,14 +6,9 @@
       <span class="m-text"> {{ username }} </span> <span class="m-text">{{ apellido }}</span> / <span class="m-text" style="font-weight: bold;">{{ role }}</span>
     </span>
   </div>
-  <!-- <div class="p-2">
-    <li class="nav-item">
-      <i class="bi bi-bell"></i>
-    </li>
-  </div> -->
   <div class="aling-items-end p-2 me-3">
     <div class="dropdown">
-      <img src="assets/images/1727215005376.jpg" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer" data-bs-toggle="dropdown" aria-expanded="false"/>
+      <img [src]="imangenPerfil" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer" data-bs-toggle="dropdown" aria-expanded="false" (error)="imagenPorDefecto($event)"/>
       <span class="status-indicator"></span>
       <ul class="dropdown-menu">
         <li><a class="dropdown-item active" href="#">Another action</a></li>

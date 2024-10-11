@@ -1,19 +1,18 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl  } from '@angular/forms';
-import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
-import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
-import { PagoService } from 'src/app/features/pago/service/pago.service';
-import { BodegaService } from 'src/app/features/bodega/service/bodega.service';
-import { ProveedorService } from 'src/app/features/proveedor/service/proveedor.service';
-import { Observable } from 'rxjs';
+import { FormBuilder, FormGroup, Validators, AbstractControl  } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ImageUploadService } from 'src/app/core/services/image-upload.service';
-import Swal from 'sweetalert2';
-import { ProprovService } from 'src/app/features/proprov/service/proprov.service';
-import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
-import { AuthService } from 'src/app/core/auth/auth.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { BodegaService } from 'src/app/features/bodega/service/bodega.service';
+import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
+import { ProprovService } from 'src/app/features/proprov/service/proprov.service';
+import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
+import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
+import { PagoService } from 'src/app/features/pago/service/pago.service';
+import { ProveedorService } from 'src/app/features/proveedor/service/proveedor.service';
+import { environment } from 'src/environments/environment';
+
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
@@ -34,10 +33,16 @@ export class ModalComponent {
   @Output() onRegisterSuccess = new EventEmitter<any>();
   @Output() confirmAction = new EventEmitter<void>();
   imageFile: File | null = null;
+  imageFileUsu: File | null = null;
   previsualizacion: string | null = null;
   imageUrl: any
 
+  intentoFallido: boolean = false;
+  botonHabilitado: boolean = true;
 
+  // showProfilePicture: boolean = false;
+  
+  showProfilePicture: string | ArrayBuffer | null = null;
   pedidos: any[] = [];
   result: any[] = [];
   acc: any[] = [];
@@ -73,38 +78,12 @@ export class ModalComponent {
 
   ngOnInit() {
     this.initializeForm();
-    // Crear un formulario con controles para cada campo
-    this.form = this.fb.group(
-      this.fields.reduce((acc, field) => {
-        let validators = [];
-        if(field.type === 'email') {
-          validators.push(Validators.required, Validators.email, this.validacionEmail);
-        } else if(field.type === 'text' && field.label.toLowerCase().includes('telefono')) {
-          validators.push(Validators.required, Validators.pattern(/^\d{10}$/));
-        } else if(field.type === 'password') {
-          validators.push(Validators.required, Validators.minLength(8), this.validacionContraseña)
-        }
-
-        acc[field.id] = [this.data[field.id] || ''];
-        return acc;
-      }, {} as { [key: string]: any }) // Asegúrate de proporcionar el tipo aquí
-    );
-  }
-
-  validacionEmail(control: AbstractControl) {
-    const email = control.value;
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email) ? null : { invalidEmail: true }
-  }
-
-  validacionContraseña(control: AbstractControl) {
-    const password = control.value;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    const valid = hasUpperCase && hasNumber && hasSpecialChar;
-    return valid ? null : { weakPassword: true };
+    this.form.valueChanges.subscribe(() => {
+      if (this.intentoFallido) {
+        this.intentoFallido = false // Habilita el formulario cuando hay cambios
+        this.botonHabilitado = true
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -114,21 +93,75 @@ export class ModalComponent {
   private initializeForm() {
     this.form = this.fb.group(
       this.fields.reduce((acc, field) => {
-        // Verifica si estamos en modo edición o visualización de detalles
-        if (this.isEditing || this.isViewingDetails) {
-          acc[field.id] = [this.data[field.id] || ''];
-        } else {
-          acc[field.id] = ['']; // En modo registro, inicializa vacío
+        let validators = [];
+  
+        // Agregar validadores según el tipo de campo
+        if (field.type === 'email') {
+          validators.push(Validators.required, Validators.email, this.validacionEmail);
+        // } else if (field.type === 'text' && field.label.toLowerCase().includes('telefono')) {
+        //   validators.push(Validators.required, Validators.pattern(/^\d{10}$/));
+        } else if (field.type === 'password') {
+          validators.push(Validators.required, Validators.minLength(8), this.validacionContrasena);
+        } else if (field.type === 'text' && field.label.toLowerCase().includes('nombre')) {
+          validators.push(Validators.required); // Validador para el campo Nombres
+        } else if (field.type === 'text' && field.label.toLowerCase().includes('apellido')) {
+          validators.push(Validators.required); // Validador para el campo Apellidos
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('telefono')) {
+          // Solo acepta números con el pattern
+          validators.push(Validators.pattern(/^\d{10}$/));
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('nro. de identificación')) {
+          // Solo acepta números y debe tener entre 8 y 10 dígitos
+          validators.push(Validators.pattern(/^\d{8,10}$/));
+        } else if (field.type === 'select') {
+          validators.push(Validators.required); // Agregar validador requerido
         }
+  
+        acc[field.id] = [this.data[field.id] || '', validators];
         return acc;
-      }, {} as { [key: string]: any })
+      }, {showProfilePicture: [false]} as { [key: string]: any},)
     );
   
-    // Carga los pedidos solo si estamos en el modo de detalles
     if (this.title === 'Detalles del pedido') {
       this.Tablapedido(this.data['PED_ID']);
-    }  
+    }
+
+    if (this.data['RGU_IMG_PROFILE']) {
+      this.previsualizacion = `${environment.apiUrlHttp}${this.data['RGU_IMG_PROFILE']}`;
+    } else if(this.data['RGU_IMG_PROFILE'] === '') {
+      this.previsualizacion = ''
+    }
   }
+
+  validacionEmail(control: AbstractControl): { [key: string]: boolean } | null {
+    const emailRegex = (/^[a-zA-Z0-9._%+-]+@(gmail|hotmail)\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,4})?$/);
+    const email = control.value;
+    return emailRegex.test(email) ? null : { invalidEmail: true }
+  }
+
+  validacionContrasena(control: AbstractControl) {
+    const password = control.value;
+
+    const hasMinLength = password ? password.length >= 8 : false;
+    // const hasMaxLength = password ? password.length <= 8 : false;
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&_*(),.?":{}|<>]/.test(password);
+
+    if (!hasMinLength) {
+      return { minlength: true };
+    }
+
+    if (!hasUpperCase) {
+      return { uppercase: true };    
+    } else if (!hasNumber) {
+      return { number: true };
+    } else if (!hasSpecialChar) {
+      return { specialchar: true };
+    }
+  
+    return  null;
+  }  
 
   formatCurrency(value: any): string {
     if (value == null) {
@@ -158,100 +191,65 @@ export class ModalComponent {
       const formValues = this.form.value; // Obtén los valores del formulario
       this.data = { ...formValues };
       const formData = this.data;
-      console.log('Datos que se enviarán:', formData);
       const service = this.getServiceBasedOnContext();
       if (service) {
         if (this.isEditing) {
-          console.log(formData, 'yei');
-          service.updateData(formData).subscribe(
-            (response: any) => {
-              this.closeModal();
-              this.data = [];
-              Swal.fire({
-                title: 'Éxito',
-                text: 'Registro editado satisfactoriamente',
-                icon: 'success',
-                confirmButtonText: 'OK'
-              }).then(() => {
-                this.save.emit(response);
-                location.reload();
-              });
-            },
-            (error: any) => {
-              console.error('Error al editar los datos:', error);
-              Swal.fire({
-                title: 'Error',
-                text: 'No se pudo editar el registro',
-                icon: 'error',
-                confirmButtonText: 'OK'
-              });
-            }
-          );
-        } else {
-          if (this.imageFile) {
-            this.prodventaService.upload(this.imageFile).subscribe(
-              (response: any) => {
-                if(response.filePath){
-                  this.data['PROD_VENTA_IMAGEN'] = response.filePath;
-                }
-                const imageUrl = response.filePath; // Guarda la ruta de la imagen
-                console.log(this.imageUrl); // Suponiendo que el servidor devuelve la URL de la imagen
-                // this.data[fieldId] = imageUrl; // Actualiza la propiedad correspondiente en el objeto `data`
-                console.log('Imagen subida exitosamente:', imageUrl);
-                service.saveData(formData).subscribe(
-                  (response: any) => {
-                    this.closeModal();
-                    this.data = [];
-                    Swal.fire({
-                      title: 'Éxito',
-                      text: 'Registro guardado satisfactoriamente',
-                      icon: 'success',
-                      confirmButtonText: 'OK'
-                    }).then(() => {
-                      this.save.emit(response);
-                      location.reload();
-                    });
-                  },
-                  (error: any) => {
-                    console.error('Error al guardar los datos:', error);
-                    Swal.fire({
-                      title: 'Error',
-                      text: 'No se pudo guardar el registro',
-                      icon: 'error',
-                      confirmButtonText: 'OK'
-                    });
+          if(this.imageFileUsu) {
+            if(this.imageFileUsu){
+              this.usuarioService.upload(this.imageFileUsu).subscribe(
+                (response: any) => {
+                  if(response.filePath){
+                    this.data['RGU_IMG_PROFILE'] = response.filePath;
+                    sessionStorage.setItem('i_perfil', response.filePath);
                   }
-                );
-              },
-              (error: any) => {
-                console.error('Error al subir la imagen:', error);
-              }
-            );
+                  const imageUrl = response.filePath; // Guarda la ruta de la imagen  
+                  delete formData['showProfilePicture'];
+                  this.actualizarDatos(formData);                
+                },
+                (error: any) => {
+                  console.error('Error al subir la imagen:', error);
+                }
+              );
+            }
           } else {
-            service.saveData(formData).subscribe( 
-              (response: any) => {
-                this.closeModal();
-                this.data = [];
-                Swal.fire({
-                  title: 'Éxito',
-                  text: 'Registro guardado satisfactoriamente',
-                  icon: 'success',
-                  confirmButtonText: 'OK'
-                }).then(() => {
-                  this.save.emit(response);
-                  location.reload();
-                });
-              },
-              (error: any) => {
-                console.error('Error al guardar los datos:', error);
-                Swal.fire({
-                  title: 'Error',
-                  text: 'No se pudo guardar el registro',
-                  icon: 'error',
-                  confirmButtonText: 'OK'
-                });
-              }
-            );
+            delete formData['showProfilePicture'];
+            this.actualizarDatos(formData);
+          }
+        } else {
+          if (this.imageFile || this.imageFileUsu) {
+            if(this.imageFile){
+              this.prodventaService.upload(this.imageFile).subscribe(
+                (response: any) => {
+                  if(response.filePath){
+                    this.data['PROD_VENTA_IMAGEN'] = response.filePath;
+                  }
+                  const imageUrl = response.filePath; // Guarda la ruta de la imagen
+                  console.log(this.imageUrl); // Suponiendo que el servidor devuelve la URL de la imagen
+                  
+                  console.log('Imagen subida exitosamente:', imageUrl);
+                  this.guardarDatos(formData)
+                },
+                (error: any) => {
+                  console.error('Error al subir la imagen:', error);
+                }
+              );
+            }
+            if(this.imageFileUsu){
+              this.usuarioService.upload(this.imageFileUsu).subscribe(
+                (response: any) => {
+                  if(response.filePath){
+                    this.data['RGU_IMG_PROFILE'] = response.filePath;
+                  }
+                  const imageUrl = response.filePath;                 
+                  this.guardarDatos(formData)
+                },
+                (error: any) => {
+                  console.error('Error al subir la imagen:', error);
+                }
+              );
+            }
+          } else {
+           this.guardarDatos(formData)
           }
         }
       } else {
@@ -260,6 +258,70 @@ export class ModalComponent {
     } else {
       console.error('Formulario inválido');
     }
+  }
+
+  guardarDatos(formData: any){
+    const service = this.getServiceBasedOnContext();
+    service.saveData(formData).subscribe(
+      (response: any) => {
+        this.closeModal();
+        this.data = [];
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Registro guardado satisfactoriamente',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.save.emit(response);
+          location.reload();
+        });
+        // this.intentoFallido = false; 
+        // this.botonHabilitado = true;
+      },
+      (error: any) => {
+        console.error('Error al guardar los datos:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo guardar el registro',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        // this.intentoFallido = true; 
+        // this.botonHabilitado = false;
+      }
+    );
+  }
+
+  actualizarDatos(formData: any) {
+    const service = this.getServiceBasedOnContext();
+    service.updateData(formData).subscribe(
+      (response: any) => {
+        this.closeModal();
+        this.data = [];
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Registro editado satisfactoriamente',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.save.emit(response);
+          location.reload();
+        });
+        // this.intentoFallido = false; 
+        // this.botonHabilitado = true;
+      },
+      (error: any) => {
+        console.error('Error al editar los datos:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo editar el registro',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        // this.intentoFallido = true; 
+        // this.botonHabilitado = false;
+      }
+    );
   }
 
   private getServiceBasedOnContext() {
@@ -323,7 +385,11 @@ export class ModalComponent {
     console.log('File input changed:', event);
     const file = event.target.files[0];
     if (file) {
-      this.imageFile = file;
+      if (fieldId === 'PROD_VENTA_IMAGEN') {
+        this.imageFile = file;
+      } else if (fieldId === 'RGU_IMG_PROFILE') {
+        this.imageFileUsu = file;
+      }
       this.extraerBase64(file).then((image: any) => {
         this.previsualizacion = image.base; // Establece la vista previa
       }).catch((error) => {

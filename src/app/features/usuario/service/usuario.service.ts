@@ -15,6 +15,7 @@ export interface Usuario {
 })
 export class UsuarioService {
   private apiUrl = `${environment.apiUrlHttp}/rgu-usuario`;
+  private apiUrlF = 'http://localhost:3000/upload/file'; 
   constructor(private http: HttpClient) { }
 
   // Método para obtener datos de la API
@@ -36,6 +37,13 @@ export class UsuarioService {
     console.log('Datos que se van a enviar para actualizar:', data);
     const url = `${this.apiUrl}/${data.RGU_ID}`;
     return this.http.put<any>(url, data);
+  }
+
+  upload(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('files', file, file.name);
+
+    return this.http.post(this.apiUrlF, formData);
   }
 
   deleteData(data: any): Observable<any> {

@@ -127,8 +127,7 @@ export class UsuarioComponent implements OnInit {
   }
 
   camposUsuario() {
-    this.modalFields = [
-      { id: 'RGU_ID', label: 'ID', type: 'number' },
+    this.modalFields = [      
       { id: 'RGU_NOMBRES', label: 'Nombres', type: 'text' },
       { id: 'RGU_APELLIDOS', label: 'Apellidos', type: 'text' },
       { id: 'RGU_GENERO', label: 'Género', type: 'select', options: [
@@ -138,7 +137,7 @@ export class UsuarioComponent implements OnInit {
       ]},
       { id: 'RGU_DIRECCION', label: 'Dirección', type: 'text' },
       { id: 'RGU_CORREO', label: 'Correo', type: 'email' },
-      { id: 'RGU_TELEFONO', label: 'Teléfono', type: 'number' },
+      { id: 'RGU_TELEFONO', label: 'Telefono', type: 'number' },
       { id: 'RGU_ROL', label: 'Rol', type: 'select', options: [
         { value: 'Administrador', label: 'Administrador' },
         { value: 'Trabajador', label: 'Trabajador' },
@@ -151,10 +150,15 @@ export class UsuarioComponent implements OnInit {
       ]},
       { id: 'RGU_IDENTIFICACION', label: 'Nro. de identificación', type: 'number' },
     ];
-
+    
     // Solo agregar el campo de contraseña si no se está editando ni visualizando detalles
     if (!this.isEditing && !this.isViewingDetails) {
       this.modalFields.push({ id: 'RGU_PASSWORD', label: 'Contraseña', type: 'password' });
+    }
+    
+    if(this.isEditing) {
+      this.modalFields.push({ id: 'RGU_IMG_PROFILE', label: 'Foto de perfil', type: 'file' }),
+      this.modalFields.push({ id: 'RGU_ID', label: 'ID', type: 'number' });
     }
   }
 

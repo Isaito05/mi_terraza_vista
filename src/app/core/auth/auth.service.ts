@@ -33,6 +33,7 @@ export class AuthService {
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('role');
     sessionStorage.removeItem('apellido');
+    sessionStorage.removeItem('i_perfil');
     this.router.navigate(['/login']);
   }
 

@@ -12,37 +12,83 @@
                     <div *ngFor="let field of fields" class="mb-3">
                         <ng-container *ngIf="field.label !== 'ID'">
                             <label [for]="field.id" class="form-label">{{ field.label }}</label>
-    
+
                             <input
                                 *ngIf="field.type !== 'select' && field.type !== 'file' && field.type !== 'datetime-local'"
-                                [type]="field.type" class="form-control" [id]="field.id" [name]="field.id"
-                                formControlName="{{field.id}}"/>
-    
+                                [type]="field.type" 
+                                class="form-control" 
+                                [id]="field.id" 
+                                [name]="field.id"
+                                [formControlName]="field.id" 
+                            />
+                            <div *ngIf="form.get(field.id)?.invalid && form.get(field.id)?.touched" class="text-danger">
+                                <div *ngIf="form.get(field.id)?.errors?.['required'] &&  field.label.toLowerCase() !== 'telefono' && field.type !== 'email' && field.type !== 'password' && field.type !== 'select'">Este campo es obligatorio</div>
+                                <div *ngIf="field.type === 'email' && form.get(field.id)?.errors?.['invalidEmail']">El correo debe contener un dominio válido ejp: &#64;gmail.com</div>
+                                <div *ngIf="field.type === 'password' && form.get(field.id)?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres</div>
+                                <div *ngIf="field.type === 'password' && form.get(field.id)?.errors?.['uppercase']">La contraseña debe tener al menos una mayúscula</div>
+                                <div *ngIf="field.type === 'password' && form.get(field.id)?.errors?.['number']">La contraseña debe contener al menos un número</div>
+                                <div *ngIf="field.type === 'password' && form.get(field.id)?.errors?.['specialchar']">La contraseña debe contener un caracter especial</div>
+                                <div *ngIf="field.type === 'number' && field.label.toLowerCase().includes('telefono') && form.get(field.id)?.errors?.['pattern']">El teléfono debe tener 10 dígitos</div>
+                                <div *ngIf="field.type === 'number' && field.label.toLowerCase().includes('nro. de identificación') && form.get(field.id)?.errors?.['pattern']">La identificación debe tener entre 8 y 10 dígitos</div>
+                            </div>
+
                             <!-- Renderiza un select para los campos de tipo 'select' -->
-                            <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id" [name]="field.id"
-                                formControlName="{{field.id}}" >
+                            <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id"
+                                [name]="field.id" [formControlName]="field.id">
                                 <option *ngFor="let option of field.options" [value]="option.value">
                                     {{ option.label }}
                                 </option>
                             </select>
-    
+                            <div *ngIf="form.get(field.id)?.invalid && form.get(field.id)?.touched" class="text-danger">
+                                <div *ngIf="form.get(field.id)?.errors?.['required'] && field.label.toLowerCase() !== 'telefono' && field.type !== 'email' && field.type !== 'password' && field.type !== 'text'">Este campo es obligatorio</div>
+                            </div>
+
                             <!-- Renderiza un input tipo archivo para imágenes -->
-                            <input *ngIf="field.type === 'file'" [type]="field.type" class="form-control" [id]="field.id"
-                                [name]="field.id" (change)="handleFileInputChange($event, field.id)"
-                                [accept]="field.accept || 'image/*'"/>
-    
-                                <div *ngIf="field.type === 'file' && previsualizacion" class="mt-3">
-                                    <img [src]="previsualizacion" alt="Vista previa" class="img-thumbnail" style="max-width: 200px;" />
-                                </div>
+                            <input *ngIf="field.type === 'file'" [type]="field.type" class="form-control"
+                                [id]="field.id" [name]="field.id" (change)="handleFileInputChange($event, field.id)"
+                                [accept]="field.accept || 'image/*'" />
+
+                            <div *ngIf="field.type === 'file' && previsualizacion" class="mt-3">
+                                <img *ngIf="previsualizacion" [src]="previsualizacion" alt="Vista previa" class="img-thumbnail"
+                                    style="max-width: 200px;" />
+                            </div>
+
                             <!-- Renderiza un input tipo datetime-local para fechas -->
                             <input *ngIf="field.type === 'datetime-local'" type="datetime-local" class="form-control"
                                 [id]="field.id" [name]="field.id" [ngModel]="getFormattedDate(field.id)"
-                                (ngModelChange)="data[field.id] = $event"  />
-    
-                                <!-- Vista previa de la imagen -->
+                                (ngModelChange)="data[field.id] = $event" />
                         </ng-container>
-
                     </div>
+                    <div *ngIf="title === 'Registrar usuario'">
+                        <div class="mb-1">
+                            <label>
+                                <input type="checkbox" [formControlName]="'showProfilePicture'" /> Agregar foto de
+                                perfil
+                            </label>
+                        </div>
+
+                        <div *ngIf="form.get('showProfilePicture')?.value" class="mb-3">
+                            <!-- <label for="profilePic" class="form-label">Foto de perfil</label> -->
+                            <input 
+                                type="file" 
+                                class="form-control" 
+                                id="RGU_IMG_PROFILE"
+                                (change)="handleFileInputChange($event, 'RGU_IMG_PROFILE')" 
+                                accept="image/*" 
+                            />
+                            <div *ngIf="previsualizacion" class="mt-3">
+                                <img [src]="previsualizacion" alt="Vista previa" class="img-thumbnail"
+                                    style="max-width: 200px;" />
+                            </div>
+                            <small 
+                                id="RGU_IMG_PROFILE" 
+                                class="form-text text-secondary font-title"
+                            >
+                                <em>*Campo opcional. Puedes subir una foto, pero no es obligatorio*</em>
+                            </small>
+                        </div>
+                    </div>
+                    <!-- Checkbox para agregar foto de perfil -->
                     <div *ngIf="title === 'Detalles del pedido'">
                         <h6>Información adicional</h6>
                         <div class="table-responsive">
@@ -78,7 +124,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()">
+                <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()" [disabled]="form.invalid || form.disabled">
                     {{ isEditing ? 'Actualizar' : 'Guardar' }}
                 </button>
             </div>
