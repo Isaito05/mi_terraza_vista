@@ -16,6 +16,7 @@ const routes: Routes = [
     title: 'Inicio de sesión',
     loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule), // Ruta de login fuera del layout
   },
+  { path: 'home', component: HomeComponent },
   { 
     path: 'forgot-password', 
     title: 'Recuperar contraseña', 
@@ -33,7 +34,6 @@ const routes: Routes = [
     component: RegisterComponent,
     canDeactivate: [canDeactivateGuard] 
   },
-  { path: 'home', component: HomeComponent },
   { path: 'pages/:pageName', component: DynamicPageComponent },
   {
     path: '',
@@ -91,6 +91,11 @@ const routes: Routes = [
   },
   {
     path: '**',
+    redirectTo: 'home', // Redirige a la página de home
+    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
+  },
+  {
+    path: '',
     redirectTo: 'home', // Redirige a la página de home
     pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
   },
