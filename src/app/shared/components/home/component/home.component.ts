@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, Renderer2, HostListener } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { AfterViewInit, Component, Renderer2, HostListener, OnInit } from '@angular/core';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -9,11 +9,38 @@ declare var $: any;
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements AfterViewInit, OnInit {
 
+  currentFragment: string = '';
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private router: Router, private renderer: Renderer2) { }
+
+
+  ngOnInit(): void {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const urlTree = this.router.parseUrl(this.router.url);
+        this.currentFragment = urlTree.fragment || '';
+
+        // Ajustar el scroll manualmente después de la navegación
+        if (this.currentFragment) {
+          setTimeout(() => {
+            const yOffset = -100; // Offset para ajustar la posición
+            const element = document.getElementById(this.currentFragment);
+            if (element) {
+              const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }, 0);
+        }
+      }
+    });
+  }
+
+  isActive(fragment: string): boolean {
+    return this.currentFragment === fragment;
+  }
 
   // Detectar cambios en el tamaño de la pantalla
   @HostListener('window:resize', ['$event'])

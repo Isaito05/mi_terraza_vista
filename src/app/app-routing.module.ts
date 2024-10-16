@@ -16,6 +16,7 @@ const routes: Routes = [
     title: 'Inicio de sesión',
     loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule), // Ruta de login fuera del layout
   },
+  { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
   { 
     path: 'forgot-password', 
@@ -102,7 +103,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
