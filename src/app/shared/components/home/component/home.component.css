@@ -1,0 +1,7 @@
+.no-after::after {
+    display: none !important;
+}
+
+.p-imagen {
+    padding: 35px 0;
+}

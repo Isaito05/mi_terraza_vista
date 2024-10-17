@@ -11,7 +11,7 @@
       <img [src]="imangenPerfil" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer" data-bs-toggle="dropdown" aria-expanded="false" (error)="imagenPorDefecto($event)"/>
       <span class="status-indicator"></span>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item active" href="#">Another action</a></li>
+        <li><a class="dropdown-item" [routerLink]="['/home']">Pagina princial <i class="fa-solid fa-utensils ms-1"></i></a></li>
         <li><a class="dropdown-item">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i></a></li>
         <li><a class="dropdown-item" href="#">Notificaciones  <i class="fa-solid fa-bell ms-1"></i></a></li>
         <li><hr class="dropdown-divider"></li>

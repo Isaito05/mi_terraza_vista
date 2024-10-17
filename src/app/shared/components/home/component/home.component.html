@@ -70,7 +70,20 @@
                           </div>
                           <a routerLink="/" fragment="footer" class="nav-item nav-link" [class.active]="isActive('footer')">Contact</a>
                         </div>                      
-                        <a [routerLink]="['/login']" class="btn btn-primary py-2 px-4">Inicia sesión</a>
+                        <a *ngIf="!logueado" [routerLink]="['/login']" class="btn btn-primary py-2 px-4">Inicia sesión</a>
+                        <div *ngIf="logueado" class="d-flex align-items-center p-imagen">
+                            <div class="dropdown">
+                              <a href="#" class="dropdown-toggle no-after" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img [src]="usu_imagen" class="rounded-circle" alt="user profile" width="40" height="40">
+                              </a>
+                              <ul class="dropdown-menu" style="right: -2rem; top: 2.4rem;">
+                                <li *ngIf="rol"><span class="dropdown-item"><a [routerLink]="['/pedido']">Administracion</a></span></li>
+                                <li><span class="dropdown-item-text">{{ usu_nombre }}</span></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" (click)="logout()">Cerrar sesión</a></li>
+                              </ul>
+                            </div>
+                        </div>
                     </div>
                 </nav>
 

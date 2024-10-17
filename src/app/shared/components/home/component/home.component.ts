@@ -1,20 +1,31 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, Renderer2, HostListener, OnInit } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
+
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { environment } from 'src/environments/environment';
 declare var $: any;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports:[RouterModule],
+  imports:[RouterModule, CommonModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements AfterViewInit, OnInit {
+export class HomeComponent implements AfterViewInit {
+  logueado: boolean = false;
+  rol: boolean = false;
+  usu_nombre: string | null = "";
+  usu_imagen: string = "";
+  usu_rol: string | null = "";
+  usu_token: string | null = "";
 
   currentFragment: string = '';
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
 
-  constructor(private router: Router, private renderer: Renderer2) { }
+  constructor(private router: Router, private renderer: Renderer2, private authService: AuthService) { }
 
 
   ngOnInit(): void {
@@ -36,6 +47,32 @@ export class HomeComponent implements AfterViewInit, OnInit {
         }
       }
     });
+    const usu_token = sessionStorage.getItem('token');
+    if(usu_token){
+      const decodedToken: any = jwtDecode(usu_token);
+      this.usu_nombre = decodedToken.nombre
+      this.usu_imagen = decodedToken.i_perfil
+      this.usu_rol = decodedToken.rol
+      this.logueado = true
+      console.log(this.usu_token)
+    }
+    
+    if (!this.usu_imagen || this.usu_imagen === '') {
+      this.usu_imagen = 'assets/images/pf.jpg'
+    } else {
+      this.usu_imagen = `${environment.apiUrlHttp}${this.usu_imagen}?t=${new Date().getTime()}`;
+    }  
+
+    if(this.usu_rol === 'Administrador' || this.usu_rol === 'Trabajador') {
+      this.rol = true
+    }
+    console.log(this.logueado)
+    console.log(this.rol)
+    console.log(this.usu_rol)
+  }
+
+  logout () {
+    this.authService.logout();
   }
 
   isActive(fragment: string): boolean {

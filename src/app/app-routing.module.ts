@@ -11,13 +11,19 @@ import { RegisterComponent } from './shared/components/register/component/regist
 import { canDeactivateGuard } from './guard/can-deactivate.guard';
 
 const routes: Routes = [
-  {
-    path: 'login',
-    title: 'Inicio de sesión',
-    loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule), // Ruta de login fuera del layout
+  // Redirige a 'home' si la ruta es vacía
+  { 
+    path: '', 
+    redirectTo: 'home', 
+    pathMatch: 'full' 
   },
-  { path: '', component: HomeComponent },
-  { path: 'home', component: HomeComponent },
+
+  // Rutas públicas (fuera del layout)
+  { 
+    path: 'login', 
+    title: 'Inicio de sesión',
+    loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule),
+  },
   { 
     path: 'forgot-password', 
     title: 'Recuperar contraseña', 
@@ -26,16 +32,28 @@ const routes: Routes = [
   { 
     path: 'reset-password', 
     title: 'Cambiar contraseña', 
-    component: ResetPasswordComponent,
-    canDeactivate: [canDeactivateGuard] 
+    component: ResetPasswordComponent, 
+    canDeactivate: [canDeactivateGuard]
   },
   { 
     path: 'register', 
     title: 'Registrar usuario', 
-    component: RegisterComponent,
-    canDeactivate: [canDeactivateGuard] 
+    component: RegisterComponent, 
+    canDeactivate: [canDeactivateGuard]
   },
-  { path: 'pages/:pageName', component: DynamicPageComponent },
+  { 
+    path: 'pages/:pageName', 
+    component: DynamicPageComponent 
+  },
+  
+  // Ruta para la página de inicio pública
+  { 
+    path: 'home', 
+    title: 'Pagina principal', 
+    component: HomeComponent 
+  },
+
+  // Rutas dentro del layout con autenticación (authGuard)
   {
     path: '',
     component: LayoutComponent,
@@ -43,14 +61,14 @@ const routes: Routes = [
       {
         path: 'usuario',
         title: 'Usuarios',
-        loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule), // Carga perezosa del módulo Feature1
+        loadChildren: () => import('./features/usuario/usuario.module').then(m => m.UsuarioModule),
         canActivate: [authGuard]
       },
       {
         path: 'bodega',
         title: 'Bodega',
         loadChildren: () => import('./features/bodega/bodega.module').then(m => m.BodegaModule),
-        canActivate: [authGuard] // Carga perezosa del módulo Feature1
+        canActivate: [authGuard]
       },
       {
         path: 'pago',
@@ -84,22 +102,19 @@ const routes: Routes = [
       },
       {
         path: 'upload',
-        title: 'upload',
-        loadChildren: () => import('./core/upload/upload.module').then(m => m.UploadModule), 
-        // canActivate: [authGuard]
+        title: 'Cargar Archivos',
+        loadChildren: () => import('./core/upload/upload.module').then(m => m.UploadModule),
+        // canActivate: [authGuard] // Habilitar cuando quieras proteger esta ruta
       },
     ]
   },
+
+  // Ruta comodín para redirigir cualquier ruta no encontrada a 'home'
   {
     path: '**',
-    redirectTo: 'home', // Redirige a la página de home
-    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
-  },
-  {
-    path: '',
-    redirectTo: 'home', // Redirige a la página de home
-    pathMatch: 'full' // Asegura que la ruta raíz coincida exactamente
-  },
+    redirectTo: 'home',
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({

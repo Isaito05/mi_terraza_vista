@@ -58,11 +58,8 @@ export class LoginComponent {
         next: (response) => {
           // console.log('Login successful');
           const decodedToken: any = jwtDecode(response.access_token);
-          const miNombre = decodedToken.nombre
-          sessionStorage.setItem('username', decodedToken.nombre);
-          sessionStorage.setItem('role', decodedToken.rol);        
-          sessionStorage.setItem('apellido', decodedToken.apellido);        
-          sessionStorage.setItem('i_perfil', decodedToken.i_perfil);        
+          const miNombre = decodedToken.nombre       
+          const cliente = decodedToken.rol       
           Swal.fire({
             title: `¡Bienvenido de nuevo, ${miNombre}!`,
             text: "Has iniciado sesión correctamente.",
@@ -85,7 +82,9 @@ export class LoginComponent {
             }
           });
           setTimeout(() => {
-            this.router.navigate(['/']);  // Redirige al dashboard o página principal
+            if(cliente === 'Cliente'){
+              this.router.navigate(['/home']);  // Redirige al dashboard o página principal
+            }
           },1500);
           this.intentoFallido = false; 
           this.botonHabilitado = true;

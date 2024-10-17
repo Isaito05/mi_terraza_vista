@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-sidebar',
@@ -19,16 +20,21 @@ export class SidebarComponent implements OnInit {
     }
   }
   isToggled: boolean = false;
-  userRole: any;
+  userRole: string = '';
   // Método para alternar el estado
   toggleIcon() {
     this.isToggled = !this.isToggled;
   }
 
   constructor(private router: Router,
-     private route: ActivatedRoute,
-     
-     ) {this.userRole = sessionStorage.getItem('role') || '';}
+  private route: ActivatedRoute,
+  ){
+    const token = sessionStorage.getItem('token');
+    if(token){
+      const decodedToken: any = jwtDecode(token)
+      this.userRole = decodedToken.rol
+    }
+  }
 
   isActive(route: string): boolean {
     return this.router.url === route;

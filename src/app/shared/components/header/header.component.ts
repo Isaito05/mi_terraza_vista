@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 import { NgxLoadingModule } from 'ngx-loading';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ImageUploadService } from 'src/app/core/services/image-upload.service';
@@ -7,7 +9,7 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgxLoadingModule],
+  imports: [NgxLoadingModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
@@ -23,11 +25,14 @@ export class HeaderComponent {
   constructor( private authService: AuthService, private imagenService: ImageUploadService ){}
 
   ngOnInit() {
-    this.username = sessionStorage.getItem('username');
-    this.role = sessionStorage.getItem('role');
-    this.apellido = sessionStorage.getItem('apellido');
-    this.i_perfil = sessionStorage.getItem('i_perfil');
-
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwtDecode(token)
+      this.username = decodedToken.nombre;
+      this.apellido = decodedToken.apellido;
+      this.role = decodedToken.rol;
+      this.i_perfil = decodedToken.i_perfil;
+    }
     if (!this.i_perfil || this.i_perfil === '') {
       this.imangenPerfil = 'assets/images/pf.jpg'
     } else {
