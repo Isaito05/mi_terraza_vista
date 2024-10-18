@@ -15,6 +15,12 @@
           </div>
         </div>
         <div [ngClass]="{'col-md-4 offset-md-4': title === 'Modulo de Usuario', 'mt-auto': title !== 'Modulo de Usuario'}">
+          <div>
+            <div class="d-flex justify-content-end mb-3">
+             <input type="date" class="form-control me-2" [(ngModel)]="startDate" (change)="updateFilter($event)" placeholder="Fecha inicio" />
+             <input type="date" class="form-control" [(ngModel)]="endDate" (change)="updateFilter($event)" placeholder="Fecha fin" />
+            </div>
+         </div>
           <div class="d-flex justify-content-end position-relative">
             <input type="text" class="form-control f-in mb-3" placeholder="Buscar..." (input)="updateFilter($event)" />
             <i class="bi bi-search position-absolute search-icon"></i>

@@ -28,11 +28,23 @@ export class TableComponent {
 
   cbTrabajador: boolean = false;
   cbCliente: boolean = false;
+  startDate: string | null = null;
+  endDate: string | null = null;
+
+  data_fecha: string = '';
   private tooltip: bootstrap.Tooltip | null = null;
 
   ngOnInit() {
     this.filteredData = [...this.data];
-   // console.log(this.filteredData)
+   console.log(this.filteredData)
+   console.log(this.title)
+   if (this.title === 'Modulo de Pagos') {
+     this.data_fecha = 'PAGO_FECHA'
+     console.log(this.data_fecha);
+    } else if (this.title === 'Modulo de Usuario') {
+    this.data_fecha = 'RGU_FCH_REGISTRO'
+    console.log(this.data_fecha);
+   }
 
     // Establecer la columna por defecto para ordenamiento, por ejemplo, la primera columna
     if (this.columns.length > 0) {
@@ -56,6 +68,9 @@ export class TableComponent {
     // Variables para los filtros de checkbox
     const buscarTrabajador = this.cbTrabajador;
     const buscarCliente = this.cbCliente;
+
+    const startDate = this.startDate ? new Date(this.startDate) : null;
+    const endDate = this.endDate ? new Date(this.endDate) : null;
   
     console.log("Valor de búsqueda (input):", val);
     console.log("Estado cbTrabajador:", buscarTrabajador);
@@ -67,49 +82,33 @@ export class TableComponent {
         return field && field.toString().toLowerCase().includes(val);
       });
   
-      const esTrabajador = item.RGU_ROL.toLowerCase() === 'trabajador'; // Asegúrate de que el campo `rol` sea el correcto
-      const esCliente = item.RGU_ROL.toLowerCase() === 'cliente'; // Asegúrate de que el campo `rol` sea el correcto
+      const esTrabajador = item.RGU_ROL ? item.RGU_ROL.toLowerCase() === 'trabajador': false; // Asegúrate de que el campo `rol` sea el correcto
+      const esCliente = item.RGU_ROL ? item.RGU_ROL.toLowerCase() === 'cliente': false; // Asegúrate de que el campo `rol` sea el correcto
   
       // Verificar el filtro basado en checkboxes
       const cumpleCheckboxes = 
         (buscarTrabajador && esTrabajador) || 
         (buscarCliente && esCliente) || 
         (!buscarTrabajador && !buscarCliente); // Sin checkbox marcado, mostrar todos
+
+        const cumpleFecha = () => {
+          if (!startDate && !endDate) return true; // Sin fechas seleccionadas
+          // const itemDate = new Date(item.PAGO_FECHA); // Ajusta 'fecha' al campo adecuado
+          const itemDate = new Date(item[this.data_fecha]); // Ajusta 'fecha' al campo adecuado
+          if (startDate && endDate) {
+            return itemDate >= startDate && itemDate <= endDate;
+          }
+          if (startDate) return itemDate >= startDate;
+          if (endDate) return itemDate <= endDate;
+          return true;
+        };
   
       // Retornar si cumple con la búsqueda y los checkboxes
-      return cumpleBusqueda && cumpleCheckboxes;
+      return cumpleBusqueda && cumpleCheckboxes && cumpleFecha();
     });
   
     console.log("Registros filtrados:", this.filteredData.length);
   }
-
-  // updateFilter(event: any) {
-  //   let val = ''; // Obtener el valor del input
-  //   if (event.target.type === 'text') {
-  //     val = event.target.value.toLowerCase(); // Solo procesar el valor si es un input de texto
-  //   }
-  //     // Condicionales para modificar el valor de búsqueda basado en los checkboxes
-  //   if (this.cbTrabajador && !this.cbCliente) {
-  //     // Si sólo está marcado Trabajador
-  //     val = val ? `${val} trabajador` : 'trabajador';
-  //   } else if (!this.cbTrabajador && this.cbCliente) {
-  //     // Si sólo está marcado Cliente
-  //     val = val ? `${val} cliente` : 'cliente';
-  //   } else if (this.cbTrabajador && this.cbCliente) {
-  //     // Si ambos están marcados
-  //     val = val ? `${val} trabajador cliente` : 'trabajador cliente';
-  //   } 
-  //   console.log("Valor de búsqueda final:", val);
-
-  // // Filtrado de datos
-  // this.filteredData = this.data.filter((item) => {
-  //   return Object.values(item).some((field: any) => {
-  //     return field && field.toString().toLowerCase().includes(val);
-  //   });
-  // });
-
-  // console.log("Registros filtrados:", this.filteredData.length);
-  // }
 
   sortData(columnKey: string) {
     console.log(columnKey)
@@ -225,11 +224,28 @@ export class TableComponent {
 
   onPageChange(page: number) {
     this.p = page;
+    // Reinicializar los tooltips después de cambiar de página
+    setTimeout(() => {
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+          html: true, // Permitir HTML en el tooltip
+        });
+      });
+    }, 0);
   }
 
   onItemsPerPageChange(event: any) {
     this.itemsPerPage = +event.target.value;
     this.p = 1; // Restablecer a la primera página cuando se cambie el número de ítems por página
+    setTimeout(() => {
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+          html: true, // Permitir HTML en el tooltip
+        });
+      });
+    }, 0);
   }
 
   formatDateForDatetimeLocal(dateString: string): string {

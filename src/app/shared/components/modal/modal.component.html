@@ -21,7 +21,7 @@
                                 [name]="field.id"
                                 [formControlName]="field.id" 
                             />
-                            <div *ngIf="form.get(field.id)?.invalid && form.get(field.id)?.touched" class="text-danger">
+                            <!-- <div *ngIf="form.get(field.id)?.invalid && form.get(field.id)?.touched" class="text-danger">
                                 <div *ngIf="form.get(field.id)?.errors?.['required'] &&  field.label.toLowerCase() !== 'telefono' && field.type !== 'email' && field.type !== 'password' && field.type !== 'select'">Este campo es obligatorio</div>
                                 <div *ngIf="field.type === 'email' && form.get(field.id)?.errors?.['invalidEmail']">El correo debe contener un dominio válido ejp: &#64;gmail.com</div>
                                 <div *ngIf="field.type === 'password' && form.get(field.id)?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres</div>
@@ -30,7 +30,7 @@
                                 <div *ngIf="field.type === 'password' && form.get(field.id)?.errors?.['specialchar']">La contraseña debe contener un caracter especial</div>
                                 <div *ngIf="field.type === 'number' && field.label.toLowerCase().includes('telefono') && form.get(field.id)?.errors?.['pattern']">El teléfono debe tener 10 dígitos</div>
                                 <div *ngIf="field.type === 'number' && field.label.toLowerCase().includes('nro. de identificación') && form.get(field.id)?.errors?.['pattern']">La identificación debe tener entre 8 y 10 dígitos</div>
-                            </div>
+                            </div> -->
 
                             <!-- Renderiza un select para los campos de tipo 'select' -->
                             <select *ngIf="field.type === 'select'" class="form-select" [id]="field.id"
@@ -39,9 +39,9 @@
                                     {{ option.label }}
                                 </option>
                             </select>
-                            <div *ngIf="form.get(field.id)?.invalid && form.get(field.id)?.touched" class="text-danger">
+                            <!-- <div *ngIf="form.get(field.id)?.invalid && form.get(field.id)?.touched" class="text-danger">
                                 <div *ngIf="form.get(field.id)?.errors?.['required'] && field.label.toLowerCase() !== 'telefono' && field.type !== 'email' && field.type !== 'password' && field.type !== 'text'">Este campo es obligatorio</div>
-                            </div>
+                            </div> -->
 
                             <!-- Renderiza un input tipo archivo para imágenes -->
                             <input *ngIf="field.type === 'file'" [type]="field.type" class="form-control"
@@ -124,7 +124,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()" [disabled]="form.invalid || form.disabled">
+                <button *ngIf="!isViewingDetails" type="button" class="btn btn-primary" (click)="confirm()">
                     {{ isEditing ? 'Actualizar' : 'Guardar' }}
                 </button>
             </div>

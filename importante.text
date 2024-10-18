@@ -1,0 +1,16 @@
+-- Modo Administrador --
+- Apartado del Dashboard(graficas)
+- Buscar entre fechas //Sale pa' pintura
+- Generacion PDF(seleccionar algunos o todos los usuarios y generar el pdf) al igual cuando filtramos entre fechas generar en PDF los datos filtrados)
+- Generar Excel(Yeider)
+- Apartado de mi Perfil //En proceso
+- Apartado de notificaciones(cuando se haya realizado un pedido)
+- El apartado del pedido(que se autorefresque la tabla, cuando un pedido esta en espera, enviado, en proceso, cancelado)
+Diseño del modo adminstrador..(esta en veremos).
+
+-- Pagina Principal --
+- Apartado de mi Perfil //En proceso
+- Agregar texto real(cambiar los Lorem impsu, los nombres en ingles y el nombre de la aplicacion)
+- Apartado del menu
+- Apartado de notificaciones(cuando se haya realizado un pedido y si ha cambiado el estado del pedido)
+- El carrito

@@ -191,9 +191,13 @@ export class ModalComponent {
   }
 
   confirm() {
-    if (this.form.valid) {
+    // if (this.form.valid) {
       const formValues = this.form.value; // Obtén los valores del formulario
       this.data = { ...formValues };
+      const fechaRegistro = new Date();
+      const offset = fechaRegistro.getTimezoneOffset();
+      fechaRegistro.setMinutes(fechaRegistro.getMinutes() - offset)
+      this.data['RGU_FCH_REGISTRO'] = fechaRegistro.toISOString();
       const formData = this.data;
       const service = this.getServiceBasedOnContext();
       if (service) {
@@ -259,17 +263,16 @@ export class ModalComponent {
       } else {
         console.error('No se encontró un servicio adecuado para el contexto.');
       }
-    } else {
-      console.error('Formulario inválido');
-    }
+    // } else {
+    //   console.error('Formulario inválido');
+    // }
   }
 
   usuariosEmail() {
 
   }
 
-guardarDatos(formData: any) {
-
+  guardarDatos(formData: any) {
     this.usuarioService.getData().subscribe({
       next: (data) => {
         this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);

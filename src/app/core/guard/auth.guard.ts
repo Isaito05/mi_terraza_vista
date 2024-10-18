@@ -34,7 +34,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) =
   console.log('Rol de usuario:', userRole); // Verifica aquí el rol
 
   // Permitir acceso para Administradores
-  if (userRole === 'Administrador' || userRole === 'Trabajador') {
+  if (userRole === 'Administrador') {
     return true;
   }
   
