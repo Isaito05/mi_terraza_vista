@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Restoran - Bootstrap Restaurant Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="assets/images/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .profile-card {
+          background-color: #FFD700;
+          padding: 20px;
+          border-radius: 10px;
+          text-align: center;
+        }
+        .profile-pic {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .nav-pills .nav-link {
+          border-radius: 0;
+        }
+        .list-group-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: pointer;
+        }
+        .list-group-item .arrow-icon {
+          font-size: 1.2rem;
+          color: #6c757d;
+        }
+      </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+
+        <!-- Spinner Start -->
+        <!-- <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div> -->
+        <!-- Spinner End -->
+
+
+        <!-- Navbar & Hero Start -->
+        <section id="navbar">
+            <div class="container-xxl position-relative p-0">
+            <app-navbar></app-navbar>
+                <div class="container-xxl py-5 bg-dark hero-header mb-5">
+                </div>
+            </div>
+        </section>
+        <!-- Navbar & Hero End -->
+
+
+       <!-- Profile Start -->
+       <div class="container mt-5">
+        <div class="row">
+          <!-- Card de perfil -->
+          <div class="col-md-4">
+            <div class="profile-card shadow">
+              <img [src]="imangenPerfil" alt="Foto de perfil" class="profile-pic mb-3">
+              <h5>Hola {{ usuario?.RGU_NOMBRES || 'Datos no proporcionados'}}</h5>
+              <p>ID: {{ usuario?.RGU_ID || 'Datos no proporcionados'}}</p>
+              <ul class="nav nav-pills flex-column mt-4">
+                <li class="nav-item">
+                  <a class="nav-link active" id="datos-personales-tab" data-bs-toggle="pill" href="#datos-personales">Datos personales</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="historial-pedidos-tab" data-bs-toggle="pill" href="#historial-pedidos">Historial de pedidos</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+    
+          <!-- Contenido dinámico -->
+          <div class="col-md-8">
+            <div class="tab-content">
+              <!-- Datos personales -->
+              <div class="tab-pane fade show active" id="datos-personales" *ngIf="usuario">
+                <h3 class="mb-4">Datos personales</h3>
+                <ul class="list-group">
+                  <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalNombre">
+                    <span><i class="bi bi-person-fill me-2"></i> 
+                      Nombre y Apellido: 
+                      <strong>{{ usuario?.RGU_NOMBRES || 'Datos no proporcionados'}} {{ usuario?.RGU_APELLIDOS || 'Datos no proporcionados' }}</strong>
+                    </span>
+                    <i class="bi bi-chevron-right arrow-icon"></i>
+                  </li>
+                  <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalEmail">
+                    <span><i class="bi bi-envelope-fill me-2"></i> 
+                      Correo electrónico: 
+                      <strong>{{ usuario?.RGU_CORREO || 'Datos no proporcionados' }}</strong>
+                    </span>
+                    <i class="bi bi-chevron-right arrow-icon"></i>
+                  </li>
+                  <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalTelefono">
+                    <span><i class="bi bi-telephone-fill me-2 text-warning"></i> 
+                      Teléfono: 
+                      <span class="text-muted">{{ usuario?.RGU_TELEFONO || 'Datos no proporcionados' }}</span>
+                    </span>
+                    <i class="bi bi-chevron-right arrow-icon"></i>
+                  </li>
+                  <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalDocumento">
+                    <span><i class="bi bi-card-text me-2"></i> 
+                      Documento de identidad: 
+                      <span class="text-muted">{{ usuario?.RGU_IDENTIFICACION || 'Datos no proporcionados' }}</span>
+                    </span>
+                    <i class="bi bi-chevron-right arrow-icon"></i>
+                  </li>
+                  <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalDireccion">
+                    <span><i class="bi bi-geo-alt-fill me-2"></i> 
+                      Dirección: 
+                      <span class="text-muted">{{ usuario?.RGU_DIRECCION || 'Datos no proporcionados' }}</span>
+                    </span>
+                    <i class="bi bi-chevron-right arrow-icon"></i>
+                  </li>
+                </ul>
+                <button class="btn btn-outline-danger mt-4" (click)="logOut()">Cerrar sesión</button>
+              </div>
+          
+              <!-- Historial de pedidos -->
+              <div class="tab-pane fade" id="historial-pedidos">
+                <h3 class="mb-4">Historial de pedidos</h3>
+                <p>No hay pedidos recientes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Modales para editar datos personales -->
+      <!-- Modal Nombre -->
+      <div class="modal fade" id="modalNombre" tabindex="-1" aria-labelledby="modalNombreLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalNombreLabel">Editar Nombre y Apellido</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form *ngIf="editForm" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label for="nombreInput" class="form-label">Nombre</label>
+                  <input type="text" formControlName="RGU_NOMBRES" class="form-control" id="nombreInput">
+                </div>
+                <div class="mb-3">
+                  <label for="apellidoInput" class="form-label">Apellido</label>
+                  <input type="text" formControlName="RGU_APELLIDOS" class="form-control" id="apellidoInput">
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </form>              
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Modal Email -->
+      <div class="modal fade" id="modalEmail" tabindex="-1" aria-labelledby="modalEmailLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEmailLabel">Editar Correo electrónico</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form *ngIf="editForm" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label for="emailInput" class="form-label">Correo electrónico</label>
+                  <input type="email" formControlName="RGU_CORREO" class="form-control" id="emailInput" >
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Modal Teléfono -->
+      <div class="modal fade" id="modalTelefono" tabindex="-1" aria-labelledby="modalTelefonoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTelefonoLabel">Editar Teléfono</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form *ngIf="editForm" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label for="telefonoInput" class="form-label">Teléfono</label>
+                  <input type="tel" formControlName="RGU_TELEFONO" class="form-control" id="telefonoInput" placeholder="Datos no proporcionados">
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Modal Direccion -->
+      <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDireccionLabel">Editar Direccion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form *ngIf="editForm" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label for="modalDireccionInput" class="form-label">Direccion</label>
+                  <input type="text" formControlName="RGU_DIRECCION" class="form-control" id="direccionInput">
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Modal Documento de identidad -->
+      <div class="modal fade" id="modalDocumento" tabindex="-1" aria-labelledby="modalDocumentoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDocumentoLabel">Editar Documento de identidad</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form *ngIf="editForm" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label for="documentoInput" class="form-label">Documento de identidad</label>
+                  <input type="text" formControlName="RGU_IDENTIFICACION" class="form-control" id="documentoInput" placeholder="Datos no proporcionados">
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+       <!-- Profile End -->
+
+       
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Company</h4>
+                        <a class="btn btn-link" href="">About Us</a>
+                        <a class="btn btn-link" href="">Contact Us</a>
+                        <a class="btn btn-link" href="">Reservation</a>
+                        <a class="btn btn-link" href="">Privacy Policy</a>
+                        <a class="btn btn-link" href="">Terms & Condition</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>infoexample.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Opening</h4>
+                        <h5 class="text-light fw-normal">Monday - Saturday</h5>
+                        <p>09AM - 09PM</p>
+                        <h5 class="text-light fw-normal">Sunday</h5>
+                        <p>10AM - 08PM</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Newsletter</h4>
+                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                        <div class="position-relative mx-auto" style="max-width: 400px;">
+                            <input class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved. 
+							
+							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a><br><br>
+                            Distributed By <a class="border-bottom" href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="">Home</a>
+                                <a href="">Cookies</a>
+                                <a href="">Help</a>
+                                <a href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"  ><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+</body>
+
+</html>

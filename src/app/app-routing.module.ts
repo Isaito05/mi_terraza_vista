@@ -9,6 +9,7 @@ import { ForgotPasswordComponent } from './core/forgot-password/forgot-password.
 import { ResetPasswordComponent } from './core/reset-password/reset-password.component';
 import { RegisterComponent } from './shared/components/register/component/register.component'; 
 import { canDeactivateGuard } from './guard/can-deactivate.guard';
+import { ProfileComponent } from './shared/components/profile/component/profile.component';
 
 const routes: Routes = [
   // Redirige a 'home' si la ruta es vacía
@@ -45,7 +46,11 @@ const routes: Routes = [
     path: 'pages/:pageName', 
     component: DynamicPageComponent 
   },
-  
+  { 
+    path: 'profile', 
+    title: 'Mi perfil', 
+    component: ProfileComponent 
+  },
   // Ruta para la página de inicio pública
   { 
     path: 'home', 

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { map, Observable, BehaviorSubject } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 import { environment } from 'src/environments/environment';
@@ -10,7 +10,9 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  authService: any;
+  // Comportamiento de inicio de sesión
+  private loggedInSubject = new BehaviorSubject<boolean>(this.loggedIn);
+  isLoggedIn$ = this.loggedInSubject.asObservable(); // Observable para que otros componentes puedan suscribirse
 
   constructor(
     private http: HttpClient,
@@ -40,7 +42,6 @@ export class AuthService {
       })
     );
   }
-
 
   logout() {
     sessionStorage.removeItem('token');

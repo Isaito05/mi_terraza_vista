@@ -1,12 +1,16 @@
-import { AfterViewInit, Component, HostListener, OnInit, Renderer2 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit, Renderer2 } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // Importa DomSanitizer
+import { NavbarComponent } from '../navbar/navbar.component';
+import { jwtDecode } from 'jwt-decode';
+import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 declare var $: any;
 
 @Component({
   selector: 'app-dynamic-page',
   standalone: true,
+  imports:[RouterModule, NavbarComponent],
   templateUrl: './dynamic-page.component.html',
   styleUrls: ['./dynamic-page.component.css']
 })
@@ -14,20 +18,46 @@ export class DynamicPageComponent implements OnInit, AfterViewInit {
 
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
   safePageContent: SafeHtml = ''; // SafeHtml para el contenido seguro
+  userId!: number;
+  usuario: any = {}
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private sanitizer: DomSanitizer,  // Inyecta DomSanitizer
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private usuarioService:UsuarioService,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    const pageName = this.route.snapshot.paramMap.get('pageName'); // Obtener el parámetro de la ruta
+    const pageName = this.route.snapshot.paramMap.get('pageName');
     if (pageName) {
       this.loadPageContent(pageName);
     }
+  
+    const token = sessionStorage.getItem('token'); 
+    console.log('Auth Token:', token); // Verificar token
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      console.log('User token:', decodedToken); 
+      this.userId = decodedToken.id;
+      console.log('User ID:', this.userId); // Verificar userId
+  
+      this.usuarioService.getUsuarioById(this.userId).subscribe(
+        (data) => {
+          this.usuario = data;
+          console.log('Usuario obtenido:', this.usuario);
+
+          this.cd.detectChanges();
+        },
+        (error) => {
+          console.error('Error al obtener los datos del usuario', error);
+        }
+      );
+    }
   }
+  
 
   // Cargar el contenido de la página de forma segura
   loadPageContent(pageName: string) {

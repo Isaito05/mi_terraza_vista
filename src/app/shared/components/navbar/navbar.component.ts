@@ -1,36 +1,29 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, Renderer2, HostListener, OnInit } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { NgxLoadingModule } from 'ngx-loading';
 import { ImageUploadService } from 'src/app/core/services/image-upload.service';
+import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { NavbarComponent } from "../../navbar/navbar.component";
 import { jwtDecode } from 'jwt-decode';
 declare var $: any;
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, NgxLoadingModule, CommonModule, NavbarComponent],
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  imports: [RouterModule, NgxLoadingModule, CommonModule],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.css'
 })
-export class HomeComponent implements AfterViewInit {
-  logueado: boolean = false;
-  rol: boolean = false;
-  usu_nombre: string | null = "";
-  usu_imagen: string = "";
-  usu_rol: string | null = "";
-  usu_token: string | null = "";
-
+export class NavbarComponent implements AfterViewInit, OnInit{
   currentFragment: string = '';
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
   username: string | null = '';
   apellido: string | null = '';
   i_perfil: string | null = '';
   role: string | null = '';
+  userId!: number;
   
   loading: boolean = false;
   imangenPerfil: string = '';
@@ -56,17 +49,30 @@ export class HomeComponent implements AfterViewInit {
       }
     );
     
-    // Código existente para obtener datos de sesión
-    this.username = sessionStorage.getItem('username');
-    this.role = sessionStorage.getItem('role');
-    this.apellido = sessionStorage.getItem('apellido');
-    this.i_perfil = sessionStorage.getItem('i_perfil');
-    
-    if (!this.i_perfil || this.i_perfil === '') {
-      this.imangenPerfil = 'assets/images/pf.jpg'
-    } else {
-      this.imangenPerfil = `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`;
+    // Código existente para obtener datos de sesión    
+    const token = sessionStorage.getItem('token'); 
+    console.log('Auth Token:', token); // Verificar token
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      this.userId = decodedToken.id;
+      this.imangenPerfil = decodedToken.i_perfil;
+      this.username = decodedToken.nombre;
+      this.apellido = decodedToken.apellido;
+      this.role = decodedToken.rol;
+  
+      if (!this.imangenPerfil || this.imangenPerfil === '') {
+        this.imangenPerfil = 'assets/images/pf.jpg'
+      } else {
+        this.imangenPerfil = `${environment.apiUrlHttp}${this.imangenPerfil}?t=${new Date().getTime()}`;
+      }
     }
+
+    
+    // if (!this.i_perfil || this.i_perfil === '') {
+    //   this.imangenPerfil = 'assets/images/pf.jpg'
+    // } else {
+    //   this.imangenPerfil = `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`;
+    // }
     
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -86,32 +92,6 @@ export class HomeComponent implements AfterViewInit {
         }
       }
     });
-    const usu_token = sessionStorage.getItem('token');
-    if(usu_token){
-      const decodedToken: any = jwtDecode(usu_token);
-      this.usu_nombre = decodedToken.nombre
-      this.usu_imagen = decodedToken.i_perfil
-      this.usu_rol = decodedToken.rol
-      this.logueado = true
-      console.log(this.usu_token)
-    }
-    
-    if (!this.usu_imagen || this.usu_imagen === '') {
-      this.usu_imagen = 'assets/images/pf.jpg'
-    } else {
-      this.usu_imagen = `${environment.apiUrlHttp}${this.usu_imagen}?t=${new Date().getTime()}`;
-    }  
-
-    if(this.usu_rol === 'Administrador' || this.usu_rol === 'Trabajador') {
-      this.rol = true
-    }
-    console.log(this.logueado)
-    console.log(this.rol)
-    console.log(this.usu_rol)
-  }
-
-  logout () {
-    this.authService.logout();
   }
 
   // Método que se ejecuta cuando se cierra la sesión
@@ -237,4 +217,5 @@ export class HomeComponent implements AfterViewInit {
     // Limpiar la suscripción al destruir el componente
     this.authSubscription.unsubscribe();
   }
+
 }

@@ -1,0 +1,47 @@
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+        <a href="" class="navbar-brand p-0">
+            <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Restoran</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0 pe-4">
+                <a routerLink="/" fragment="navbar" class="nav-item nav-link" [class.active]="isActive('navbar')">Home</a>
+                <a routerLink="/" fragment="about" class="nav-item nav-link" [class.active]="isActive('about')">About</a>
+                <a routerLink="/" fragment="service" class="nav-item nav-link" [class.active]="isActive('service')">Service</a>
+                <a routerLink="/" fragment="menu" class="nav-item nav-link" [class.active]="isActive('menu')">Menu</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="dropdownMenuButton">Pages</a>
+                    <div class="dropdown-menu m-0" aria-labelledby="dropdownMenuButton">
+                        <a routerLink="/" fragment="reservation" class="dropdown-item" [class.active]="isActive('reservation')">Booking</a>
+                        <a routerLink="/" fragment="team" class="dropdown-item" [class.active]="isActive('team')">Our Team</a>
+                        <a routerLink="/" fragment="testimonial" class="dropdown-item" [class.active]="isActive('testimonial')">Testimonial</a>
+                    </div>
+                </div>
+                <a routerLink="/" fragment="footer" class="nav-item nav-link" [class.active]="isActive('footer')">Contact</a>
+            </div>
+            
+            <!-- Mostrar el botón de inicio de sesión si no está logueado -->
+            <a *ngIf="!isLoggedIn" [routerLink]="['/login']" class="btn btn-primary py-2 px-4">Inicia sesión</a>
+    
+            <!-- Mostrar imagen de perfil y dropdown si el usuario está logueado -->
+            <div *ngIf="isLoggedIn" class="d-flex align-items-center">
+                <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+                <span class ="offset-2 text-light">
+                    <span class="m-text "> {{ username }} </span> <span class="m-text">{{ apellido }}</span> / <span class="m-text" style="font-weight: bold;">{{ role }}</span>
+                  </span>
+                <div class="dropdown ">
+                    <img [src]="imangenPerfil" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer" data-bs-toggle="dropdown" aria-expanded="false" (error)="imagenPorDefecto($event)" />
+                    <span class="px-md-5 status-indicator"></span>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item active" href="#">Mi cuenta</a></li>
+                        <li><a class="dropdown-item" href="/profile">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i></a></li>
+                        <li><a class="dropdown-item" href="#">Notificaciones  <i class="fa-solid fa-bell ms-1"></i></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex justify-content-end" (click)="logOut()">Salir  <i class="bi bi-door-open-fill m-icon"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
