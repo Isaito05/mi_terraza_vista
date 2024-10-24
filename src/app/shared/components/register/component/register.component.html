@@ -12,7 +12,8 @@
           <i class="fa-solid fa-chevron-left"></i>
         </a>¡Únete a la Experiencia!
       </h2>
-      <p class="text-center mb-3 fw-t text-light font-title">¡Regístrate ahora y accede a ofertas exclusivas solo para ti! No te pierdas estas oportunidades especiales.</p>
+      <p class="text-center mb-3 fw-t text-light font-title">¡Regístrate ahora y accede a ofertas exclusivas solo para
+        ti! No te pierdas estas oportunidades especiales.</p>
 
       <div class="d-flex align-items-center justify-content-center my-3">
         <hr class="flex-grow-1 me-2 text-light" />
@@ -45,6 +46,82 @@
               *ngIf="registerForm.get('RGU_APELLIDOS')?.hasError('required') && registerForm.get('RGU_APELLIDOS')?.touched"
               class="text-danger property-danger-c error-message-container">
               Este campo es obligatorio y debe contener mas de 2 caracteres.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 font-title">
+          <label for="genero" class="text-light">Genero</label>
+          <div class="d-flex align-items-start flex-column input-container position-relative">
+            <select formControlName="RGU_GENERO" type="select" id="RGU_GENERO" name="RGU_GENERO"
+              aria-describedby="emailHelp" class="form-control p-ci" placeholder="Ingresa tu genero" autocomplete="off">
+              <option value="">Selecciona tu género</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="No_binario">No Binario</option>
+            </select>
+            <div *ngIf="registerForm.get('RGU_GENERO')?.hasError('required') && registerForm.get('RGU_GENERO')?.touched"
+              class="text-danger property-danger-c error-message-container">
+              Este campo es obligatorio.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 font-title">
+          <label for="direccion" class="text-light">Dirección</label>
+          <div class="d-flex align-items-start flex-column input-container position-relative">
+            <input formControlName="RGU_DIRECCION" type="text" id="RGU_DIRECCION" name="RGU_DIRECCION"
+              aria-describedby="emailHelp" class="form-control p-ci" placeholder="Ingresa tu dirección"
+              autocomplete="off">
+            <div
+              *ngIf="registerForm.get('RGU_DIRECCION')?.hasError('required') && registerForm.get('RGU_DIRECCION')?.touched"
+              class="text-danger property-danger-c error-message-container">
+              Este campo es obligatorio.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 font-title">
+          <label for="telefono" class="text-light">Teléfono</label>
+          <div class="d-flex align-items-start flex-column input-container position-relative">
+            <input formControlName="RGU_TELEFONO" type="text" id="RGU_TELEFONO" name="RGU_TELEFONO"
+              aria-describedby="emailHelp" class="form-control p-ci" placeholder="Ingresa tu teléfono"
+              autocomplete="off" (keypress)="validateNumberInput($event)">
+            <div
+              *ngIf="registerForm.get('RGU_TELEFONO')?.hasError('required') && registerForm.get('RGU_TELEFONO')?.touched"
+              class="text-danger property-danger-c error-message-container">
+              El teléfono debe tener 10 dígitos.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 font-title">
+          <label for="identificación" class="text-light">Tipo de identificación</label>
+          <div class="d-flex align-items-start flex-column input-container position-relative">
+            <select formControlName="RGU_TP_DOC" type="select" id="RGU_TP_DOC" name="RGU_TP_DOC"
+              aria-describedby="emailHelp" class="form-control p-ci" placeholder="Ingresa tu tipo de indentificación" autocomplete="off">
+              <option value="">Selecciona tipo identificación</option>
+              <option value="Cedula">Cédula nacional</option>
+              <option value="Tarjeta_Identidad">Tarjeta de identidad</option>
+              <option value="ce">Cédula extranjera</option>
+            </select>
+            <div *ngIf="registerForm.get('RGU_TP_DOC')?.hasError('required') && registerForm.get('RGU_TP_DOC')?.touched"
+              class="text-danger property-danger-c error-message-container">
+              Este campo es obligatorio.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 font-title">
+          <label for="identificación" class="text-light">Nro. Identificación</label>
+          <div class="d-flex align-items-start flex-column input-container position-relative">
+            <input formControlName="RGU_IDENTIFICACION" type="text" id="RGU_IDENTIFICACION" name="RGU_IDENTIFICACION"
+              aria-describedby="emailHelp" class="form-control p-ci" placeholder="Ingresa nro. identificación"
+              autocomplete="off" (keypress)="validateNumberInput($event)">
+            <div
+              *ngIf="registerForm.get('RGU_IDENTIFICACION')?.hasError('required') && registerForm.get('RGU_IDENTIFICACION')?.touched"
+              class="text-danger property-danger-c error-message-container">
+              La identificación debe tener entre 8 y 10 dígitos.
             </div>
           </div>
         </div>

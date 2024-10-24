@@ -326,51 +326,59 @@ export class ModalComponent {
   }
 
   actualizarDatos(formData: any) {
-
     this.usuarioService.getData().subscribe({
       next: (data) => {
         this.usuarios = data.filter((item: { RGU_ESTADO: number }) => item.RGU_ESTADO === 1);
-        const emails = this.usuarios.map((item: { RGU_CORREO: string }) => item.RGU_CORREO);
-
-        if (emails.includes(formData.RGU_CORREO)) {
-          Swal.fire({
-            title: 'Correo duplicado',
-            text: 'Este correo ya existe. No se puede actualizar.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-          })
+        const usuarioActual = this.usuarios.find((item: { RGU_CORREO: string, RGU_ID: number }) => item.RGU_ID === formData.RGU_ID);
+  
+        if (usuarioActual && usuarioActual.RGU_CORREO === formData.RGU_CORREO) {
+          this.actualizarRegistro(formData);
         } else {
-          const service = this.getServiceBasedOnContext();
-          service.updateData(formData).subscribe(
-            (response: any) => {
-              this.closeModal();
-              this.data = [];
-              Swal.fire({
-                title: 'Éxito',
-                text: 'Registro editado satisfactoriamente',
-                icon: 'success',
-                confirmButtonText: 'OK'
-              }).then(() => {
-                this.save.emit(response);
-                location.reload();
-              });
-            },
-            (error: any) => {
-              console.error('Error al editar los datos:', error);
-              Swal.fire({
-                title: 'Error',
-                text: 'No se pudo editar el registro',
-                icon: 'error',
-                confirmButtonText: 'OK'
-              });
-            }
-          );
+          const emails = this.usuarios.map((item: { RGU_CORREO: string }) => item.RGU_CORREO);
+          if (emails.includes(formData.RGU_CORREO)) {
+            Swal.fire({
+              title: 'Correo duplicado',
+              text: 'Este correo ya existe. No se puede actualizar.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          } else {
+            this.actualizarRegistro(formData);
+          }
         }
       },
       error: (err) => {
         console.error('Error obteniendo usuarios:', err);
       }
     });
+  }
+  
+  private actualizarRegistro(formData: any): void {
+    const service = this.getServiceBasedOnContext();
+    service.updateData(formData).subscribe(
+      (response: any) => {
+        this.closeModal();
+        this.data = [];
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Registro editado satisfactoriamente',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.save.emit(response);
+          location.reload();
+        });
+      },
+      (error: any) => {
+        console.error('Error al editar los datos:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo editar el registro',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    );
   }
 
   private getServiceBasedOnContext() {

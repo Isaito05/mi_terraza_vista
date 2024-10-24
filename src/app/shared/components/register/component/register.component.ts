@@ -24,6 +24,11 @@ export class RegisterComponent implements OnInit, CanComponentDeactivate {
     this.registerForm = this.fb.group({
       RGU_NOMBRES: ['', [Validators.required, Validators.minLength(2)]],
       RGU_APELLIDOS: ['', [Validators.required, Validators.minLength(2)]],
+      RGU_GENERO: ['', [Validators.required]],
+      RGU_TP_DOC: ['', [Validators.required]],
+      RGU_IDENTIFICACION: ['', [Validators.required,Validators.pattern(/^\d{8,10}$/)]],
+      RGU_DIRECCION: ['', [Validators.required]],
+      RGU_TELEFONO: ['', [Validators.required,Validators.pattern(/^\d{10}$/)]],
       RGU_CORREO: ['', [Validators.required, this.validacionEmail]],
       RGU_PASSWORD: ['', [Validators.required, Validators.minLength(8), this.validacionContrasena]],
       confirmPassword: ['', Validators.required],
@@ -173,11 +178,35 @@ export class RegisterComponent implements OnInit, CanComponentDeactivate {
     
     
 
-  canDeactivate(): CanDeactivateType {
-      if(this.registerForm.dirty && !this.registerForm.invalid) {
-      return confirm('Tienes cambios sin guardar. ¿Estás seguro de que deseas salir?');
+    canDeactivate(): Promise<boolean> {
+      if (this.registerForm.dirty && !this.registerForm.invalid) {
+        return Swal.fire({
+          title: 'Cambios sin guardar',
+          text: 'Tienes cambios sin guardar. ¿Estás seguro de que deseas salir?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, salir',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          return result.isConfirmed; // Retorna true si el usuario confirma, false si cancela
+        });
+      }
+      return Promise.resolve(true); // Si no hay cambios sin guardar, permite navegar sin confirmación
     }
-    return true;
+
+  validateNumberInput(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+  const charCode = event.charCode ? event.charCode : event.keyCode;
+
+  if (charCode < 48 || charCode > 57) {
+    event.preventDefault(); 
+  }
+
+  if (input.value.length >= 10) {
+    event.preventDefault(); 
+  }
   }
 
 }

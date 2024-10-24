@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ProdventaService } from '../services/prodventa.service';
 import Swal from 'sweetalert2';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-prodventa',
@@ -65,7 +66,7 @@ export class ProdventaComponent implements OnInit {
 
 
   getProdventa(): void {
-    this.http.get<any[]>('http://localhost:3000/prodventa').subscribe(data => {
+    this.http.get<any[]>(`${environment.apiUrlHttp}/prodventa`).subscribe(data => {
       this.prodventa = data;
     })
   }
@@ -113,7 +114,7 @@ viewDetails(user: any) {
 onDelete(user: any) {
   Swal.fire({
     title: '¿Estás seguro?',
-    text: `Eliminarás al usuario: ${user.PROD_VENTA_NOMBRE}`,
+    text: `Eliminarás el producto: ${user.PROD_VENTA_NOMBRE}`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
