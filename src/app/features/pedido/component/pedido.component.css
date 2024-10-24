@@ -1,0 +1,9 @@
+.modal-dialog {
+    max-height: 80vh;  /* Limita la altura del modal a un 80% del alto de la ventana */
+  }
+  
+  .modal-content {
+    overflow-y: auto;  /* Permite que el contenido del modal sea desplazable */
+    max-height: 80vh;  /* Aplica el límite de altura al contenido */
+  }
+  

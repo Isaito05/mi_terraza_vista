@@ -10,6 +10,7 @@
   <!-- <div class="d-block p-2 bg-dark text-white fs-2 mb-1">Modulo de Usuarios</div> -->
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
+    <button (click)="generateUsuarioPdf()">Descargar Reporte PDF</button>
   </div>
   <app-modal 
   [title]="isViewingDetails ? 'Detalles del usuario' : (isEditing ? 'Editar usuario' : 'Registrar usuario')" 

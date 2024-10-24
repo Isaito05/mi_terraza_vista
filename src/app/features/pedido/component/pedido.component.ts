@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { PedidoService } from '../../pedido/service/pedido.service';
 import Swal from 'sweetalert2';
 import { UsuarioService } from '../../usuario/service/usuario.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
+import { ProdventaService } from '../../prodventa/services/prodventa.service';
 
 export interface Usuario {
   RGU_ID: number;
@@ -23,7 +25,24 @@ export class PedidoComponent implements OnInit {
   editingPed: any = {};
   isModalVisible: boolean = false;
   loading: boolean = true;
-  constructor(private pedidoservice: PedidoService, private usuarioService: UsuarioService ) { }
+  filteredPedidos: any[] = [];
+  clientesUnicos: string[] = [];
+  productos: string[] = [];
+
+  constructor(private pedidoservice: PedidoService, private usuarioService: UsuarioService,private prodventaService: ProdventaService, private pdfReportService:PdfReportService ) { }
+
+  selectedFields = { 
+    pedidoId: true,
+    fecha: true,
+    estado: true,
+    infoPedido: true,
+    precioTotal: true,
+    descripcion: true,
+    cancelado: true,
+    nombreUsuario: true
+
+};
+
 
   ngOnInit(): void {
     this.pedidoservice.getData().subscribe({
@@ -31,6 +50,29 @@ export class PedidoComponent implements OnInit {
         this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1)
         console.log(this.pedidos);
         console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
+        const clientes = this.pedidos.map(pedido => pedido.rguUsuario.RGU_NOMBRES);
+        this.clientesUnicos = [...new Set(clientes)];
+
+        // Extraer productos únicos de los pedidos
+        const productosPromises: Promise<void>[] = [];
+        const productosSet = new Set<string>();  
+
+        this.pedidos.forEach(pedido => {
+          const pedInfoArray = JSON.parse(pedido.PED_INFO);  // Convertir el campo PED_INFO a array de productos
+          pedInfoArray.forEach((producto: { id: number; cantidad: number }) => {
+            const productoPromise = this.prodventaService.getProVenById(producto.id).toPromise().then(productoDetails => {
+              productosSet.add(productoDetails.PROD_VENTA_NOMBRE);  // Agregar el nombre del producto al Set
+            });
+            productosPromises.push(productoPromise);
+          });
+        });
+
+        // Después de que todas las promesas se resuelvan, llenar el array de productos
+        Promise.all(productosPromises).then(() => {
+          this.productos = Array.from(productosSet);  // Convertir el Set a un Array
+        });
+
+        this.filteredPedidos = data;
         this.loading = false;
       },
       error: (error) => {
@@ -132,4 +174,164 @@ export class PedidoComponent implements OnInit {
       }
     });
   }
+  disableBodyScroll() {
+    document.body.style.overflow = 'hidden';  // Desactiva el scroll de la página
+  }
+  
+  enableBodyScroll() {
+    document.body.style.overflow = 'auto';  // Reactiva el scroll de la página
+  }
+  
+
+  filters = {
+    dateRange: { startDate: null, endDate: null},
+    status: "",  // 'Cancelado', 'Enviado', 'Pendiente'
+    nombreCliente: "",
+    selectedProduct:"",
+    minPrecioTotal: null,  // Precio mínimo
+    maxPrecioTotal: null  
+  };
+
+  filtersApplied: boolean = false; // Para mostrar si los filtros han sido aplicados
+  // loading: boolean = false; 
+  
+  applyFilters(): any[] {
+    const filteredPedidos = this.pedidos.filter(pedido => {
+      let matches = true;
+  
+      // Filtro por fechas
+      const pedidoFecha = new Date(pedido.PED_FECHA);
+      const { startDate, endDate } = this.filters.dateRange;
+    
+      if (startDate && pedidoFecha < new Date(startDate)) matches = false;
+      if (endDate && pedidoFecha > new Date(endDate)) matches = false;
+  
+      // Filtro por estado
+      if (this.filters.status && pedido.PED_ESTADO !== this.filters.status) {
+        matches = false;
+      }
+  
+      // Filtro por nombre de cliente
+      if (this.filters.nombreCliente && pedido.rguUsuario.RGU_NOMBRES !== this.filters.nombreCliente) {
+        matches = false;
+      }
+  
+      // Filtro por producto
+      if (this.filters.selectedProduct) {
+        const pedInfoArray = JSON.parse(pedido.PED_INFO);
+        const hasSelectedProduct = pedInfoArray.some((producto: { id: number; cantidad: number }) => {
+          return this.prodventaService.getProVenById(producto.id).toPromise().then(productoDetails => {
+            return productoDetails.PROD_VENTA_NOMBRE === this.filters.selectedProduct;
+          });
+        });
+  
+        if (!hasSelectedProduct) matches = false;
+      }
+  
+      // Filtro por precio total
+      const precioTotal = pedido.PED_PRECIO_TOTAL;
+      if (this.filters.minPrecioTotal && precioTotal < this.filters.minPrecioTotal) {
+        matches = false;
+      }
+      if (this.filters.maxPrecioTotal && precioTotal > this.filters.maxPrecioTotal) {
+        matches = false;
+      }
+  
+      return matches;
+    });
+  
+    this.filtersApplied = true;
+    setTimeout(() => {
+      this.filtersApplied = false;
+    }, 2000);
+  
+    return filteredPedidos;
+  }
+  
+  
+  selectedEstado: string = '';
+
+  
+  generatePedidoPdf() {
+    // Definir los encabezados de la tabla
+    const headers: string[] = [];  
+
+    this.loading = true;
+  
+    // Definir encabezados según los campos seleccionados
+    if (this.selectedFields.nombreUsuario) headers.push('Cliente');
+    if (this.selectedFields.fecha) headers.push('Fecha');
+    if (this.selectedFields.estado) headers.push('Estado');
+    if (this.selectedFields.infoPedido) headers.push('Info Pedido');
+    if (this.selectedFields.descripcion) headers.push('Descripcion');
+    if (this.selectedFields.cancelado) headers.push('Cancelado');
+    if (this.selectedFields.precioTotal) headers.push('Precio Total');
+    
+    this.pedidoservice.getData().subscribe(data => {
+      // Aplicar filtros
+      this.pedidos = data; // Asegúrate de tener tus pedidos aquí
+      const filteredData = this.applyFilters(); // Ahora esto debería ser un array
+    
+      const rows: any[][] = [];
+      const productNamesPromises: any[] = [];
+    
+      filteredData.forEach((pedido: any) => {
+        const row: any[] = [];
+        const pedInfoArray = JSON.parse(pedido.PED_INFO);
+        const productosInfoPromises: Promise<string>[] = [];
+    
+        if (this.selectedFields.nombreUsuario) row.push(pedido.rguUsuario.RGU_NOMBRES);
+        if (this.selectedFields.fecha) {
+          const fecha = new Date(pedido.PED_FECHA);
+          const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+          row.push(fechaFormateada);
+        }
+        if (this.selectedFields.estado) row.push(pedido.PED_ESTADO);
+        if (this.selectedFields.descripcion) row.push(pedido.PED_DESCRIPCION);
+        if (this.selectedFields.cancelado) row.push(pedido.PED_CANCELADO);
+    
+        if (this.selectedFields.infoPedido) {
+          pedInfoArray.forEach((producto: { id: number; cantidad: number }) => {
+            const productoPromise = this.prodventaService.getProVenById(producto.id).toPromise().then(productoDetails => {
+              return `${productoDetails.PROD_VENTA_NOMBRE} (Cantidad: ${producto.cantidad})`;
+            });
+            productosInfoPromises.push(productoPromise);
+          });
+        }
+    
+        if (this.selectedFields.precioTotal) {
+          const precioFormateado = new Intl.NumberFormat('es-CO', { 
+            style: 'currency', 
+            currency: 'COP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }).format(pedido.PED_PRECIO_TOTAL);
+          row.push(precioFormateado);
+        }
+    
+        const productInfoPromise = Promise.all(productosInfoPromises).then(productInfoArray => {
+          const productosInfo = productInfoArray.join(',\n');
+          if (this.selectedFields.infoPedido) {
+            row.splice(headers.indexOf('Info Pedido'), 0, productosInfo);
+          }
+          rows.push(row);
+        });
+    
+        productNamesPromises.push(productInfoPromise);
+      });
+    
+      Promise.all(productNamesPromises).then(() => {
+        this.loading = false; // Finaliza el estado de carga
+        this.pdfReportService.generatePdf('Reporte de Pedidos', headers, rows, 'reporte_pedidos');
+      }).catch(() => {
+        this.loading = false; // Asegúrate de finalizar el estado de carga incluso si hay un error
+      });
+    });
+  }
+  
+  
 }

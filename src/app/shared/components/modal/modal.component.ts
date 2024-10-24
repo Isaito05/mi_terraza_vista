@@ -127,6 +127,7 @@ export class ModalComponent {
 
     if (this.title === 'Detalles del pedido') {
       this.Tablapedido(this.data['PED_ID']);
+      console.log(this.pedidos)
     }
 
     if (this.data['RGU_IMG_PROFILE']) {
@@ -452,7 +453,7 @@ export class ModalComponent {
       const pedidosFiltrados = data.filter((pedido: { PED_ID: number; }) => pedido.PED_ID === pedId);
 
       const productosMap = new Map<string, number>(); // Para evitar duplicados
-
+      console.log(productosMap)
       pedidosFiltrados.forEach((pedido: { PED_INFO: string | any[]; }) => {
         if (typeof pedido.PED_INFO === 'string') {
           try {
@@ -485,10 +486,12 @@ export class ModalComponent {
           return null; // Manejar el error
         })
       );
+      console.log(productPromises)
 
       // Esperar a que todas las promesas se resuelvan
       Promise.all(productPromises).then(results => {
         this.pedidos = results.filter(result => result !== null); // Filtrar resultados nulos en caso de error
+        console.log(this.pedidos = results.filter(result => result !== null))
       });
     });
   }

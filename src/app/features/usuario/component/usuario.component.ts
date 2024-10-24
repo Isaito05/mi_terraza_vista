@@ -1,6 +1,7 @@
 // usuario.component.ts
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../service/usuario.service'; // Importa el servicio
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -22,7 +23,7 @@ export class UsuarioComponent implements OnInit {
   loading: boolean = true;
 
   constructor(
-    private usuarioService: UsuarioService,
+    private usuarioService: UsuarioService, private pdfReportService: PdfReportService
     
   ) {
     this.camposUsuario();
@@ -165,5 +166,19 @@ export class UsuarioComponent implements OnInit {
   handleConfirm() {
     console.log('Confirmed!');
     this.isModalVisible = false;
+  }
+
+  // Método para generar PDF de usuarios
+  generateUsuarioPdf() {
+    const headers = ['ID', 'Nombre', 'Apellido', 'Correo', 'Teléfono'];
+    const data = this.usuarios.map(usuario => [
+      usuario.RGU_ID,
+      usuario.RGU_NOMBRES,
+      usuario.RGU_APELLIDOS,
+      usuario.RGU_CORREO,
+      usuario.RGU_TELEFONO
+    ]);
+
+    this.pdfReportService.generatePdf('Reporte de Usuarios', headers, data, 'reporte_usuarios');
   }
 }

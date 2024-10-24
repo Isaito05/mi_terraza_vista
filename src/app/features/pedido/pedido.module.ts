@@ -5,7 +5,7 @@ import { PedidoRoutingModule } from './pedido-routing.module';
 import { PedidoComponent } from './component/pedido.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgxLoadingModule } from 'ngx-loading';
-
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +15,8 @@ import { NgxLoadingModule } from 'ngx-loading';
     CommonModule,
     PedidoRoutingModule,
     SharedModule,
-    NgxLoadingModule.forRoot({})
+    NgxLoadingModule.forRoot({}),
+    FormsModule
   ]
 })
 export class PedidoModule { }

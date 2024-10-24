@@ -29,6 +29,9 @@ export class AuthService {
     return CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
   }
   login(email: string, password: string): Observable<any> {
+    console.log( email, password)
+    console.log(`${environment.apiUrlHttp}`)
+
     return this.http.post<any>(`${environment.apiUrlHttp}/auth/login`, { email, password })
     .pipe(
       map(response => {
