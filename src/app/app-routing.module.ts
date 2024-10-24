@@ -54,7 +54,7 @@ const routes: Routes = [
   // Ruta para la página de inicio pública
   { 
     path: 'home', 
-    title: 'Pagina principal', 
+    title: 'Mi terraza', 
     component: HomeComponent 
   },
 

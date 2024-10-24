@@ -57,7 +57,7 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
         next: (response) => {
           // console.log('Login successful');
-          console.log(response)
+          // console.log(response)
           const decodedToken: any = jwtDecode(response.access_token);
           const miNombre = decodedToken.nombre       
           const cliente = decodedToken.rol       

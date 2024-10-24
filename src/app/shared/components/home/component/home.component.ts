@@ -48,26 +48,6 @@ export class HomeComponent implements AfterViewInit {
   constructor(private router: Router, private renderer: Renderer2, private authService: AuthService,private imagenService: ImageUploadService) { }
 
   ngOnInit(): void {
-  // Suscribirse al observable para actualizar el estado de isLoggedIn
-    this.authSubscription = this.authService.isLoggedIn$.subscribe(
-      (loggedIn: boolean) => {
-        this.isLoggedIn = loggedIn;
-        console.log('Estado de isLoggedIn actualizado:', this.isLoggedIn);
-      }
-    );
-    
-    // Código existente para obtener datos de sesión
-    this.username = sessionStorage.getItem('username');
-    this.role = sessionStorage.getItem('role');
-    this.apellido = sessionStorage.getItem('apellido');
-    this.i_perfil = sessionStorage.getItem('i_perfil');
-    
-    if (!this.i_perfil || this.i_perfil === '') {
-      this.imangenPerfil = 'assets/images/pf.jpg'
-    } else {
-      this.imangenPerfil = `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`;
-    }
-    
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const urlTree = this.router.parseUrl(this.router.url);
@@ -86,44 +66,7 @@ export class HomeComponent implements AfterViewInit {
         }
       }
     });
-    const usu_token = sessionStorage.getItem('token');
-    if(usu_token){
-      const decodedToken: any = jwtDecode(usu_token);
-      this.usu_nombre = decodedToken.nombre
-      this.usu_imagen = decodedToken.i_perfil
-      this.usu_rol = decodedToken.rol
-      this.logueado = true
-      console.log(this.usu_token)
-    }
-    
-    if (!this.usu_imagen || this.usu_imagen === '') {
-      this.usu_imagen = 'assets/images/pf.jpg'
-    } else {
-      this.usu_imagen = `${environment.apiUrlHttp}${this.usu_imagen}?t=${new Date().getTime()}`;
-    }  
-
-    if(this.usu_rol === 'Administrador' || this.usu_rol === 'Trabajador') {
-      this.rol = true
-    }
-    console.log(this.logueado)
-    console.log(this.rol)
-    console.log(this.usu_rol)
   }
-
-  logout () {
-    this.authService.logout();
-  }
-
-  // Método que se ejecuta cuando se cierra la sesión
-    logOut() {
-      this.loading = true
-      // document.body.style.overflow = 'hidde';
-      setTimeout(() => {
-        this.loading = false
-        // document.body.style.overflow = 'auto';
-        this.authService.logout();
-      },1000);
-    }
 
   isActive(fragment: string): boolean {
     return this.currentFragment === fragment;
@@ -231,10 +174,5 @@ export class HomeComponent implements AfterViewInit {
         }
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    // Limpiar la suscripción al destruir el componente
-    this.authSubscription.unsubscribe();
   }
 }

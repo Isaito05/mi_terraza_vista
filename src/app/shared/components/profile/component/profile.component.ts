@@ -26,6 +26,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   userId!: number;
   usuario: any = {}
   imangenPerfil: string = '';
+  i_perfil: string = '';
 
   constructor(
     private renderer: Renderer2,
@@ -41,14 +42,9 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     if (token) {
       const decodedToken: any = jwtDecode(token);
       this.userId = decodedToken.id;
-      this.imangenPerfil = decodedToken.i_perfil;
-
-      if (!this.imangenPerfil || this.imangenPerfil === '') {
-        this.imangenPerfil = 'assets/images/pf.jpg'
-      } else {
-        this.imangenPerfil = `${environment.apiUrlHttp}${this.imangenPerfil}?t=${new Date().getTime()}`;
-      }
-
+      this.i_perfil = decodedToken.i_perfil;
+    }
+      console.log(this.i_perfil)
       this.usuarioService.getUsuarioById(this.userId).subscribe(
         (data) => {
           this.usuario = data;
@@ -69,11 +65,17 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         (error) => {
           console.error('Error al obtener los datos del usuario', error);
         }
-      );
-      
-    }
-
-    
+      );      
+    // }
+    this.imangenPerfil = this.getImagenUsuario();
+    console.log(this.imangenPerfil)
+    this.usuarioService.$usuario.subscribe((usuario) => {
+      if (usuario) {
+        this.usuario = usuario;
+        this.imangenPerfil = this.getImagenUsuario();
+        console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
+      }
+    });
   }
 
   onSubmit() {
@@ -88,12 +90,14 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         RGU_IDENTIFICACION: this.editForm.value.RGU_IDENTIFICACION,
         RGU_DIRECCION: this.editForm.value.RGU_DIRECCION,
       };
-      console.log(updatedData," loos demons")
-
+      // console.log(updatedData," loos demons")
+      // const dataToUpdate = { ...updatedData };
+      // console.log(dataToUpdate)
+      // delete dataToUpdate.RGU_PASSWORD; 
+      // console.log(updatedData, 'se va a enviar')
       this.usuarioService.updateData(updatedData).subscribe(
         (response) => {
           console.log('Usuario actualizado con éxito:', response);
-  
           // SweetAlert2 para mostrar un mensaje de éxito
           Swal.fire({
             title: '¡Éxito!',
@@ -132,7 +136,16 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     }
   }
 
-  
+  getImagenUsuario(): string {
+    console.log(this.i_perfil)
+    const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
+    console.log(imagen)
+    if (imagen !== undefined) {
+      return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
+    }
+    console.log(`${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`)
+    return `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`; // Ruta de la imagen por defecto
+  }
 
   // Detectar cambios en el tamaño de la pantalla
   @HostListener('window:resize', ['$event'])

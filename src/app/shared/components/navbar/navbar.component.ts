@@ -7,6 +7,8 @@ import { ImageUploadService } from 'src/app/core/services/image-upload.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
+import * as CryptoJS from 'crypto-js';
 declare var $: any;
 
 @Component({
@@ -16,64 +18,54 @@ declare var $: any;
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
+
 export class NavbarComponent implements AfterViewInit, OnInit{
   currentFragment: string = '';
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
-  username: string | null = '';
-  apellido: string | null = '';
+  username: string = '';
+  apellido: string = '';
   i_perfil: string | null = '';
   role: string | null = '';
+  rol_ad: boolean = false;
   userId!: number;
-  
-  loading: boolean = false;
   imangenPerfil: string = '';
 
-  isLoggedIn = false; // Cambia a 'true' cuando el usuario se loguee
+  isLoading: boolean = false; // Cambia a 'true' cuando el usuario se loguee
+  usuario: any
+  secretKey = 'your-secret-key'
   private authSubscription!: Subscription;
   
   // Método para usar una imagen por defecto si la imagen de perfil falla
   imagenPorDefecto(event: Event) {
     const imgElement = event.target as HTMLImageElement;
-    console.log(imgElement)
+    // console.log(imgElement)
     imgElement.src = 'assets/images/pf.jpg'; // Imagen por defecto si no se encuentra la imagen en el servidor
   }
 
-  constructor(private router: Router, private renderer: Renderer2, private authService: AuthService,private imagenService: ImageUploadService) { }
+  constructor(
+    private router: Router, 
+    private renderer: Renderer2, 
+    public authService: AuthService,
+    private usuarioService: UsuarioService
+  ){}
 
   ngOnInit(): void {
-  // Suscribirse al observable para actualizar el estado de isLoggedIn
-    this.authSubscription = this.authService.isLoggedIn$.subscribe(
-      (loggedIn: boolean) => {
-        this.isLoggedIn = loggedIn;
-        console.log('Estado de isLoggedIn actualizado:', this.isLoggedIn);
-      }
-    );
-    
-    // Código existente para obtener datos de sesión    
-    const token = sessionStorage.getItem('token'); 
-    console.log('Auth Token:', token); // Verificar token
+    const token = sessionStorage.getItem('token')
+    // console.log('Auth Token:', token); // Verificar token
     if (token) {
       const decodedToken: any = jwtDecode(token);
       this.userId = decodedToken.id;
-      this.imangenPerfil = decodedToken.i_perfil;
+      this.role = decodedToken.rol;
       this.username = decodedToken.nombre;
       this.apellido = decodedToken.apellido;
-      this.role = decodedToken.rol;
-  
-      if (!this.imangenPerfil || this.imangenPerfil === '') {
-        this.imangenPerfil = 'assets/images/pf.jpg'
-      } else {
-        this.imangenPerfil = `${environment.apiUrlHttp}${this.imangenPerfil}?t=${new Date().getTime()}`;
-      }
+      this.i_perfil = decodedToken.i_perfil;
     }
 
-    
-    // if (!this.i_perfil || this.i_perfil === '') {
-    //   this.imangenPerfil = 'assets/images/pf.jpg'
-    // } else {
-    //   this.imangenPerfil = `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`;
-    // }
-    
+    if(this.role === 'Administrador' || this.role === 'Trabajador') {
+      this.rol_ad = true;
+    }
+
+    this.imangenPerfil = this.getImagenUsuario();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const urlTree = this.router.parseUrl(this.router.url);
@@ -92,17 +84,75 @@ export class NavbarComponent implements AfterViewInit, OnInit{
         }
       }
     });
+
+    // Suscribirse al observable de usuario
+    this.usuarioService.$usuario.subscribe((usuario) => {
+      if (usuario) {
+        this.usuario = usuario;
+    
+        // Si necesitas usar sessionStorage para obtener datos iniciales
+        const encryptedData = sessionStorage.getItem('user');
+        if (encryptedData) {
+          try {
+            const decryptedData = this.decryptData(encryptedData); // Desencriptar los datos de sessionStorage
+            const parseData = JSON.parse(decryptedData); // Luego parsear los datos desencriptados
+            this.usuario = parseData;
+          } catch (error) {
+            console.error('Error al desencriptar o parsear los datos del usuario:', error);
+            sessionStorage.removeItem('user'); // Limpiar si los datos son inválidos
+            // return null
+          }
+        }
+    
+        this.imangenPerfil = this.getImagenUsuario();
+        // console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
+      }
+    });
+  }
+
+  private decryptData(ciphertext: string): string {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
+    const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+    console.log('Decrypted Data:', decryptedText); // Verificar el contenido descifrado
+    return decryptedText
+  }
+
+  getNombreUsuario(): string {
+    const nombre = this.usuario ? this.usuario.RGU_NOMBRES : 'Invitado';
+    if(nombre !== 'Invitado'){
+      return nombre
+    }
+    return this.username
+  }
+
+  getApellidoUsuario(): string {
+    const apellido = this.usuario ? this.usuario.RGU_APELLIDOS : 'Invitado';
+    if(apellido !== 'Invitado') {
+      return apellido
+    }
+    return this.apellido
+  }
+
+  getImagenUsuario(): string {
+    const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
+    if (imagen !== 'no hay imagen') {
+      return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
+    }
+    return `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`; // Ruta de la imagen por defecto
   }
 
   // Método que se ejecuta cuando se cierra la sesión
     logOut() {
-      this.loading = true
-      // document.body.style.overflow = 'hidde';
-      setTimeout(() => {
-        this.loading = false
-        // document.body.style.overflow = 'auto';
-        this.authService.logout();
-      },1000);
+      // Mostrar el spinner antes de cerrar sesión
+      this.isLoading = true;
+
+      // setTimeout(() => {
+        this.authService.logout(); // Aquí se hace el logout
+        // this.router.navigate(['/home']).then(() => {
+        //   // Ocultar el spinner después de navegar
+        //   this.isLoading = false;
+        // });
+      // }, 1000); // Tiempo simulado de espera antes de cerrar sesión
     }
 
   isActive(fragment: string): boolean {
@@ -212,10 +262,10 @@ export class NavbarComponent implements AfterViewInit, OnInit{
       }
     });
   }
+}
 
-  ngOnDestroy(): void {
-    // Limpiar la suscripción al destruir el componente
-    this.authSubscription.unsubscribe();
-  }
-
+const secretKey = 'Secret-key'
+function decryptData(ciphertext: string): string {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
