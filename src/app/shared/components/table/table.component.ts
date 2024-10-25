@@ -41,11 +41,15 @@ export class TableComponent {
     if (this.title === 'Modulo de Pagos') {
       this.data_fecha = 'PAGO_FECHA'
       console.log(this.data_fecha);
-    // } else if (this.title === 'Modulo de Usuario') {
-    //   this.data_fecha = 'RGU_FCH_REGISTRO'
-    //   console.log(this.data_fecha);
+    } else if (this.title === 'Modulo de Usuario') {
+      this.data_fecha = 'RGU_FCH_REGISTRO'
+      console.log(this.data_fecha);
     } else if (this.title === 'Modulo de Proprov') {
       this.data_fecha = 'PROPROV_FCH_INGRESO'
+      console.log(this.data_fecha);
+    }
+     else if (this.title === 'Modulo de Pedido') {
+      this.data_fecha = 'PED_FECHA'
       console.log(this.data_fecha);
     }
 
@@ -96,16 +100,25 @@ export class TableComponent {
 
       const cumpleFecha = () => {
         if (!startDate && !endDate) return true; // Sin fechas seleccionadas
-        // const itemDate = new Date(item.PAGO_FECHA); // Ajusta 'fecha' al campo adecuado
-        const itemDate = new Date(item[this.data_fecha]); // Ajusta 'fecha' al campo adecuado
-        if (startDate && endDate) {
-          return itemDate >= startDate && itemDate <= endDate;
+        
+        const formatFecha = (fecha: Date) => {
+          return fecha.toISOString().split('T')[0];
         }
-        if (startDate) return itemDate >= startDate;
-        if (endDate) return itemDate <= endDate;
+        // const itemDate = new Date(item.PAGO_FECHA); // Ajusta 'fecha' al campo adecuado
+        const itemDate = formatFecha(new Date(item[this.data_fecha])); // Ajusta 'fecha' al campo adecuado
+        const startDateString = startDate ? formatFecha(startDate) : null;
+        const endDateString = endDate ? formatFecha(endDate) : null;
+        // Comparar fechas solo en formato 'YYYY-MM-DD'
+        if (startDateString && endDateString) {
+          // console.log("Comparando entre:", startDateString, "y", endDateString);
+          return itemDate >= startDateString && itemDate <= endDateString;
+        }
+        if (startDateString) return itemDate >= startDateString;
+        if (endDateString) return itemDate <= endDateString;
+
         return true;
       };
-
+      console.log(cumpleFecha())
       // Retornar si cumple con la búsqueda y los checkboxes
       return cumpleBusqueda && cumpleCheckboxes && cumpleFecha();
     });

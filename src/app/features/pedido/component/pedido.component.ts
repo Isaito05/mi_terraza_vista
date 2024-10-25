@@ -52,7 +52,8 @@ export class PedidoComponent implements OnInit {
         this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1)
         console.log(this.pedidos);
         console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
-        const clientes = this.pedidos.map(pedido => pedido.rguUsuario.RGU_NOMBRES);
+        const clientes = this.pedidos.map(pedido => pedido.rguUsuario?.RGU_NOMBRES);
+        console.log(clientes)
         this.clientesUnicos = [...new Set(clientes)];
 
         // Extraer productos únicos de los pedidos
@@ -63,7 +64,7 @@ export class PedidoComponent implements OnInit {
           const pedInfoArray = JSON.parse(pedido.PED_INFO);  // Convertir el campo PED_INFO a array de productos
           pedInfoArray.forEach((producto: { id: number; cantidad: number }) => {
             const productoPromise = this.prodventaService.getProVenById(producto.id).toPromise().then(productoDetails => {
-              productosSet.add(productoDetails.PROD_VENTA_NOMBRE);  // Agregar el nombre del producto al Set
+              productosSet.add(productoDetails?.PROD_VENTA_NOMBRE);  // Agregar el nombre del producto al Set
             });
             productosPromises.push(productoPromise);
           });
@@ -198,14 +199,33 @@ export class PedidoComponent implements OnInit {
 
   applyFilters(): any[] {
     const filteredPedidos = this.pedidos.filter(pedido => {
-      const pedidoFecha = new Date(pedido.PED_FECHA);
       const { startDate, endDate } = this.filters.dateRange;
+      if (!startDate && !endDate) return true; // Sin fechas seleccionadas
+      const formatFecha = (fecha: any) => {
+        // Verificar si la fecha ya es un objeto Date
+        if (!(fecha instanceof Date)) {
+          fecha = new Date(fecha); // Convertir a Date si no lo es
+        }
+        return fecha.toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
+      };
+      
+      // const pedidoFecha = new Date(pedido.PED_FECHA);
+      const itemDate = formatFecha(new Date(pedido.PED_FECHA)); // Ajusta 'fecha' al campo adecuado
+      const startDateString = startDate ? formatFecha(startDate) : null;
+      const endDateString = endDate ? formatFecha(endDate) : null;
+
 
       // Reiniciar matches a true al inicio
       let matches = true;
 
-      if (startDate && pedidoFecha < new Date(startDate)) matches = false; // Cambiar <= a <
-      if (endDate && pedidoFecha > new Date(endDate)) matches = false;
+      // if (startDate && pedidoFecha < new Date(startDate)) matches = false; // Cambiar <= a <
+      // if (endDate && pedidoFecha > new Date(endDate)) matches = false;
+      if (startDateString && endDateString) {
+        // console.log("Comparando entre:", startDateString, "y", endDateString);
+        return itemDate >= startDateString && itemDate <= endDateString;
+      }
+      if (startDateString) return itemDate >= startDateString;
+      if (endDateString) return itemDate <= endDateString;
 
       // Filtro por estado
       if (this.filters.status && pedido.PED_ESTADO !== this.filters.status) {
@@ -302,7 +322,7 @@ export class PedidoComponent implements OnInit {
         const pedInfoArray = JSON.parse(pedido.PED_INFO);
         const productosInfoPromises: Promise<string>[] = [];
 
-        if (this.selectedFields.nombreUsuario) row.push(pedido.rguUsuario.RGU_NOMBRES);
+        if (this.selectedFields.nombreUsuario) row.push(pedido.rguUsuario?.RGU_NOMBRES);
         if (this.selectedFields.fecha) {
           const fecha = new Date(pedido.PED_FECHA);
           const fechaFormateada = fecha.toLocaleDateString('es-ES', {
@@ -319,7 +339,7 @@ export class PedidoComponent implements OnInit {
         if (this.selectedFields.infoPedido) {
           pedInfoArray.forEach((producto: { id: number; cantidad: number }) => {
             const productoPromise = this.prodventaService.getProVenById(producto.id).toPromise().then(productoDetails => {
-              return `${productoDetails.PROD_VENTA_NOMBRE} (Cantidad: ${producto.cantidad})`;
+              return `${productoDetails?.PROD_VENTA_NOMBRE} (Cantidad: ${producto.cantidad})`;
             });
             productosInfoPromises.push(productoPromise);
           });

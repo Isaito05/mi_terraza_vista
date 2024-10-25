@@ -15,7 +15,7 @@
           </div>
         </div>
         <div [ngClass]="{'col-md-4 offset-md-4': title === 'Modulo de Usuario', 'mt-auto': title !== 'Modulo de Usuario'}">
-          <div>
+          <div *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Pedido' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'">
             <div class="d-flex justify-content-end mb-3">
              <input type="date" class="form-control me-2" [(ngModel)]="startDate" (change)="updateFilter($event)" placeholder="Fecha inicio" />
              <input type="date" class="form-control" [(ngModel)]="endDate" (change)="updateFilter($event)" placeholder="Fecha fin" />
