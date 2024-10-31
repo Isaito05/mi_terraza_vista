@@ -4,26 +4,84 @@ tbody {
     text-transform: lowercase;
 }
 
-tbody, td, tfoot, th, thead, tr {
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
     border-style: hidden !important
 }
 
-.btn:focus{
+.btn:focus {
     box-shadow: none;
 }
 
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+.btn-check:checked+.btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check)+.btn:active {
     border-color: transparent;
 }
 
 table {
     border-bottom: 0 !important;
-    
+
 }
 
-table td, 
+table td,
 table th {
-    text-transform: capitalize; /* Transforma la primera letra de cada palabra a mayúscula */
+    text-transform: capitalize;
+    /* Transforma la primera letra de cada palabra a mayúscula */
+}
+
+.linea {
+    width: 14.4rem;
+    height: 2.3rem;
+    position: absolute;
+    top: 2rem;
+    left: 3.5rem;
+    border: 1px solid #ced4da;
+    ;
+    border-radius: 5px;
+    border-bottom: transparent;
+}
+
+.linea-busqueda {
+    width: 15.4rem;
+    height: 2.3rem;
+    position: absolute;
+    top: 1.8rem;
+    left: 44rem;
+    border: 1px solid #ced4da;
+    ;
+    border-radius: 5px;
+    border-bottom: transparent;
+}
+
+.linea-fch {
+    width: 25rem;
+    height: 2.3rem;
+    position: absolute;
+    top: 1.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    border-bottom: transparent
+}
+
+.form-label {
+    display: inline-block;
+    margin-right: 8px;
+    /* Ajusta el espacio entre el label y la línea */
+    position: relative;
+    z-index: 1;
+    background-color: white;
+    /* Fondo para cubrir la línea detrás */
+    padding: 0 5px;
+    font-style: italic;
+    font-size: 13px;
+    color: #868b8f;
 }
 
 .form-control:focus {
@@ -37,16 +95,25 @@ table th {
 }
 
 .f-in {
-    width: 10rem;
+    width: 13rem;
     padding-left: 2rem;
 }
 
 .search-icon {
     /* position: absolute; */
-    top: 32%;
-    right: 8.2rem; /* Ajusta esta distancia para que el ícono esté más o menos a la derecha */
+    top: 49%;
+    right: 11.2rem;
+    /* Ajusta esta distancia para que el ícono esté más o menos a la derecha */
     transform: translateY(-50%);
-    font-size: 1.2rem; /* Ajusta el tamaño del ícono */
-    color: #999; /* Cambia el color del ícono */
-    pointer-events: none; /* Evita que el ícono sea clicable y afecte el input */
+    font-size: 1.2rem;
+    /* Ajusta el tamaño del ícono */
+    color: #999;
+    /* Cambia el color del ícono */
+    pointer-events: none;
+    /* Evita que el ícono sea clicable y afecte el input */
+}
+
+.center-label {
+    margin-top: -0.09rem;
+    padding-left: 0.4rem;
 }

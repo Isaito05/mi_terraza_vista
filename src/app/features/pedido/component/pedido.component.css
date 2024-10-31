@@ -1,9 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Rethink+Sans:ital,wght@0,500;1,500&display=swap');
+
 .modal-dialog {
     max-height: 80vh;  /* Limita la altura del modal a un 80% del alto de la ventana */
-  }
+}
   
-  .modal-content {
-    overflow-y: auto;  /* Permite que el contenido del modal sea desplazable */
-    max-height: 80vh;  /* Aplica el límite de altura al contenido */
-  }
-  
+.modal-content {
+  overflow-y: auto;  /* Permite que el contenido del modal sea desplazable */
+  max-height: 80vh;  /* Aplica el límite de altura al contenido */
+}
+
+.style-title {
+  font-family: "Lexend Deca", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.pdf-selection {
+  margin-bottom: 1rem; /* Espacio debajo del mensaje */
+  font-family: Arial, sans-serif; /* Tipografía clara */
+  color: #333; /* Color de texto contrastante */
+}
+
+.instruction {
+  display: flex;
+  align-items: center; /* Alinear el ícono con el texto */
+}
+
+.instruction strong {
+  margin-right: 0.5rem; /* Espacio entre el texto y el ícono */
+}
+
+h2 {
+  font-size: 1.5rem; /* Ajusta el tamaño del texto */
+  color: #333; /* Color del texto */
+  display: flex; /* Usar flex para alinear el ícono con el texto */
+  align-items: center; /* Centrar verticalmente el ícono */
+  font-weight: 100
+}
+
+.label-center {
+  margin-top: -0.1rem;
+  padding-right: 0.4rem;
+  font-style: italic;
+  font-size: 14px;
+  color: #999a9b;
+}
+
+.eo-label {
+  margin-top: -0.2rem;
+  padding-left: 0.5rem;
+}
+
+h2 i {
+  margin-right: 0.5rem; /* Espacio entre el ícono y el texto */
+  color: #007bff; /* Color del ícono (puedes personalizarlo) */
+}
+
+.w-pdf {
+  width: 191px !important;
+}

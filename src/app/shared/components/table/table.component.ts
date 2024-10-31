@@ -1,7 +1,9 @@
 import { HtmlParser } from '@angular/compiler';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import * as bootstrap from 'bootstrap';
+import { DatosService } from 'src/app/core/services/datos.service';
 import { environment } from 'src/environments/environment';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-table',
@@ -13,6 +15,7 @@ export class TableComponent {
   @Input() columns: { key: string, label: string, type?: any, format?: string }[] = [];
   @Input() noDataMessage: string = 'No hay datos disponibles.';
   @Input() title: string = '';
+  @Input() dataService: any;
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() detail = new EventEmitter<any>();
@@ -32,25 +35,31 @@ export class TableComponent {
   endDate: string | null = null;
 
   data_fecha: string = '';
-  private tooltip: bootstrap.Tooltip | null = null;
+  id: string = '';
+  itemsSelected: any[] = [];
+  selectedCount: number = 0;
 
+  constructor( private compartirdatos: DatosService){}
   ngOnInit() {
     this.filteredData = [...this.data];
-    console.log(this.filteredData)
+    // console.log(this.filteredData)
     console.log(this.title)
     if (this.title === 'Modulo de Pagos') {
       this.data_fecha = 'PAGO_FECHA'
-      console.log(this.data_fecha);
+      this.id = 'PAGO_ID'
+      console.log(this.id);
     } else if (this.title === 'Modulo de Usuario') {
       this.data_fecha = 'RGU_FCH_REGISTRO'
-      console.log(this.data_fecha);
+      this.id = 'RGU_ID'
+      console.log(this.id);
     } else if (this.title === 'Modulo de Proprov') {
       this.data_fecha = 'PROPROV_FCH_INGRESO'
-      console.log(this.data_fecha);
+      // console.log(this.data_fecha);
     }
-     else if (this.title === 'Modulo de Pedido') {
+    else if (this.title === 'Modulo de Pedido') {
       this.data_fecha = 'PED_FECHA'
-      console.log(this.data_fecha);
+      this.id = 'PED_ID'
+      // console.log(this.data_fecha);
     }
 
     // Establecer la columna por defecto para ordenamiento, por ejemplo, la primera columna
@@ -65,10 +74,10 @@ export class TableComponent {
     return `<img src="${imageUrl}" width="110" height="95" />`;
   }
 
-  updateFilter(event: any) {
+  updateFilter(event: any = null) {
     // Obtener el valor del input de búsqueda (si es un campo de texto)
     let val = '';
-    if (event.target.type === 'text') {
+    if (event && event.target && event.target.type === 'text') {
       val = event.target.value.toLowerCase(); // Solo procesar el valor si es un input de texto
     }
 
@@ -279,8 +288,81 @@ export class TableComponent {
 
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
+
   getFormattedDate(fieldId: any): string {
     const isoDate = this.data[fieldId] || fieldId; // Utilizar `fieldId` si `this.data[fieldId]` no está definido
     return isoDate ? this.formatDateForDatetimeLocal(isoDate) : '';
+  }
+
+  seleccionarTodos(checked: boolean ){
+    // const checked = (event.target as HTMLInputElement).checked;
+    // const selectedItemsAll = this.filteredData.forEach(item => item.selected = checked);
+    const selectedItemsAll = this.filteredData.map(item => {
+      item.selected = checked;
+      return item;
+    });
+    this.compartirdatos.setSelectedItems(selectedItemsAll);
+  }
+
+  cmpPdf(){
+    const selectedItems = this.filteredData.filter(item => item.selected);
+    this.compartirdatos.setSelectedItems(selectedItems);
+  }
+  
+  checkCambio(item: any, checked: boolean){
+    // const checked = (event.target as HTMLInputElement).checked;
+    // if(checked) {
+    //   this.itemsSelected.push(item)
+    // } else {
+    //   this.itemsSelected = this.itemsSelected.filter(i => i !== item);
+    // }
+    // item.selected = (event.target as HTMLInputElement).checked;
+    item.selected = checked
+    const selectedItems = this.filteredData.filter(item => item.selected);
+    this.compartirdatos.setSelectedItems(selectedItems);
+    this.selectedCount = this.filteredData.filter((i: any) => i.selected).length;
+  }
+
+  eliminarSeleccionados() {
+    const seleccionados = this.filteredData.filter(item => item.selected);
+    const idsSeleccionados = seleccionados.map(item => item.RGU_ID);
+
+    console.log(idsSeleccionados); // Esto mostrará un array con los IDs seleccionados
+    console.log(seleccionados, 'Datos seleccionados')
+    console.log(seleccionados.length, 'Numero de datos seleccionados')
+    
+    if (seleccionados.length === 0) {
+      Swal.fire('No hay registros seleccionados', '', 'info');
+      return;
+    }
+    
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Se eliminarán ${seleccionados.length} registros.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Itera sobre cada elemento seleccionado para eliminarlos uno por uno
+        seleccionados.forEach(item => {
+        const itemId = item[this.id];
+          console.log(this.dataService, 'Servicio que se va a utilizar')
+          console.log(item.RGU_ID, 'Id de los datos seleccionados')
+          this.dataService.deleteData(itemId).subscribe({
+            next: () => {
+              // Filtra los datos eliminados de la tabla
+              this.filteredData = this.filteredData.filter(i => i[this.id] !== itemId);
+            },
+            error: (error: any) => {
+              console.error('Error al eliminar el registro:', error);
+            }
+          });
+        });
+
+        Swal.fire('Eliminados', `${seleccionados.length} registros han sido eliminados.`, 'success');
+      }
+    });
   }
 }

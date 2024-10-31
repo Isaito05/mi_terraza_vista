@@ -1,76 +1,91 @@
 <div class="container">
   <div class="card">
     <div class="card-body">
-      <div class="row">
-        <div *ngIf="title === 'Modulo de Usuario'" class="col-md-4">
-          <div class="d-flex justify-content-start mb-3">
-            <div class="form-check me-3"> 
-              <input class="form-check-input" type="checkbox" id="filterTrabajador" [(ngModel)]="cbTrabajador" (change)="updateFilter($event)">
-              <label class="form-check-label" for="filterTrabajador">Trabajador</label>
+      <div class="row align-items-center">
+        <!-- Filtros de usuario -->
+        <div *ngIf="title === 'Modulo de Usuario'" class="col-md-4 d-flex flex-column align-items-center">
+          <label class="form-label">*Filtrar por tipo de usuario*</label>
+          <span class="linea"></span>
+          <div class="d-flex">
+            <div class="form-check me-4 d-flex flex-row"  style="padding: 0 !important;"> 
+              <app-check-box id="filterTrabajador" [(checked)]="cbTrabajador" (checkedChange)="updateFilter($event)"></app-check-box>
+              <label class="form-check-label center-label" for="filterTrabajador">Trabajador</label>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="filterCliente" [(ngModel)]="cbCliente" (change)="updateFilter($event)">
-              <label class="form-check-label" for="filterCliente">Cliente</label>
+            <div class="form-check d-flex flex-row" style="padding: 0 !important;">
+              <app-check-box id="filterCliente" [(checked)]="cbCliente" (checkedChange)="updateFilter($event)"></app-check-box>
+              <label class="form-check-label center-label" for="filterCliente">Cliente</label>
             </div>
           </div>
         </div>
-        <div [ngClass]="{'col-md-4 offset-md-4': title === 'Modulo de Usuario', 'mt-auto': title !== 'Modulo de Usuario'}">
-          <div *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Pedido' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'">
-            <div class="d-flex justify-content-end mb-3">
-             <input type="date" class="form-control me-2" [(ngModel)]="startDate" (change)="updateFilter($event)" placeholder="Fecha inicio" />
-             <input type="date" class="form-control" [(ngModel)]="endDate" (change)="updateFilter($event)" placeholder="Fecha fin" />
+
+        <!-- Selección de fechas -->
+        <div [ngClass]="{'col-md-4 d-flex flex-column align-items-center': title === 'Modulo de Usuario', 'col-md-5 d-flex flex-column align-items-center': title !== 'Modulo de Usuario'}">
+          <div class="d-flex flex-column align-items-center" *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Pedido' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'">
+            <label class="form-label">*Rango de fechas*</label>
+            <span class="linea-fch"></span>
+            <div class="d-flex justify-content-end">
+              <input type="date" class="form-control me-2" [(ngModel)]="startDate" (change)="updateFilter($event)" aria-label="Fecha de inicio" placeholder="Fecha inicio" />
+              <span class="d-flex align-items-center me-1">entre</span>
+              <input type="date" class="form-control" [(ngModel)]="endDate" (change)="updateFilter($event)" aria-label="Fecha fin" placeholder="Fecha fin" />
             </div>
-         </div>
-          <div class="d-flex justify-content-end position-relative">
-            <input type="text" class="form-control f-in mb-3" placeholder="Buscar..." (input)="updateFilter($event)" />
-            <i class="bi bi-search position-absolute search-icon"></i>
+          </div>
+        </div>
+
+        <!-- Campo de búsqueda -->
+        <div [ngClass]="{'col-md-4 d-flex flex-column align-items-center': title === 'Modulo de Usuario', 'col-md-6 d-flex flex-column': title !== 'Modulo de Usuario'}" class="align-items-end">
+          <div class="d-flex flex-column align-items-center">
+            <label class="form-label" for="searchInput">*Buscar en la tabla*</label>
+            <span class="linea-busqueda" *ngIf=" title === 'Modulo de Pedido' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'"></span>
+            <div class="d-flex justify-content-end position-relative">
+              <input id="searchInput" type="text" class="form-control f-in" placeholder="Escribe aquí para buscar..." (input)="updateFilter($event)" aria-label="Campo de búsqueda" />
+              <i class="bi bi-search position-absolute search-icon"></i>
+            </div>
           </div>
         </div>
       </div>
-      <!-- <h5 class="card-title">{{title}}</h5> -->
-      <table class="table table-hover" id="contentToConvert">
-        <!-- Encabezado de la tabla -->         
+
+      <!-- Tabla de datos -->
+      <table class="table table-hover mt-3" id="contentToConvert" aria-label="Tabla de datos">
         <thead>
           <tr>
+            <th *ngIf=" title === 'Modulo de Usuario'">
+              <app-check-box (checkedChange)="seleccionarTodos($event)"></app-check-box>
+            </th>
             <th *ngFor="let column of columns" scope="col" (click)="sortData(column.key)">
               {{ column.label }}
               <span *ngIf="column.key === 'RGU_IDENTIFICACION' || column.key === 'RGU_NOMBRES'">
                 <i *ngIf="sortColumn === column.key" [ngClass]="sortDirection === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
               </span>
             </th>
-            <!-- <th>Acciones</th> -->
           </tr>
         </thead>
-
-        <!-- Cuerpo de la tabla -->
         <tbody>
-          <tr *ngFor="let item of filteredData  | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+          <tr *ngFor="let item of filteredData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+            <td *ngIf=" title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'">
+              <app-check-box  [checked]="item.selected" (checkedChange)="checkCambio(item, $event)"></app-check-box>
+              <!-- <input type="checkbox" [(ngModel)]="item.selected" (change)="checkCambio(item, $event)" aria-label="Seleccionar elemento" /> -->
+            </td>
             <td *ngFor="let column of columns">
-
               <ng-container *ngIf="column.key === 'PROD_VENTA_IMAGEN'; else defaultCell">
                 <img 
-                [src]="getImageUrl(getPropertyValue(item, column.key))" 
-                alt="Imagen" 
-                width="50" 
-                height="40" 
-                style="border-radius: 10%;"  
-                data-bs-toggle="tooltip" 
-                data-bs-placement="right" 
-                [attr.title]="getImageTooltip(item, column.key)" />
+                  [src]="getImageUrl(getPropertyValue(item, column.key))" 
+                  alt="Imagen del producto" 
+                  width="50" 
+                  height="40" 
+                  style="border-radius: 10%;"  
+                  data-bs-toggle="tooltip" 
+                  data-bs-placement="right" 
+                  [attr.title]="getImageTooltip(item, column.key)" />
               </ng-container>
-        
               <ng-template #defaultCell>
                 <ng-container *ngIf="isArray(getPropertyValue(item, column.key)); else singleValue">
                   <span *ngFor="let subItem of getPropertyValue(item, column.key)">
                     Cantidad: {{ subItem.cantidad }} Nombre: {{ subItem.nombre }}
                   </span>
                 </ng-container>
-
-                
-
                 <ng-template #singleValue>
-                  <ng-container *ngIf="fieldsToTruncate.includes(column.key); ">
-                    {{ getTruncatedText(getPropertyValue(item, column.key), 25) }} <!-- Ajusta el número para truncado -->
+                  <ng-container *ngIf="fieldsToTruncate.includes(column.key)">
+                    {{ getTruncatedText(getPropertyValue(item, column.key), 25) }}
                   </ng-container>
                   <ng-container *ngIf="column.type === 'datetime-local'; else currencyFormat">
                     {{ getFormattedDate(getPropertyValue(item, column.key)) }}
@@ -83,26 +98,35 @@
                       {{ getPropertyValue(item, column.key) }}
                     </ng-template>
                   </ng-template>
-                  
-
                 </ng-template>
               </ng-template>
             </td>
-            <!-- Columna para los botones de acción -->
             <td>
-              <button class="btn pt-0" (click)="onEdit(item)" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Top popover">
-                <i class="fa-solid fa-file-pen fs-5"></i> <!-- Icono de editar -->
+              <button class="btn pt-0" (click)="onEdit(item)" aria-label="Editar elemento">
+                <i class="fa-solid fa-file-pen fs-5"></i>
               </button>
-              <button class="btn pt-0" (click)="onDelete(item)" data-bs-toggle="popover" data-bs-trigger="hover focus" title="Eliminar" data-bs-content="Edita este elemento">
-                <i class="fa-solid fa-trash-can-arrow-up fs-5"></i> <!-- Icono de eliminar -->
+              <button class="btn pt-0" (click)="onDelete(item)" aria-label="Eliminar elemento">
+                <i class="fa-solid fa-trash-can-arrow-up fs-5"></i>
               </button>
-              <button class="btn pt-0" (click)="onDetail(item)">
-                <i class="fbi bi-three-dots fs-5"></i><!-- Icono de detalles -->
+              <button class="btn pt-0" (click)="onDetail(item)" aria-label="Ver detalles del elemento">
+                <i class="bi bi-three-dots fs-5"></i>
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Botón de eliminación múltiple -->
+      <div class="d-flex justify-content-end mt-3">
+        <button 
+          class="btn btn-danger" 
+          type="submit" 
+          (click)="eliminarSeleccionados()" 
+          [disabled]="selectedCount < 2" 
+          aria-label="Eliminar elementos seleccionados"
+          *ngIf=" title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'"
+        >Eliminar</button>
+      </div>
 
       <!-- Mensaje de "No hay datos" -->
       <div *ngIf="filteredData.length === 0" class="text-center mt-3">
@@ -110,6 +134,7 @@
       </div>
     </div>
   </div>
+
   <!-- Controles de paginación -->
   <div class="d-flex justify-content-end me-4 mt-4">
     <pagination-controls (pageChange)="onPageChange($event)" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
@@ -117,7 +142,7 @@
     <div class="mb-3">
       <div class="d-flex align-items-center">
         <div class="me-1 ms-1">
-          <label for="itemsPerPage" class="form-label">Ítems por página: </label>
+          <label for="itemsPerPage" class="form-label">Ítems por página:</label>
         </div>
         <div>
           <select id="itemsPerPage" class="form-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange($event)">

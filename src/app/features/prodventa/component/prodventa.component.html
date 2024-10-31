@@ -31,6 +31,7 @@
     { key: 'PROD_VENTA_IMAGEN', label: 'imagen' },
     ]" noDataMessage="No hay productos disponibles."
     [title]="title"
+    [dataService]="prodventaService"
     (edit)="onEdit($event)"
     (delete)="onDelete($event)"
     (detail)="onDetail($event)">

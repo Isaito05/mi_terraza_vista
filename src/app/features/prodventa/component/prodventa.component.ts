@@ -26,7 +26,7 @@ export class ProdventaComponent implements OnInit {
   title = 'Modulo de Producto en venta';
   loading: boolean = true;
 
-  constructor(private http: HttpClient,private prodventaService: ProdventaService) { }
+  constructor(private http: HttpClient,public prodventaService: ProdventaService) { }
 
   ngOnInit(): void {
     this.prodventaService.getData().subscribe({

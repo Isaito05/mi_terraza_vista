@@ -34,6 +34,7 @@
       { key: 'PAGO_MONTO', label: 'Monto', format: 'currencyFormat' },
     ]" noDataMessage="No hay pagos disponibles."
     [title]="title"
+    [dataService]="pagoService"
     (edit)="onEdit($event)"
     (delete)="onDelete($event)"
     (detail)="onDetail($event)">

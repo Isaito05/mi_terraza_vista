@@ -32,7 +32,7 @@ export class PagoComponent implements OnInit {
   loading: boolean = true;
 
   constructor(
-    private pagoService: PagoService,
+    public pagoService: PagoService,
     private http: HttpClient,
     private usuarioService: UsuarioService,
   ) {}

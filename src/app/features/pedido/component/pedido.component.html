@@ -8,161 +8,201 @@
     </ul>
   </div>
   <div class="d-flex justify-content-start mb-3">
-    <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
+    <button class="button-86 fw-bold me-2" (click)="openModal()">Registrar </button>
     <!-- <button (click)="generatePedidoPdf()">Descargar Reporte PDF</button> -->
     <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary d-flex align-items-center offset-8" data-bs-toggle="modal" data-bs-target="#filterModal">
+    <button type="button" class="button-86 fw-bold w-pdf" data-bs-toggle="modal" data-bs-target="#filterModal">
       <i class="fas fa-file-pdf me-2"></i> Descargar Reporte PDF
     </button>
 
 
     <!-- Modal de Bootstrap -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true" (shown.bs.modal)="disableBodyScroll()" (hidden.bs.modal)="enableBodyScroll()">
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true"
+      (shown.bs.modal)="disableBodyScroll()" (hidden.bs.modal)="enableBodyScroll()">
       <div class="modal-dialog modal-lg"> <!-- modal-lg para un tamaño más grande -->
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="filterModalLabel">Seleccionar Campos para el PDF</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body m-3">
-                <h6 class="mb-3">Selecciona los campos que deseas incluir en el PDF:</h6>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="todo" (click)="seleccionarTodo()" [(ngModel)]="todo">
-                  <label class="form-check-label" for="todo">Seleccionar Todo</label>
-                </div>
-                <div class="row">
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="nombreUsuario" [(ngModel)]="selectedFields.nombreUsuario">
-                      <label class="form-check-label" for="nombreUsuario">Nombre Usuario</label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="fecha" [(ngModel)]="selectedFields.fecha">
-                      <label class="form-check-label" for="fecha">Fecha</label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="estado" [(ngModel)]="selectedFields.estado">
-                      <label class="form-check-label" for="estado">Estado</label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="infoPedido" [(ngModel)]="selectedFields.infoPedido">
-                      <label class="form-check-label" for="infoPedido">Info Pedido</label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="precioTotal" [(ngModel)]="selectedFields.precioTotal">
-                      <label class="form-check-label" for="precioTotal">Precio Total</label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="descripcion" [(ngModel)]="selectedFields.descripcion">
-                      <label class="form-check-label" for="descripcion">Descripción</label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="cancelado" [(ngModel)]="selectedFields.cancelado">
-                      <label class="form-check-label" for="cancelado">Motivo de Cancelación</label>
-                    </div>
-                  </div>
-                </div>                
-  
-                  <hr class="my-4"> <!-- Línea divisoria -->
-                  
-                  <h6 class="mb-3">Filtrar por fechas:</h6>
-                  <div class="d-flex mb-3">
-                      <label for="startDate" class="form-label p-2">Fecha Inicio:</label>
-                      <input type="date" class="form-control w-25" id="startDate" [(ngModel)]="filters.dateRange.startDate">
-              
-                      <label for="endDate" class="form-label offset-1 p-2">Fecha Fin:</label>
-                      <input type="date" class="form-control w-25" id="endDate" [(ngModel)]="filters.dateRange.endDate">
-                  </div>
-  
-                  <div class="mb-3">
-                      <label for="status" class="form-label">Seleccionar Estado:</label>
-                      <select class="form-select" id="status" [(ngModel)]="filters.status">
-                          <option value="">Todos los estados</option>
-                          <option value="Pendiente">Pendiente</option>
-                          <option value="Cancelado">Cancelado</option>
-                          <option value="Enviado">Enviado</option>
-                      </select>
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="nombreCliente" class="form-label">Seleccionar Cliente:</label>
-                    <select class="form-select" id="nombreCliente" [(ngModel)]="filters.nombreCliente">
-                      <option value="">Todos los clientes</option>
-                      <option *ngFor="let cliente of clientesUnicos" [value]="cliente">{{ cliente }}</option>
-                    </select>
-                  </div>
-                  
-                  <div class="mb-3">
-                    <label for="producto" class="form-label">Seleccionar Producto:</label>
-                    <select class="form-select" id="producto" [(ngModel)]="filters.selectedProduct">
-                      <option value="">Todos los productos</option>
-                      <option *ngFor="let producto of productos" [value]="producto">{{ producto }}</option>
-                    </select>
-                  </div>
-                  
-                  <!-- Filtro por rango de precios -->
-                    <label for="minPrecioTotal">Precio mínimo:</label>
-                    <input type="number" id="minPrecioTotal" [(ngModel)]="filters.minPrecioTotal" placeholder="Mínimo">
-
-                    <label for="maxPrecioTotal">Precio máximo:</label>
-                    <input type="number" id="maxPrecioTotal" [(ngModel)]="filters.maxPrecioTotal" placeholder="Máximo">
-
-              </div>
-
-              <div *ngIf="filtersApplied" class="alert alert-success" role="alert">
-                Filtros aplicados correctamente.
-              </div>
-            
-
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                  <button type="button" class="btn btn-primary" (click)="generatePedidoPdf()">Generar PDF</button>
-              </div>
+        <div class="modal-content">
+          <div class="modal-header" style="padding-bottom: 0; border-bottom: 0;">
+            <h2 class="style-title"><i class="fas fa-file-alt"></i> Selecciona los Campos que Deseas Incluir en el PDF</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
+          <!-- <div class="modal-header" style="border-bottom: 2px solid #007bff;">
+            <h3 style="color: #007bff; font-weight: bold;">
+                <i class="fas fa-file-alt me-2"></i> Selecciona los Campos que Deseas Incluir en el PDF
+            </h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div> -->
+          <div class="d-flex align-items-center justify-content-center">
+            <hr class="flex-grow-1 me-2 text-dark" />
+            <span class="text-dark font-title">●</span>
+            <hr class="flex-grow-1 ms-2 text-dark" />
+          </div>
+          <div class="modal-body m-3" style="margin-top: 0 !important; padding-top: 0;">
+            <div class="d-flex align-items-baseline justify-content-start">
+              <div class="mr-auto">
+                <span class="instruction">
+                  <strong>Selecciona los campos que deseas incluir en el PDF. </strong>
+                  <span class="icon"><i class="fa-regular fa-square-check"></i></span>
+                </span>
+              </div>
+            </div>
+            <div class="d-flex form-check justify-content-end">
+              <label class="form-check-label label-center" for="todo">Seleccionar todos los campos*</label>
+              <app-check-box id="todo" [(checked)]="todo" (checkedChange)="seleccionarTodo()"></app-check-box>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="nombreUsuario" [(ngModel)]="selectedFields.nombreUsuario"> -->
+                  <app-check-box [(checked)]="selectedFields.nombreUsuario"></app-check-box>
+                  <label class="form-check-label eo-label" for="nombreUsuario">Nombre Usuario</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="fecha" [(ngModel)]="selectedFields.fecha"> -->
+                  <app-check-box [(checked)]="selectedFields.fecha"></app-check-box>
+                  <label class="form-check-label eo-label" for="fecha">Fecha</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="estado" [(ngModel)]="selectedFields.estado"> -->
+                  <app-check-box [(checked)]="selectedFields.estado"></app-check-box>
+                  <label class="form-check-label eo-label" for="estado">Estado</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="infoPedido" [(ngModel)]="selectedFields.infoPedido"> -->
+                  <app-check-box [(checked)]="selectedFields.infoPedido"></app-check-box>
+                  <label class="form-check-label eo-label" for="infoPedido">Info Pedido</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="precioTotal" [(ngModel)]="selectedFields.precioTotal"> -->
+                  <app-check-box [(checked)]="selectedFields.precioTotal"></app-check-box>
+                  <label class="form-check-label eo-label" for="precioTotal">Precio Total</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="descripcion" [(ngModel)]="selectedFields.descripcion"> -->
+                  <app-check-box [(checked)]="selectedFields.descripcion"></app-check-box>
+                  <label class="form-check-label eo-label" for="descripcion">Descripción</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check d-flex">
+                  <!-- <input type="checkbox" class="form-check-input" id="cancelado" [(ngModel)]="selectedFields.cancelado"> -->
+                  <app-check-box [(checked)]="selectedFields.cancelado"></app-check-box>
+                  <label class="form-check-label eo-label" for="cancelado">Motivo de Cancelación</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Línea divisoria -->
+            <div class="d-flex align-items-center justify-content-center">
+              <hr class="flex-grow-1 me-2 text-dark" />
+              <span class="text-dark font-title">●</span>
+              <hr class="flex-grow-1 ms-2 text-dark" />
+            </div>
+
+            <div class="d-flex align-items-baseline justify-content-start mb-3">
+              <div class="mr-auto">
+                <span class="instruction">
+                  <strong>Filtrar por fechas. </strong>
+                  <i class="fa-solid fa-calendar-days"></i>
+                </span>
+              </div>
+            </div>
+            <div class="d-flex mb-3">
+              <label for="startDate" class="form-label p-2">Fecha Inicio:</label>
+              <input type="date" class="form-control w-25" id="startDate" [(ngModel)]="filters.dateRange.startDate">
+
+              <label for="endDate" class="form-label offset-1 p-2">Fecha Fin:</label>
+              <input type="date" class="form-control w-25" id="endDate" [(ngModel)]="filters.dateRange.endDate">
+            </div>
+            <div class="d-flex align-items-center justify-content-center">
+              <hr class="flex-grow-1 me-2 text-dark" />
+              <span class="text-dark font-title">●</span>
+              <hr class="flex-grow-1 ms-2 text-dark" />
+            </div>
+            <div class="d-flex align-items-baseline justify-content-start mb-3">
+              <div class="mr-auto">
+                <span class="instruction">
+                  <strong>Filtros avanzados. </strong>
+                  <!-- <i class="fa-solid fa-calendar-days"></i> -->
+                </span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="status" class="form-label">Seleccionar Estado:</label>
+              <select class="form-select" id="status" [(ngModel)]="filters.status">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Enviado">Enviado</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="nombreCliente" class="form-label">Seleccionar Cliente:</label>
+              <select class="form-select" id="nombreCliente" [(ngModel)]="filters.nombreCliente">
+                <option value="">Todos los clientes</option>
+                <option *ngFor="let cliente of clientesUnicos" [value]="cliente">{{ cliente }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="producto" class="form-label">Seleccionar Producto:</label>
+              <select class="form-select" id="producto" [(ngModel)]="filters.selectedProduct">
+                <option value="">Todos los productos</option>
+                <option *ngFor="let producto of productos" [value]="producto">{{ producto }}</option>
+              </select>
+            </div>
+
+            <!-- Filtro por rango de precios -->
+            <label for="minPrecioTotal">Precio mínimo:</label>
+            <input type="number" id="minPrecioTotal" [(ngModel)]="filters.minPrecioTotal" placeholder="Mínimo">
+
+            <label for="maxPrecioTotal">Precio máximo:</label>
+            <input type="number" id="maxPrecioTotal" [(ngModel)]="filters.maxPrecioTotal" placeholder="Máximo">
+
+          </div>
+
+          <div *ngIf="filtersApplied" class="alert alert-success" role="alert">
+            Filtros aplicados correctamente.
+          </div>
+
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" (click)="generatePedidoPdf()">Generar PDF</button>
+          </div>
+        </div>
       </div>
-  </div>
-  
-  
-    
+    </div>
+
+
+
 
   </div>
-  <app-modal [title]="isViewingDetails ? 'Detalles del pedido' : (isEditing ? 'Editar pedido' : 'Registrar pedido')" 
-  [isVisible]="isModalVisible" (close)="handleClose()"
-    (confirmAction)="handleConfirm()" 
-    [fields]="[
+  <app-modal [title]="isViewingDetails ? 'Detalles del pedido' : (isEditing ? 'Editar pedido' : 'Registrar pedido')"
+    [isVisible]="isModalVisible" (close)="handleClose()" (confirmAction)="handleConfirm()" [fields]="[
     { id: 'PED_FECHA', label: 'Fecha', type: 'datetime-local' },
     { id: 'PED_PRECIO_TOTAL', label: 'Precio', type: 'text' },
     { id: 'PED_RGU_ID', label: 'usuario', type: 'select', options: usuarioOptions },
-    ]"
-    [isEditing]="isEditing"
-    [isViewingDetails]="isViewingDetails"
-    [data]="editingPed">
+    ]" [isEditing]="isEditing" [isViewingDetails]="isViewingDetails" [data]="editingPed">
     <p>Your custom content goes here!</p>
   </app-modal>
 </div>
 <div *ngIf="!loading">
-  <app-table
-  [data]="pedidos"
-  [columns]="[
+  <app-table [data]="pedidos" [columns]="[
       { key: 'rguUsuario.RGU_NOMBRES', label: 'Nombre Cliente' },
       { key: 'PED_FECHA', label: 'Fecha' ,type: 'datetime-local' },
       { key: 'PED_PRECIO_TOTAL', label: 'Precio Total', format: 'currencyFormat' },
-    ]"noDataMessage="No hay pedidos disponibles."
-    [title]="title"
-    (edit)="onEdit($event)"
-    (delete)="onDelete($event)"
+    ]" noDataMessage="No hay pedidos disponibles." [title]="title" (edit)="onEdit($event)" (delete)="onDelete($event)"
     (detail)="onDetail($event)">
   </app-table>
 </div>

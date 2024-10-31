@@ -104,6 +104,7 @@ export class PedidoComponent implements OnInit {
         });
       }
     });
+    console.log(this.todo, 'todo valor incial')
   }
 
   openModal(user?: any, isDetailView: boolean = false) {
@@ -379,7 +380,8 @@ export class PedidoComponent implements OnInit {
 
 
   seleccionarTodo(): void {
-    if (!this.todo) {
+    console.log(this.todo, 'todo')
+    if (this.todo) {
       this.selectedFields = {
         pedidoId: true,
         fecha: true,

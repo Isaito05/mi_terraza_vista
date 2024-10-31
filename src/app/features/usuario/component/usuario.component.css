@@ -20,3 +20,7 @@ table {
 }
 
 /* CSS */
+
+.w-pdf {
+    width: 191px !important;
+}

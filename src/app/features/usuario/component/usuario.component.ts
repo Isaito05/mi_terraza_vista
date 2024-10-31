@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../service/usuario.service'; // Importa el servicio
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 import Swal from 'sweetalert2';
+import { DatosService } from 'src/app/core/services/datos.service';
 
 @Component({
   selector: 'app-usuario',
@@ -23,7 +24,9 @@ export class UsuarioComponent implements OnInit {
   loading: boolean = true;
 
   constructor(
-    private usuarioService: UsuarioService, private pdfReportService: PdfReportService
+    public usuarioService: UsuarioService, 
+    private datosCompartidos: DatosService, 
+    private pdfReportService: PdfReportService
     
   ) {
     this.camposUsuario();
@@ -170,13 +173,18 @@ export class UsuarioComponent implements OnInit {
 
   // Método para generar PDF de usuarios
   generateUsuarioPdf() {
-    const headers = ['ID', 'Nombre', 'Apellido', 'Correo', 'Teléfono'];
-    const data = this.usuarios.map(usuario => [
+    const headers = ['ID','Nombre', 'Apellido', 'Correo', 'Teléfono','Direccion','Tp. Identificacion','Nro. Identificacion'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+
+    const data = (selectedItems.length > 0 ? selectedItems : this.usuarios).map(usuario => [
       usuario.RGU_ID,
       usuario.RGU_NOMBRES,
       usuario.RGU_APELLIDOS,
       usuario.RGU_CORREO,
-      usuario.RGU_TELEFONO
+      usuario.RGU_TELEFONO,
+      usuario.RGU_DIRECCION,
+      usuario.RGU_TP_DOC,
+      usuario.RGU_IDENTIFICACION
     ]);
 
     this.pdfReportService.generatePdf('Reporte de Usuarios', headers, data, 'reporte_usuarios');
