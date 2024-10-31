@@ -1,10 +1,10 @@
 // usuario.component.ts
 import { Component, OnInit } from '@angular/core';
-import { UsuarioService } from '../service/usuario.service'; // Importa el servicio
+import { Usuario, UsuarioService } from '../service/usuario.service'; // Importa el servicio
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 import Swal from 'sweetalert2';
 import { DatosService } from 'src/app/core/services/datos.service';
-
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
 @Component({
   selector: 'app-usuario',
   templateUrl: './usuario.component.html',
@@ -22,11 +22,13 @@ export class UsuarioComponent implements OnInit {
   isModalVisible: boolean = false; // Estado para controlar la visibilidad del modal
   modalFields: any[] = []; // Campos del modal
   loading: boolean = true;
+  todo: boolean = false;
 
   constructor(
     public usuarioService: UsuarioService, 
     private datosCompartidos: DatosService, 
-    private pdfReportService: PdfReportService
+    private pdfReportService: PdfReportService,  
+    private excelReportService: ExcelReportService
     
   ) {
     this.camposUsuario();
@@ -189,4 +191,58 @@ export class UsuarioComponent implements OnInit {
 
     this.pdfReportService.generatePdf('Reporte de Usuarios', headers, data, 'reporte_usuarios');
   }
+
+  enableBodyScroll() {
+    document.body.style.overflow = 'auto'; // Reactiva el scroll de la página
+  }
+
+  // seleccionarTodo(): void {
+  //   if (!this.todo) {
+  //     this.selectedFields = {
+  //       genero: true,
+  //       rol: true,
+  //       correo: true,
+  //       direccion: true,
+  //       telefono: true,
+  //       nombreUsuario: true,
+  //       tpDocumento : true,
+  //       documento: true
+  //     };
+  //   } else {
+  //     this.selectedFields = {
+  //       genero: false,
+  //       rol: false,
+  //       correo: false,
+  //       direccion: false,
+  //       telefono: false,
+  //       nombreUsuario: false,
+  //       tpDocumento : false,
+  //       documento: false
+  //     };
+  //   }
+  // }
+
+  
+  
+
+  generateUsuariosEXCEL() {
+    const columns: (keyof Usuario | string)[] = ['Nombres', 'Apellidos', 'Correo', 'Direccion', 'Documento', 'Rol', 'Genero', 'Telefono'];
+    
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof Usuario | string } = {
+      'Nombres': 'RGU_NOMBRES',
+      'Apellidos': 'RGU_APELLIDOS',
+      'Correo': 'RGU_CORREO',
+      'Direccion': 'RGU_DIRECCION',
+      'Documento': 'RGU_IDENTIFICACION', 
+      'Rol': 'RGU_ROL', 
+      'Genero': 'RGU_GENERO', 
+      'Telefono': 'RGU_TELEFONO'
+    };
+    
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+     this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping);
+}
+  
 }

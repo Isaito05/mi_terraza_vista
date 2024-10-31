@@ -5,6 +5,7 @@ import { UsuarioRoutingModule } from './usuario-routing.module';
 import { UsuarioComponent } from './component/usuario.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgxLoadingModule } from 'ngx-loading';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { NgxLoadingModule } from 'ngx-loading';
     CommonModule,
     UsuarioRoutingModule,
     SharedModule,
-    NgxLoadingModule.forRoot({})
+    NgxLoadingModule.forRoot({}),
+    FormsModule
   ]
 })
 export class UsuarioModule { }

@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 import { UsuarioService } from '../../usuario/service/usuario.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 import { ProdventaService } from '../../prodventa/services/prodventa.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+
 
 export interface Usuario {
   RGU_ID: number;
@@ -11,10 +13,32 @@ export interface Usuario {
   RGU_APELLIDOS: string;
 }
 
+export interface Pedido {
+  PED_CANCELADO: boolean;
+  PED_DESCRIPCION: string;
+  PED_ESTADO: string;
+  PED_ESTADOE: string;
+  PED_FECHA: Date;
+  PED_ID: number;
+  PED_INFO: string; // Suponiendo que contiene ID y cantidad de productos
+  PED_MET_PAGO: string;
+  PED_NOTIFICACION: string;
+  PED_PRECIO_TOTAL: number;
+  PED_RGU_ID: number;
+  rguUsuario: {
+    RGU_ID: number;
+    RGU_IDENTIFICACION: string;
+    RGU_NOMBRES: string;
+    RGU_APELLIDOS: string;
+    RGU_GENERO: string;
+  };
+}
+
+
 @Component({
   selector: 'app-pedido',
   templateUrl: './pedido.component.html',
-  styleUrls: ['./pedido.component.css']
+  styleUrls: ['./pedido.component.css'],
 })
 export class PedidoComponent implements OnInit {
   pedidos: any[] = []; // Array para almacenar la lista de pedidos
@@ -32,7 +56,7 @@ export class PedidoComponent implements OnInit {
   selectedEstado: string = '';
   filtersApplied: boolean = false; // Para mostrar si los filtros han sido aplicados
 
-  constructor(private pedidoservice: PedidoService, private usuarioService: UsuarioService, private prodventaService: ProdventaService, private pdfReportService: PdfReportService) { }
+  constructor(private pedidoservice: PedidoService, private usuarioService: UsuarioService, private prodventaService: ProdventaService, private pdfReportService: PdfReportService ,private excelReportService: ExcelReportService, ) { }
 
   selectedFields: any = {
     pedidoId: false,
@@ -49,7 +73,9 @@ export class PedidoComponent implements OnInit {
   ngOnInit(): void {
     this.pedidoservice.getData().subscribe({
       next: (data) => {
-        this.pedidos = data.filter((item: { PED_ESTADOE: number; }) => item.PED_ESTADOE === 1)
+        this.pedidos = data.filter(
+          (item: { PED_ESTADOE: number }) => item.PED_ESTADOE === 1
+        );
         console.log(this.pedidos);
         console.log(this.pedidos[0].rguUsuario.RGU_ID); // Muestra los datos en la consola para verificar
         const clientes = this.pedidos.map(pedido => pedido.rguUsuario?.RGU_NOMBRES);
@@ -60,8 +86,8 @@ export class PedidoComponent implements OnInit {
         const productosPromises: Promise<void>[] = [];
         const productosSet = new Set<string>();
 
-        this.pedidos.forEach(pedido => {
-          const pedInfoArray = JSON.parse(pedido.PED_INFO);  // Convertir el campo PED_INFO a array de productos
+        this.pedidos.forEach((pedido) => {
+          const pedInfoArray = JSON.parse(pedido.PED_INFO); // Convertir el campo PED_INFO a array de productos
           pedInfoArray.forEach((producto: { id: number; cantidad: number }) => {
             const productoPromise = this.prodventaService.getProVenById(producto.id).toPromise().then(productoDetails => {
               productosSet.add(productoDetails?.PROD_VENTA_NOMBRE);  // Agregar el nombre del producto al Set
@@ -72,7 +98,7 @@ export class PedidoComponent implements OnInit {
 
         // Después de que todas las promesas se resuelvan, llenar el array de productos
         Promise.all(productosPromises).then(() => {
-          this.productos = Array.from(productosSet);  // Convertir el Set a un Array
+          this.productos = Array.from(productosSet); // Convertir el Set a un Array
         });
 
         this.filteredPedidos = data;
@@ -82,8 +108,9 @@ export class PedidoComponent implements OnInit {
         console.error(error);
         this.loading = false;
         Swal.fire({
-          title: error.error.message || 'Ocurrió un error en el modulo de pedidos.',
-          text: "Contacte al Administrador!",
+          title:
+            error.error.message || 'Ocurrió un error en el modulo de pedidos.',
+          text: 'Contacte al Administrador!',
           icon: 'error',
           timer: 2000,
           showConfirmButton: false,
@@ -92,7 +119,7 @@ export class PedidoComponent implements OnInit {
               animate__animated
               animate__fadeInUp
               animate__faster
-            `
+            `,
           },
           hideClass: {
             popup: `
@@ -158,7 +185,7 @@ export class PedidoComponent implements OnInit {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar'
+      confirmButtonText: 'Sí, eliminar',
     }).then((result) => {
       if (result.isConfirmed) {
         console.log(user.rguUsuario.RGU_NOMBRES, 'eta vaina tiene '),
@@ -179,11 +206,11 @@ export class PedidoComponent implements OnInit {
     });
   }
   disableBodyScroll() {
-    document.body.style.overflow = 'hidden';  // Desactiva el scroll de la página
+    document.body.style.overflow = 'hidden'; // Desactiva el scroll de la página
   }
 
   enableBodyScroll() {
-    document.body.style.overflow = 'auto';  // Reactiva el scroll de la página
+    document.body.style.overflow = 'auto'; // Reactiva el scroll de la página
   }
 
 
@@ -195,8 +222,6 @@ export class PedidoComponent implements OnInit {
     minPrecioTotal: null,  // Precio mínimo
     maxPrecioTotal: null
   };
-
-
 
   applyFilters(): any[] {
     const filteredPedidos = this.pedidos.filter(pedido => {
@@ -234,7 +259,10 @@ export class PedidoComponent implements OnInit {
       }
 
       // Filtro por nombre de cliente
-      if (this.filters.nombreCliente && pedido.rguUsuario.RGU_NOMBRES !== this.filters.nombreCliente) {
+      if (
+        this.filters.nombreCliente &&
+        pedido.rguUsuario.RGU_NOMBRES !== this.filters.nombreCliente
+      ) {
         matches = false;
       }
 
@@ -252,10 +280,16 @@ export class PedidoComponent implements OnInit {
 
       // Filtro por precio total
       const precioTotal = pedido.PED_PRECIO_TOTAL;
-      if (this.filters.minPrecioTotal && precioTotal < this.filters.minPrecioTotal) {
+      if (
+        this.filters.minPrecioTotal &&
+        precioTotal < this.filters.minPrecioTotal
+      ) {
         matches = false;
       }
-      if (this.filters.maxPrecioTotal && precioTotal > this.filters.maxPrecioTotal) {
+      if (
+        this.filters.maxPrecioTotal &&
+        precioTotal > this.filters.maxPrecioTotal
+      ) {
         matches = false;
       }
 
@@ -269,10 +303,6 @@ export class PedidoComponent implements OnInit {
 
     return filteredPedidos;
   }
-
-
-
-
 
   generatePedidoPdf(): void {
     // Verificar si al menos un campo está seleccionado
@@ -351,7 +381,7 @@ export class PedidoComponent implements OnInit {
             style: 'currency',
             currency: 'COP',
             minimumFractionDigits: 0,
-            maximumFractionDigits: 0
+            maximumFractionDigits: 0,
           }).format(pedido.PED_PRECIO_TOTAL);
           row.push(precioFormateado);
         }
@@ -376,9 +406,7 @@ export class PedidoComponent implements OnInit {
       });
     });
   }
-
-
-
+  
   seleccionarTodo(): void {
     console.log(this.todo, 'todo')
     if (this.todo) {
@@ -405,4 +433,30 @@ export class PedidoComponent implements OnInit {
       };
     }
   }
+
+   // Método para generar el reporte
+   generatePedidoExcel() {
+    const columns: (keyof Pedido | string)[] = ['Descripcion','Estado', 'Fecha', 'Precio Total','Usuario ID', 'Nombres', 'Apellidos', 'Genero'];
+    
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof Pedido | string } = {
+      'Descripcion': 'PED_DESCRIPCION',
+      'Estado': 'PED_ESTADO',
+      'Fecha': 'PED_FECHA',
+      'Precio Total': 'PED_PRECIO_TOTAL',
+      // 'Cancelado': 'PED_CANCELADO',
+      // 'Metodo de Pago': 'PED_MET_PAGO',
+      // 'Notificacion': 'PED_NOTIFICACION',
+      'Usuario ID': 'PED_RGU_ID',
+      'Nombres': 'rguUsuario.RGU_NOMBRES',
+      'Apellidos': 'rguUsuario.RGU_APELLIDOS',
+      'Genero': 'rguUsuario.RGU_GENERO',
+    };
+    
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+     this.excelReportService.generateExcel<Pedido>(this.pedidos, columns, 'Pedido', keyMapping);
+}
+
+
 }
