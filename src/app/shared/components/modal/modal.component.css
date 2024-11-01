@@ -25,3 +25,11 @@
     overflow-y: auto;
     /* Activa el scroll vertical si el contenido es demasiado alto */
 }
+
+.modal-title {
+    font-weight: 500 !important;
+}
+
+.btn {
+    border-radius: 5px !important;
+}

@@ -30,15 +30,17 @@ export class PagoComponent implements OnInit {
   editingUser: any = {};
   isModalVisible: boolean = false;
   loading: boolean = true;
+  modalFields: any[] = []; // Campos del modal
 
   constructor(
     public pagoService: PagoService,
     private http: HttpClient,
     private usuarioService: UsuarioService,
-  ) {}
+  ){
+    this.camposPago()
+  }
 
-  ngOnInit(): void {
-    
+  ngOnInit(): void {  
     this.pagoService.getData().subscribe({
       next: (data) => {
         this.pagos = data.filter((item: { PAGO_ESTADO: number; }) => item.PAGO_ESTADO === 1); // Asigna los datos recibidos a la variable pagos
@@ -72,7 +74,6 @@ export class PagoComponent implements OnInit {
       }
     });
   }
-
   // Actualiza el método para aceptar un parámetro ID
   buscarpagoPorId(id: number): void {
     this.pagoService.getPagoById(id).subscribe(data => {
@@ -102,7 +103,17 @@ export class PagoComponent implements OnInit {
       }
       this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
       this.isModalVisible = true;
+      this.camposPago()
     });
+  }
+
+  camposPago() {
+    this.modalFields = [      
+      { id: 'PAGO_FECHA', label: 'Fecha del pago', type: 'date' },
+      { id: 'PAGO_MONTO', label: 'Monto', type: 'number' },
+      { id: 'PAGO_RGU_ID', label: 'Trabajador', type: 'select', options: this.usuarioOptions },
+      { id: 'PAGO_DESCRIPCION', label: 'Descripcion', type: 'text' },
+    ];
   }
 
   viewDetails(user: any) {

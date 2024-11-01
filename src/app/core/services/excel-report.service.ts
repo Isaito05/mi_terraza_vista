@@ -12,9 +12,11 @@ export class ExcelReportService {
     data: T[],
     columns: (keyof T | string)[], // Cambiado para incluir `string` como tipo
     fileName: string,
-    keyMapping: { [key: string]: keyof T | string } // Acepta string para claves anidadas
+    keyMapping: { [key: string]: keyof T | string, }
+    // selectedItems: any[] = [] // Acepta string para claves anidadas
   ) {
     console.log(data, 'esto es lo llega ');
+    // const excelData = selectedItems.length > 0 ? selectedItems : data;
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Datos');
 

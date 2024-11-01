@@ -145,4 +145,45 @@ export class BodegaComponent implements OnInit {
       }
     });
   }
+
+  // generateUsuarioPdf() {
+  //   const headers = ['ID','Nombre', 'Apellido', 'Correo', 'Teléfono','Direccion','Tp. Identificacion','Nro. Identificacion'];
+  //   const selectedItems = this.datosCompartidos.getSelectedItems();
+
+  //   const data = (selectedItems.length > 0 ? selectedItems : this.usuarios).map(usuario => [
+  //     usuario.RGU_ID,
+  //     usuario.RGU_NOMBRES,
+  //     usuario.RGU_APELLIDOS,
+  //     usuario.RGU_CORREO,
+  //     usuario.RGU_TELEFONO,
+  //     usuario.RGU_DIRECCION,
+  //     usuario.RGU_TP_DOC,
+  //     usuario.RGU_IDENTIFICACION
+  //   ]);
+
+  //   this.pdfReportService.generatePdf('Reporte de Usuarios', headers, data, 'reporte_usuarios');
+  // }
+
+  enableBodyScroll() {
+    document.body.style.overflow = 'auto'; // Reactiva el scroll de la página
+  }
+
+  // generateUsuarioExcel() {
+  //   const columns: (keyof Usuario | string)[] = ['Nombres', 'Apellidos', 'Correo', 'Direccion', 'Documento', 'Rol', 'Genero', 'Telefono'];
+  //   // Mapeo de claves para los encabezados
+  //   const keyMapping: { [key: string]: keyof Usuario | string } = {
+  //     'Nombres': 'RGU_NOMBRES',
+  //     'Apellidos': 'RGU_APELLIDOS',
+  //     'Correo': 'RGU_CORREO',
+  //     'Direccion': 'RGU_DIRECCION',
+  //     'Documento': 'RGU_IDENTIFICACION', 
+  //     'Rol': 'RGU_ROL', 
+  //     'Genero': 'RGU_GENERO', 
+  //     'Telefono': 'RGU_TELEFONO'
+  //   };
+    
+  //   console.log(columns)
+  //   // Asegúrate de que el método espera un arreglo de claves
+  //   this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping);
+  // }
 }

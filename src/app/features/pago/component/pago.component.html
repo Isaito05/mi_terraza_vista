@@ -8,19 +8,16 @@
     </ul>
   </div>
   <div class="d-flex justify-content-start mb-3">
-    <button class="button-86 fw-bold" (click)="openModal()">Registrar </button>
+    <button class="button-86 fw-bold me-2" (click)="openModal()"><i class="bi bi-plus-circle me-2"></i>Registrar</button>
+    <button class="button-86 fw-bold w-pdf me-2"><i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF</button>
+    <button type="button" class="align-items-center button-86 d-flex fw-bold w-excel"><i class="fa-solid fa-file-excel me-2"></i>Exportar a Excel</button>
   </div>
   <app-modal 
-[title]="isViewingDetails ? 'Detalles del pago' : (isEditing ? 'Editar pago' : 'Registrar pago')"
-[isVisible]="isModalVisible" 
-(close)="handleClose()"
-(confirmAction)="handleConfirm()" 
-[fields]="[
-  { id: 'PAGO_FECHA', label: 'Fecha del pago', type: 'date' },
-  { id: 'PAGO_MONTO', label: 'Monto', type: 'number' },
-  { id: 'PAGO_RGU_ID', label: 'Trabajador', type: 'select', options: usuarioOptions },
-  { id: 'PAGO_DESCRIPCION', label: 'Descripción', type: 'text' }
-  ]"
+  [title]="isViewingDetails ? 'Detalles del pago' : (isEditing ? 'Editar pago' : 'Registrar pago')"
+  [isVisible]="isModalVisible" 
+  (close)="handleClose()"
+  (confirmAction)="handleConfirm()" 
+  [fields]="modalFields"
   [isEditing]="isEditing"
   [isViewingDetails]="isViewingDetails"
   [data]="editingUser">

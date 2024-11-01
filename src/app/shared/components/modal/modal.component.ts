@@ -102,22 +102,38 @@ export class ModalComponent {
         // Agregar validadores según el tipo de campo
         if (field.type === 'email') {
           validators.push(Validators.required, Validators.email, this.validacionEmail);
-          // } else if (field.type === 'text' && field.label.toLowerCase().includes('telefono')) {
-          //   validators.push(Validators.required, Validators.pattern(/^\d{10}$/));
         } else if (field.type === 'password') {
           validators.push(Validators.required, Validators.minLength(8), this.validacionContrasena);
+        } else if (field.type === 'date') {
+          validators.push(Validators.required);
         } else if (field.type === 'text' && field.label.toLowerCase().includes('nombre')) {
           validators.push(Validators.required); // Validador para el campo Nombres
         } else if (field.type === 'text' && field.label.toLowerCase().includes('apellido')) {
           validators.push(Validators.required); // Validador para el campo Apellidos
         } else if (field.type === 'number' && field.label.toLowerCase().includes('telefono')) {
-          // Solo acepta números con el pattern
-          validators.push(Validators.pattern(/^\d{10}$/));
+          validators.push(Validators.pattern(/^\d{10}$/));// Solo acepta números con el pattern
         } else if (field.type === 'number' && field.label.toLowerCase().includes('nro. de identificación')) {
-          // Solo acepta números y debe tener entre 8 y 10 dígitos
-          validators.push(Validators.pattern(/^\d{8,10}$/));
+          validators.push(Validators.pattern(/^\d{8,10}$/));// Solo acepta números y debe tener entre 8 y 10 dígitos
         } else if (field.type === 'select') {
           validators.push(Validators.required); // Agregar validador requerido
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('monto')) {
+          validators.push(Validators.required, Validators.min(1)); // Valida que sea un número mayor o igual a 1
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('precio')) {
+          validators.push(Validators.required); 
+        }else if (field.type === 'text' && field.label.toLowerCase().includes('descripcion')) {
+          validators.push(Validators.required, Validators.maxLength(100)); // Máximo de 500 caracteres
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('stock mínimo')) {
+          validators.push(Validators.required, Validators.minLength(1), this.validacionStockMinimo);
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('cantidad')) {
+          validators.push(Validators.required, Validators.minLength(1), this.validacionStockMinimo);
+        } else if (field.type === 'number' && field.label.toLowerCase().includes('precio unitario')) {
+          validators.push(Validators.required, Validators.min(1));
+        } else if (field.type === 'text' && field.label.toLowerCase().includes('estado')) {
+          validators.push(Validators.required);
+        } else if (field.type === 'text' && field.label.toLowerCase().includes('dirección')) {
+          validators.push(Validators.required);
+        } else if (field.type === 'text' && field.label.toLowerCase().includes('nit')) {
+          validators.push(this.validacionNIT);
         }
 
         acc[field.id] = [this.data[field.id] || '', validators];
@@ -141,6 +157,23 @@ export class ModalComponent {
     const emailRegex = (/^[a-zA-Z0-9._%+-]+@(gmail|hotmail)\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,4})?$/);
     const email = control.value;
     return emailRegex.test(email) ? null : { invalidEmail: true }
+  }
+
+  validacionStockMinimo(control: AbstractControl) {
+    const value = control.value;
+
+    const hasMinLength = value ? value.length >= 1 : false;
+    const isPositiveNumber = value && !isNaN(value) && Number(value) > 0;
+
+    if (!hasMinLength) {
+      return { minlength: true };
+    }
+
+    if (!isPositiveNumber) {
+      return { min: true };
+    }
+
+    return null;
   }
 
   validacionContrasena(control: AbstractControl) {
@@ -168,6 +201,39 @@ export class ModalComponent {
     return null;
   }
 
+  validacionPrecioUnitario(control: AbstractControl) {
+    const value = control.value;
+  
+    // Verifica que sea un número positivo con hasta 2 decimales
+    const isPositiveDecimal = value && /^\d+(\.\d{1,2})?$/.test(value) && Number(value) > 0;
+  
+    if (!value) {
+      return { required: true }; // Campo requerido
+    }
+  
+    if (!isPositiveDecimal) {
+      return { pattern: true }; // Debe ser un número positivo con hasta 2 decimales
+    }
+  
+    return null; // Sin errores
+  }
+
+  validacionNIT(control: AbstractControl) {
+    const value = control.value;
+    // Validación para solo números y longitud entre 9 y 12 dígitos
+    const isValidNIT = value && /^\d{9,12}$/.test(value);
+  
+    if (!value) {
+      return { required: true }; // Campo requerido
+    }
+  
+    if (!isValidNIT) {
+      return { pattern: true }; // Debe ser solo números con una longitud de 9 a 12 dígitos
+    }
+  
+    return null; // Sin errores
+  }
+
   formatCurrency(value: any): string {
     if (value == null) {
       return '';
@@ -192,7 +258,7 @@ export class ModalComponent {
   }
 
   confirm() {
-    // if (this.form.valid) {
+    if (this.form.valid) {
       const formValues = this.form.value; // Obtén los valores del formulario
       this.data = { ...formValues };
       const fechaRegistro = new Date();
@@ -264,9 +330,9 @@ export class ModalComponent {
       } else {
         console.error('No se encontró un servicio adecuado para el contexto.');
       }
-    // } else {
-    //   console.error('Formulario inválido');
-    // }
+    } else {
+      console.error('Formulario inválido');
+    }
   }
 
   usuariosEmail() {

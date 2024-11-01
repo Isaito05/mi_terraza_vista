@@ -221,13 +221,8 @@ export class UsuarioComponent implements OnInit {
   //     };
   //   }
   // }
-
-  
-  
-
-  generateUsuariosEXCEL() {
+  generateUsuarioExcel() {
     const columns: (keyof Usuario | string)[] = ['Nombres', 'Apellidos', 'Correo', 'Direccion', 'Documento', 'Rol', 'Genero', 'Telefono'];
-    
     // Mapeo de claves para los encabezados
     const keyMapping: { [key: string]: keyof Usuario | string } = {
       'Nombres': 'RGU_NOMBRES',
@@ -242,7 +237,7 @@ export class UsuarioComponent implements OnInit {
     
     console.log(columns)
     // Asegúrate de que el método espera un arreglo de claves
-     this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping);
-}
+    this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping);
+  }
   
 }

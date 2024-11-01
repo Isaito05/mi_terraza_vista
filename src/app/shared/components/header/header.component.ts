@@ -43,7 +43,7 @@ export class HeaderComponent {
     //   this.i_perfil = 'assets/images/pf.jpg'
     // }
     this.imangenPerfil = this.getImagenUsuario();
-    console.log(this.imangenPerfil)
+    // console.log(this.imangenPerfil)
     this.usuarioService.$usuario.subscribe((usuario) => {
       if (usuario) {
         this.usuario = usuario;
@@ -71,7 +71,7 @@ export class HeaderComponent {
 
   getImagenUsuario(): string {
     const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
-    console.log(imagen)
+    // console.log(imagen)
     if (imagen !== 'no hay imagen') {
       return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
     }

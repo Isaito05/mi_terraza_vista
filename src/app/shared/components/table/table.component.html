@@ -48,7 +48,7 @@
       <table class="table table-hover mt-3" id="contentToConvert" aria-label="Tabla de datos">
         <thead>
           <tr>
-            <th *ngIf=" title === 'Modulo de Usuario'">
+            <th *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos' || title === 'Modulo de Bodega' || title === 'Modulo de Producto en venta' || title === 'Modulo de Proveedor'">
               <app-check-box (checkedChange)="seleccionarTodos($event)"></app-check-box>
             </th>
             <th *ngFor="let column of columns" scope="col" (click)="sortData(column.key)">
@@ -61,7 +61,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of filteredData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
-            <td *ngIf=" title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'">
+            <td *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos' || title === 'Modulo de Bodega' || title === 'Modulo de Producto en venta' || title === 'Modulo de Proveedor'">
               <app-check-box  [checked]="item.selected" (checkedChange)="checkCambio(item, $event)"></app-check-box>
               <!-- <input type="checkbox" [(ngModel)]="item.selected" (change)="checkCambio(item, $event)" aria-label="Seleccionar elemento" /> -->
             </td>
@@ -124,7 +124,7 @@
           (click)="eliminarSeleccionados()" 
           [disabled]="selectedCount < 2" 
           aria-label="Eliminar elementos seleccionados"
-          *ngIf=" title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'"
+          *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos' || title === 'Modulo de Bodega' || title === 'Modulo de Producto en venta' || title === 'Modulo de Proveedor'"
         >Eliminar</button>
       </div>
 
