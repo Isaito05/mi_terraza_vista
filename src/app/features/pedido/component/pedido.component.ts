@@ -205,6 +205,7 @@ export class PedidoComponent implements OnInit {
       }
     });
   }
+
   disableBodyScroll() {
     document.body.style.overflow = 'hidden'; // Desactiva el scroll de la página
   }
@@ -435,28 +436,61 @@ export class PedidoComponent implements OnInit {
   }
 
    // Método para generar el reporte
-   generatePedidoExcel() {
-    const columns: (keyof Pedido | string)[] = ['Descripcion','Estado', 'Fecha', 'Precio Total','Usuario ID', 'Nombres', 'Apellidos', 'Genero'];
-    
-    // Mapeo de claves para los encabezados
+   async generatePedidoExcel() {
+    const columns: (keyof Pedido | string)[] = [
+      'Nombres', 'Apellidos', 'Genero', // Información del usuario
+      'Descripcion', 'Estado', 'Fecha', 'Precio Total', // Información del pedido
+    ];
+  
+    // Mapear cada encabezado a su clave en el objeto Pedido
     const keyMapping: { [key: string]: keyof Pedido | string } = {
+      'Nombres': 'rguUsuario.RGU_NOMBRES',
+      'Apellidos': 'rguUsuario.RGU_APELLIDOS',
+      'Genero': 'rguUsuario.RGU_GENERO',
       'Descripcion': 'PED_DESCRIPCION',
       'Estado': 'PED_ESTADO',
       'Fecha': 'PED_FECHA',
       'Precio Total': 'PED_PRECIO_TOTAL',
-      // 'Cancelado': 'PED_CANCELADO',
-      // 'Metodo de Pago': 'PED_MET_PAGO',
-      // 'Notificacion': 'PED_NOTIFICACION',
-      'Usuario ID': 'PED_RGU_ID',
-      'Nombres': 'rguUsuario.RGU_NOMBRES',
-      'Apellidos': 'rguUsuario.RGU_APELLIDOS',
-      'Genero': 'rguUsuario.RGU_GENERO',
     };
-    
-    console.log(columns)
-    // Asegúrate de que el método espera un arreglo de claves
-     this.excelReportService.generateExcel<Pedido>(this.pedidos, columns, 'Pedido', keyMapping);
-}
+  
+    const pedidosConInfo = await Promise.all(
+      this.pedidos.map(async (pedido) => {
+        // Formatear la fecha para mostrar solo la fecha y hora sin segundos ni zona horaria
+        const fechaOriginal = new Date(pedido.PED_FECHA);
+        const fechaFormateada = `${fechaOriginal.toLocaleDateString()} ${fechaOriginal.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  
+        // Procesa el campo PED_INFO para obtener nombre y cantidad de cada producto
+        const pedInfo = JSON.parse(pedido.PED_INFO); // Asegúrate de que sea un JSON válido
+        const productosDetalle = await Promise.all(
+          pedInfo.map(async (producto: { id: number; cantidad: number }) => {
+            const productoDetails = await this.prodventaService.getProVenById(producto.id).toPromise();
+            return `${productoDetails.PROD_VENTA_NOMBRE} (Cantidad: ${producto.cantidad})`;
+          })
+        );
+  
+        // Agrega una propiedad adicional al objeto de pedido con el detalle de productos y fecha formateada
+        return {
+          ...pedido,
+          PED_FECHA: fechaFormateada, // Reemplaza la fecha original con la fecha formateada
+          productosDetalle: productosDetalle.join(',\n ') // Detalles de productos en una sola columna
+        };
+      })
+    );
+
+  // Mapeo de colores para el estado
+  const colorMapping = {
+    'Enviado': '7fe757', // Verde
+    'Cancelado': 'f34336', // Rojo
+    'Pendiente': 'ffff52', // Amarillo
+  };
+
+  const updatedColumns = [...columns, 'Pedido'];
+  keyMapping['Pedido'] = 'productosDetalle';
+  
+    // Llama al servicio de generación de Excel con los datos y el mapeo actualizado
+    // this.excelReportService.generateExcel<Pedido>(pedidosConInfo, columns, 'Pedido', keyMapping);
+    this.excelReportService.generateExcel<Pedido>(pedidosConInfo, updatedColumns, 'Pedido', keyMapping, colorMapping);
+  }
 
 
 }
