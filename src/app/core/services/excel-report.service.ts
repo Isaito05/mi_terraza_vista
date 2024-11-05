@@ -34,15 +34,19 @@ export class ExcelReportService {
     columns: (keyof T | string)[],
     fileName: string,
     keyMapping: { [key: string]: keyof T | string },
-    colorMapping?: { [key: string]: string }
+    colorMapping?: { [key: string]: string },
+    selectedItems: any[] = [], // Acepta string para claves anidadas
+    title?: string
   ) {
+    const excelData = selectedItems.length > 0 ? selectedItems : data;
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Datos');
 
+    excelData.sort((a, b) => a[1].localeCompare(b[1]));
     // Definir la fila de título
     worksheet.mergeCells('A1:H1'); // Ajusta el rango según el número de columnas
     const titleCell = worksheet.getCell('A1');
-    titleCell.value = 'Reporte de pedido';
+    titleCell.value = title;
     titleCell.font = { bold: true, size: 22, color: { argb: 'FFFFFFFF' } };
     titleCell.fill = {
       type: 'pattern',
@@ -84,7 +88,7 @@ export class ExcelReportService {
     ];
 
     // Agregar datos y ajustar ancho dinámico
-    data.forEach((item, index) => {
+    excelData.forEach((item, index) => {
       const rowValues = columns.map((col) => {
         const mappingKey = keyMapping[col as keyof typeof keyMapping];
 

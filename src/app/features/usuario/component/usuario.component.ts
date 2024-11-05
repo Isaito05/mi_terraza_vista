@@ -179,14 +179,14 @@ export class UsuarioComponent implements OnInit {
     const selectedItems = this.datosCompartidos.getSelectedItems();
 
     const data = (selectedItems.length > 0 ? selectedItems : this.usuarios).map(usuario => [
-      usuario.RGU_ID,
+      String(usuario.RGU_ID),
       usuario.RGU_NOMBRES,
       usuario.RGU_APELLIDOS,
-      usuario.RGU_CORREO,
-      usuario.RGU_TELEFONO,
-      usuario.RGU_DIRECCION,
+      String(usuario.RGU_CORREO),
+      String(usuario.RGU_TELEFONO),
+      String(usuario.RGU_DIRECCION),
       usuario.RGU_TP_DOC,
-      usuario.RGU_IDENTIFICACION
+      String(usuario.RGU_IDENTIFICACION)
     ]);
 
     this.pdfReportService.generatePdf('Reporte de Usuarios', headers, data, 'reporte_usuarios');
@@ -223,6 +223,7 @@ export class UsuarioComponent implements OnInit {
   // }
   generateUsuarioExcel() {
     const columns: (keyof Usuario | string)[] = ['Nombres', 'Apellidos', 'Correo', 'Direccion', 'Documento', 'Rol', 'Genero', 'Telefono'];
+    const title: any = 'Reporte de Usuarios'
     // Mapeo de claves para los encabezados
     const keyMapping: { [key: string]: keyof Usuario | string } = {
       'Nombres': 'RGU_NOMBRES',
@@ -234,10 +235,13 @@ export class UsuarioComponent implements OnInit {
       'Genero': 'RGU_GENERO', 
       'Telefono': 'RGU_TELEFONO'
     };
+
+    // Filtrar los usuarios seleccionados
+    const selectedItems = this.datosCompartidos.getSelectedItems();
     
     console.log(columns)
     // Asegúrate de que el método espera un arreglo de claves
-    this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping);
+    this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping, undefined, selectedItems, title );
   }
   
 }

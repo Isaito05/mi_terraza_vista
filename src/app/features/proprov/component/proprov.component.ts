@@ -2,10 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { ProprovService } from '../service/proprov.service';
 import { ProveedorService } from '../../proveedor/service/proveedor.service';
 import Swal from 'sweetalert2';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
 export interface Proveedor {
   PROV_ID: number;
   PROV_NOMBRE: string;
+}
+export interface ProdProv {
+  PROPROV_CANTIDAD: number;
+  PROPROV_DESCRIPCION: string;
+  PROPROV_FCH_INGRESO: Date;
+  PROPROV_NOMBRE: string;
+  PROPROV_PRECIO_UNITARIO: number;
+  PROPROV_PROV_ID: number;
+  proveedor: {
+    PROV_NOMBRE: string;
+  };
 }
 
 @Component({
@@ -24,7 +38,13 @@ export class ProprovComponent implements OnInit {
   title = 'Modulo de Proprov';
   loading: boolean = true;
 
-  constructor(private ProprovService: ProprovService, private proveedorService: ProveedorService) { }
+  constructor(
+    private ProprovService: ProprovService, 
+    private proveedorService: ProveedorService,
+    private datosCompartidos: DatosService,
+    private excelReportService: ExcelReportService,
+    private pdfReportService: PdfReportService,
+  ) { }
 
   ngOnInit(): void {
     this.ProprovService.getData().subscribe({
@@ -60,7 +80,6 @@ export class ProprovComponent implements OnInit {
       }
     });
   }
-
   openModal(user?: any, isDetailView: boolean = false) {
     this.proveedorService.getProveedor().subscribe((proveedor: Proveedor[]) => {
       this.proveedoresOptions = proveedor.map((proveedor: Proveedor) => ({
@@ -128,6 +147,40 @@ export class ProprovComponent implements OnInit {
         );
       }
     });
+  }
+
+  generateProProvPdf() {
+    const headers = ['Nombre del producto','Cantidad del producto','Fecha de ingreso del producto','Precio unitario','Descripcion del producto','Provedor del producto'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+
+    const data = (selectedItems.length > 0 ? selectedItems : this.proprovs).map(proprov => [
+      String(proprov.PROPROV_NOMBRE),
+      String(proprov.PROPROV_CANTIDAD),
+      String(proprov.PROPROV_FCH_INGRESO),
+      String(proprov.PROPROV_PRECIO_UNITARIO),
+      String(proprov.PROPROV_DESCRIPCION),
+      String(proprov.proveedor.PROV_NOMBRE)
+    ]);
+
+    this.pdfReportService.generatePdf('Reporte de Productos de Proveedor', headers, data, 'reporte_proprov');
+  }
+
+  generateProProvExcel() {
+    const columns: (keyof ProdProv | string)[] = ['Nombre del producto','Cantidad del producto','Fecha de ingreso del producto','Precio unitario','Descripcion del producto','Provedor del producto'];
+    const title: any = 'Reporte de Productos por Proveedor'
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof ProdProv | string } = {
+      'Nombre del producto': 'PROPROV_NOMBRE',
+      'Cantidad del producto': 'PROPROV_CANTIDAD',
+      'Fecha de ingreso del producto': 'PROPROV_FCH_INGRESO',
+      'Precio unitario': 'PROPROV_PRECIO_UNITARIO',
+      'Descripcion del producto': 'PROPROV_DESCRIPCION',
+      'Provedor del producto': 'proveedor.PROV_NOMBRE'
+    };
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+    this.excelReportService.generateExcel<ProdProv>(this.proprovs, columns, 'ProProv_reporte', keyMapping, undefined, selectedItems, title);
   }
 }
 

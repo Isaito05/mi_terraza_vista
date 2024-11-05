@@ -10,8 +10,8 @@
   <!-- <div class="d-block p-2 bg-dark text-white fs-2 mb-1">Modulo de Usuarios</div> -->
   <div class="d-flex justify-content-start mb-3">
     <button class="button-86 fw-bold" (click)="openModal()"><i class="bi bi-plus-circle me-2"></i>Registrar</button>
-    <button class="button-86 fw-bold w-pdf me-2"><i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF</button>
-    <button type="button" class="align-items-center button-86 d-flex fw-bold w-excel"><i class="fa-solid fa-file-excel me-2"></i>Exportar a Excel</button>
+    <button class="button-86 fw-bold w-pdf me-2" (click)="generateProdVentaPdf()"><i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF</button>
+    <button type="button" class="align-items-center button-86 d-flex fw-bold w-excel" (click)="generateProdVentaExcel()"><i class="fa-solid fa-file-excel me-2"></i>Exportar a Excel</button>
   </div>
   <app-modal [title]="isViewingDetails ? 'Detalles del producto en venta' : (isEditing ? 'Editar producto en venta' : 'Registrar producto en venta')"
    [isVisible]="isModalVisible" (close)="handleClose()"

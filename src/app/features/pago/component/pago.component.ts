@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http'; // Importa HttpClient
 import { PagoService } from '../service/pago.service';
 import { UsuarioService } from '../../usuario/service/usuario.service';
 import Swal from 'sweetalert2';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
 export interface Usuario {
   RGU_ID: number;
@@ -10,6 +13,20 @@ export interface Usuario {
   RGU_APELLIDOS: string;
   RGU_IDENTIFICACION: string;
   RGU_ROL: string;
+}
+
+export interface Pago {
+  PAGO_ID: number;
+  PAGO_FECHA: Date;
+  PAGO_MONTO: number;
+  PAGO_DESCRIPCION: string;
+  rguUsuario: {
+    RGU_ID: number;
+    RGU_IDENTIFICACION: string;
+    RGU_NOMBRES: string;
+    RGU_APELLIDOS: string;
+    RGU_GENERO: string;
+  };
 }
 
 @Component({
@@ -34,8 +51,10 @@ export class PagoComponent implements OnInit {
 
   constructor(
     public pagoService: PagoService,
-    private http: HttpClient,
     private usuarioService: UsuarioService,
+    private datosCompartidos: DatosService,
+    private excelReportService: ExcelReportService,
+    private pdfReportService: PdfReportService,  
   ){
     this.camposPago()
   }
@@ -165,5 +184,35 @@ export class PagoComponent implements OnInit {
         );
       }
     });
+  }
+
+  generatePagoPdf() {
+    const headers = ['Nombre del trabajador','Monto pagado','Fecha del pago','Descripcion del pago'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+
+    const data = (selectedItems.length > 0 ? selectedItems : this.pagos).map(pago => [
+      String(pago.rguUsuario.RGU_NOMBRES),
+      String(pago.PAGO_MONTO),
+      String(pago.PAGO_FECHA),
+      String(pago.PAGO_DESCRIPCION)
+    ]);
+
+    this.pdfReportService.generatePdf('Reporte de Pago', headers, data, 'reporte_pago');
+  }
+
+  generatePagoExcel() {
+    const columns: (keyof Pago | string)[] = ['Nombre del trabajador','Monto pagado','Fecha del pago','Descripcion del pago'];
+    const title: any = 'Reporte de Pagos'
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof Pago | string } = {
+      'Nombre del trabajador': 'rguUsuario.RGU_NOMBRES',
+      'Monto pagado': 'PAGO_MONTO',
+      'Fecha del pago': 'PAGO_FECHA',
+      'Descripcion del pago': 'PAGO_DESCRIPCION'
+    };
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+    this.excelReportService.generateExcel<Pago>(this.pagos, columns, 'Pago_reporte', keyMapping, undefined, selectedItems, title);
   }
 }

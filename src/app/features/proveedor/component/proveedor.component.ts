@@ -2,7 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ProveedorService } from '../service/proveedor.service';
 import Swal from 'sweetalert2';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
+export interface Proveedor {
+  PROV_NOMBRE: string;
+  PROV_CORREO: string;
+  PROV_DIRECCION: string;
+  PROV_NIT: number;
+  PROV_TELEFONO: number;
+}
 @Component({
   selector: 'app-proveedor',
   templateUrl: './proveedor.component.html',
@@ -18,8 +28,12 @@ export class ProveedorComponent implements OnInit {
   title = 'Modulo de Proveedor';
   loading: boolean = true;
 
-  constructor(private http: HttpClient, 
-    private provService: ProveedorService
+  constructor(
+    private http: HttpClient, 
+    private provService: ProveedorService,
+    private datosCompartidos: DatosService,
+    private excelReportService: ExcelReportService,
+    private pdfReportService: PdfReportService,  
     ) { }
 
   ngOnInit(): void {
@@ -117,6 +131,43 @@ export class ProveedorComponent implements OnInit {
         );
       }
     });
+  }
+
+  generateProveedorPdf() {
+    const headers = ['Nombre del proveedor', 'Correo del proveedor', 'Telefono del proveedor', 'Direccion del proveedor', 'Nit del proveedor'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+
+    const data = (selectedItems.length > 0 ? selectedItems : this.proveedor).map(proveedor => [
+      String(proveedor.PROV_NOMBRE),
+      String(proveedor.PROV_CORREO),
+      String(proveedor.PROV_TELEFONO),
+      String(proveedor.PROV_DIRECCION),
+      String(proveedor.PROV_NIT)
+    ]);
+
+    try {
+        this.pdfReportService.generatePdf('Reporte de Proveedor', headers, data, 'reporte_proveedor');
+    } catch (error) {
+        console.error('Error al generar el PDF:', error);
+    }
+  }
+
+
+  generateProveedorExcel() {
+    const columns: (keyof Proveedor | string)[] = ['Nombre del proveedor','Correo del proveedor','Telefono del proveedor','Direccion del proveedor','Nit del proveedor'];
+    const title: any = 'Reporte de Proveedores'
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof Proveedor | string } = {
+      'Nombre del proveedor': 'PROV_NOMBRE',
+      'Correo del proveedor': 'PROV_CORREO',
+      'Telefono del proveedor': 'PROV_TELEFONO',
+      'Direccion del proveedor': 'PROV_DIRECCION',
+      'Nit del proveedor': 'PROV_NIT'
+    };
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+    this.excelReportService.generateExcel<Proveedor>(this.proveedor, columns, 'Proveedor_reporte', keyMapping, undefined, selectedItems, title);
   }
 
 }

@@ -4,10 +4,29 @@ import { Observable } from 'rxjs';
 import { BodegaService } from '../service/bodega.service';
 import { ProprovService } from '../../proprov/service/proprov.service';
 import Swal from 'sweetalert2';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
 export interface ProProv {
   PROPROV_ID: number;
   PROPROV_NOMBRE: string;
+}
+export interface Bodega {
+  BOD_ID: number;
+  BOD_STOCK_MINIMO: number;
+  BOD_ESTADO: string;
+  BOD_PROPROV_ID: string;
+  proprov: {
+    PROPROV_CANTIDAD: number,
+    PROPROV_DESCRIPCION: string;
+    PROPROV_ESTADO: number;
+    PROPROV_FCH_INGRESO: Date;
+    PROPROV_ID: number
+    PROPROV_NOMBRE: string;
+    PROPROV_PRECIO_UNITARIO: number;
+    PROPROV_PROV_ID: number;
+  }
 }
 
 @Component({
@@ -29,7 +48,10 @@ export class BodegaComponent implements OnInit {
 
   constructor(private http: HttpClient,
     private proporvService: ProprovService,
-    private bodegaService: BodegaService
+    private bodegaService: BodegaService,
+    private datosCompartidos: DatosService, 
+    private excelReportService: ExcelReportService,
+    private pdfReportService: PdfReportService,  
     ) { }
 
   ngOnInit(): void {
@@ -72,9 +94,6 @@ export class BodegaComponent implements OnInit {
       this.bodegas = data;
     });
   }
-
-  
-
 
   openModal(user?: any, isDetailView: boolean = false) {
     this.proporvService.getProprov().subscribe((productos: ProProv[]) => {
@@ -146,44 +165,35 @@ export class BodegaComponent implements OnInit {
     });
   }
 
-  // generateUsuarioPdf() {
-  //   const headers = ['ID','Nombre', 'Apellido', 'Correo', 'Teléfono','Direccion','Tp. Identificacion','Nro. Identificacion'];
-  //   const selectedItems = this.datosCompartidos.getSelectedItems();
+  generateBodegaPdf() {
+    const headers = ['Estado de Producto','Stock en bodega','Nombre del Producto'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
 
-  //   const data = (selectedItems.length > 0 ? selectedItems : this.usuarios).map(usuario => [
-  //     usuario.RGU_ID,
-  //     usuario.RGU_NOMBRES,
-  //     usuario.RGU_APELLIDOS,
-  //     usuario.RGU_CORREO,
-  //     usuario.RGU_TELEFONO,
-  //     usuario.RGU_DIRECCION,
-  //     usuario.RGU_TP_DOC,
-  //     usuario.RGU_IDENTIFICACION
-  //   ]);
+    const data = (selectedItems.length > 0 ? selectedItems : this.bodegas).map(bodega => [
+      String(bodega.BOD_ESTADO),
+      String(bodega.BOD_STOCK_MINIMO),
+      String(bodega.proprov.PROPROV_NOMBRE)
+    ]);
 
-  //   this.pdfReportService.generatePdf('Reporte de Usuarios', headers, data, 'reporte_usuarios');
-  // }
+    this.pdfReportService.generatePdf('Reporte de Bodega', headers, data, 'reporte_bodega');
+  }
 
   enableBodyScroll() {
     document.body.style.overflow = 'auto'; // Reactiva el scroll de la página
   }
 
-  // generateUsuarioExcel() {
-  //   const columns: (keyof Usuario | string)[] = ['Nombres', 'Apellidos', 'Correo', 'Direccion', 'Documento', 'Rol', 'Genero', 'Telefono'];
-  //   // Mapeo de claves para los encabezados
-  //   const keyMapping: { [key: string]: keyof Usuario | string } = {
-  //     'Nombres': 'RGU_NOMBRES',
-  //     'Apellidos': 'RGU_APELLIDOS',
-  //     'Correo': 'RGU_CORREO',
-  //     'Direccion': 'RGU_DIRECCION',
-  //     'Documento': 'RGU_IDENTIFICACION', 
-  //     'Rol': 'RGU_ROL', 
-  //     'Genero': 'RGU_GENERO', 
-  //     'Telefono': 'RGU_TELEFONO'
-  //   };
-    
-  //   console.log(columns)
-  //   // Asegúrate de que el método espera un arreglo de claves
-  //   this.excelReportService.generateExcel<Usuario>(this.usuarios, columns, 'Usuarios_reporte', keyMapping);
-  // }
+  generateBodegaExcel() {
+    const columns: (keyof Bodega | string)[] = ['Estado de Producto','Stock en bodega','Nombre del Producto'];
+    const title: any = 'Reporte de Bodega'
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof Bodega | string } = {
+      'Estado de Producto': 'BOD_ESTADO',
+      'Stock en bodega': 'BOD_STOCK_MINIMO',
+      'Nombre del Producto': 'proprov.PROPROV_NOMBRE'
+    };
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+    this.excelReportService.generateExcel<Bodega>(this.bodegas, columns, 'Bodega_reporte', keyMapping, undefined, selectedItems, title);
+  }
 }

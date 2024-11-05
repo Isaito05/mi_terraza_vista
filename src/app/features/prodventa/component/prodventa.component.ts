@@ -4,6 +4,17 @@ import { Component, OnInit } from '@angular/core';
 import { ProdventaService } from '../services/prodventa.service';
 import Swal from 'sweetalert2';
 import { environment } from 'src/environments/environment';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
+
+export interface ProdVenta {
+  PROD_VENTA_ID: number;
+  PROD_VENTA_NOMBRE: string;
+  PROD_VENTA_PRECIO: number;
+  PROD_VENTA_IMAGEN: File;
+  PROD_VENTA_DESCRIPCION: string;
+}
 
 @Component({
   selector: 'app-prodventa',
@@ -26,7 +37,13 @@ export class ProdventaComponent implements OnInit {
   title = 'Modulo de Producto en venta';
   loading: boolean = true;
 
-  constructor(private http: HttpClient,public prodventaService: ProdventaService) { }
+  constructor(
+    private http: HttpClient,
+    public prodventaService: ProdventaService,
+    private datosCompartidos: DatosService,
+    private excelReportService: ExcelReportService,
+    private pdfReportService: PdfReportService
+  ) { }
 
   ngOnInit(): void {
     this.prodventaService.getData().subscribe({
@@ -64,13 +81,11 @@ export class ProdventaComponent implements OnInit {
     });
   }
 
-
   getProdventa(): void {
     this.http.get<any[]>(`${environment.apiUrlHttp}/prodventa`).subscribe(data => {
       this.prodventa = data;
     })
   }
-
 
   openModal(user?: any) {
     console.log('Abrir modal con usuario:', user);
@@ -84,8 +99,6 @@ export class ProdventaComponent implements OnInit {
     this.isModalVisible = false;
   }
 
- 
-
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
         this.productData.PROD_VENTA_IMAGEN = event.target.files[0];
@@ -94,59 +107,88 @@ export class ProdventaComponent implements OnInit {
     }
   }
 
-onEdit(user: any) {
-  console.log('Evento de edición recibido:', user);
-  this.openModal(user);
-}
+  onEdit(user: any) {
+    console.log('Evento de edición recibido:', user);
+    this.openModal(user);
+  }
 
-onDetail(user: any) {
-  console.log('Evento de detalle recibido:', user);
-  this.viewDetails(user);
-}
+  onDetail(user: any) {
+    console.log('Evento de detalle recibido:', user);
+    this.viewDetails(user);
+  }
 
-viewDetails(user: any) {
-  this.isViewingDetails = true; // Activa el modo de visualización de detalles
-  this.isEditing = false;
-  this.editingprodventa = { ...user }; // Carga los datos del usuario en modo solo lectura
-  this.isModalVisible = true;
-}
+  viewDetails(user: any) {
+    this.isViewingDetails = true; // Activa el modo de visualización de detalles
+    this.isEditing = false;
+    this.editingprodventa = { ...user }; // Carga los datos del usuario en modo solo lectura
+    this.isModalVisible = true;
+  }
 
-onDelete(user: any) {
-  Swal.fire({
-    title: '¿Estás seguro?',
-    text: `Eliminarás el producto: ${user.PROD_VENTA_NOMBRE}`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Sí, eliminar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      console.log(user.PROD_VENTA_NOMBRE, 'eta vaina tiene '),
-      this.prodventaService.deleteData(user.PROD_VENTA_ID).subscribe(
-        (response) => {
-          Swal.fire('Eliminado!', 'El producto en venta ha sido eliminado.', 'success').then(() => {
-            location.reload();
-          });
-        },
-        (error) => {
-          console.error('Error al eliminar:', error);
-          Swal.fire('Error', 'Hubo un problema al eliminar el producto del proveedor.', 'error');
+  onDelete(user: any) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Eliminarás el producto: ${user.PROD_VENTA_NOMBRE}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log(user.PROD_VENTA_NOMBRE, 'eta vaina tiene '),
+        this.prodventaService.deleteData(user.PROD_VENTA_ID).subscribe(
+          (response) => {
+            Swal.fire('Eliminado!', 'El producto en venta ha sido eliminado.', 'success').then(() => {
+              location.reload();
+            });
+          },
+          (error) => {
+            console.error('Error al eliminar:', error);
+            Swal.fire('Error', 'Hubo un problema al eliminar el producto del proveedor.', 'error');
         }
-      );
-    }
-  });
-}
+        );
+      }
+    });
+  }
 
-handleConfirm() {
-  const formData = new FormData();
-
-  // Agregar datos del producto
-  formData.append('PROD_VENTA_NOMBRE', this.productData.PROD_VENTA_NOMBRE);
-  formData.append('PROD_VENTA_DESCRIPCION', this.productData.PROD_VENTA_DESCRIPCION);
-  formData.append('PROD_VENTA_PRECIO', this.productData.PROD_VENTA_PRECIO.toString());
+  handleConfirm() { 
+    const formData = new FormData();
+    // Agregar datos del producto
+    formData.append('PROD_VENTA_NOMBRE', this.productData.PROD_VENTA_NOMBRE);
+    formData.append('PROD_VENTA_DESCRIPCION', this.productData.PROD_VENTA_DESCRIPCION);
+    formData.append('PROD_VENTA_PRECIO', this.productData.PROD_VENTA_PRECIO.toString());
   
-}
+  }
+
+  generateProdVentaPdf() {
+    const headers = ['Nombre del producto','Descripcion del producto','Precio del producto','Imagen del producto'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+
+    const data = (selectedItems.length > 0 ? selectedItems : this.prodventa).map(prodventa => [
+      String(prodventa.PROD_VENTA_NOMBRE),
+      String(prodventa.PROD_VENTA_DESCRIPCION),
+      String(prodventa.PROD_VENTA_PRECIO),
+      String(prodventa.PROD_VENTA_IMAGEN)
+    ]);
+
+    this.pdfReportService.generatePdf('Reporte de Productos en Venta', headers, data, 'reporte_prodventa');
+  }
+
+  generateProdVentaExcel() {
+    const columns: (keyof ProdVenta | string)[] = ['Nombre del producto','Descripcion del producto','Precio del producto','Imagen del producto'];
+    const title: any = 'Reporte de Productos en Venta'
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof ProdVenta | string } = {
+      'Nombre del producto': 'PROD_VENTA_NOMBRE',
+      'Descripcion del producto': 'PROD_VENTA_DESCRIPCION',
+      'Precio del producto': 'PROD_VENTA_PRECIO',
+      'Imagen del producto': 'PROD_VENTA_IMAGEN'
+    };
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+    this.excelReportService.generateExcel<ProdVenta>(this.prodventa, columns, 'Prodventa_reporte', keyMapping, undefined, selectedItems, title);
+  }
 
 }
 

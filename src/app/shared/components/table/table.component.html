@@ -32,10 +32,10 @@
         </div>
 
         <!-- Campo de búsqueda -->
-        <div [ngClass]="{'col-md-4 d-flex flex-column align-items-center': title === 'Modulo de Usuario', 'col-md-6 d-flex flex-column': title !== 'Modulo de Usuario'}" class="align-items-end">
+        <div [ngClass]="{'col-md-4 d-flex flex-column align-items-center': title === 'Modulo de Usuario', 'col-md-7 d-flex flex-column': title !== 'Modulo de Usuario'}" class="align-items-end">
           <div class="d-flex flex-column align-items-center">
             <label class="form-label" for="searchInput">*Buscar en la tabla*</label>
-            <span class="linea-busqueda" *ngIf=" title === 'Modulo de Pedido' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'"></span>
+            <!-- <span class="linea-busqueda" *ngIf=" title === 'Modulo de Pedido' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos'"></span> -->
             <div class="d-flex justify-content-end position-relative">
               <input id="searchInput" type="text" class="form-control f-in" placeholder="Escribe aquí para buscar..." (input)="updateFilter($event)" aria-label="Campo de búsqueda" />
               <i class="bi bi-search position-absolute search-icon"></i>
