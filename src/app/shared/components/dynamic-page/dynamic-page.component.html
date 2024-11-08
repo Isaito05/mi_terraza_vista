@@ -1,55 +1,11 @@
 <app-navbar></app-navbar>
 <div [innerHTML]="safePageContent"></div>
-<div class="col-md-8">
-    <div class="tab-content">
-      <!-- Datos personales -->
-      <div class="tab-pane fade show active" id="datos-personales">
-        <h3 class="mb-4">Datos personales</h3>
-        <ul class="list-group">
-          <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalNombre">
-            <span><i class="bi bi-person-fill me-2"></i> 
-              Nombre y Apellido: 
-              <strong>{{ usuario?.RGU_NOMBRES }} {{ usuario?.RGU_APELLIDOS }}</strong>
-            </span>
-            <i class="bi bi-chevron-right arrow-icon"></i>
-          </li>
-          <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalEmail">
-            <span><i class="bi bi-envelope-fill me-2"></i> 
-              Correo electrónico: 
-              <strong>{{ usuario?.RGU_CORREO || 'Datos no proporcionados' }}</strong>
-            </span>
-            <i class="bi bi-chevron-right arrow-icon"></i>
-          </li>
-          <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalTelefono">
-            <span><i class="bi bi-telephone-fill me-2 text-warning"></i> 
-              Teléfono: 
-              <span class="text-muted">{{ usuario?.RGU_TELEFONO || 'Datos no proporcionados' }}</span>
-            </span>
-            <i class="bi bi-chevron-right arrow-icon"></i>
-          </li>
-          <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalFechaNacimiento">
-            <span><i class="bi bi-calendar-fill me-2"></i> 
-              Fecha de nacimiento: 
-              <span class="text-muted">Datos no proporcionados</span> <!-- Si tienes fecha de nacimiento, agrégala -->
-            </span>
-            <i class="bi bi-chevron-right arrow-icon"></i>
-          </li>
-          <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalDocumento">
-            <span><i class="bi bi-card-text me-2"></i> 
-              Documento de identidad: 
-              <span class="text-muted">{{ usuario?.RGU_IDENTIFICACION || 'Datos no proporcionados' }}</span>
-            </span>
-            <i class="bi bi-chevron-right arrow-icon"></i>
-          </li>
-          <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalDireccion">
-            <span><i class="bi bi-geo-alt-fill me-2"></i> 
-              Dirección: 
-              <span class="text-muted">{{ usuario?.RGU_DIRECCION || 'Datos no proporcionados' }}</span>
-            </span>
-            <i class="bi bi-chevron-right arrow-icon"></i>
-          </li>
-        </ul>
-        <button class="btn btn-outline-danger mt-4" >Cerrar sesión</button>
-      </div>
-    </div>
-  </div>
+
+<!-- Mostrar el componente Menu si es la página 'menu' -->
+<app-menu *ngIf="isMenuPage"></app-menu>
+
+<!-- Mostrar el contenido HTML dinámico si no es la página 'menu' -->
+<div *ngIf="!isMenuPage" [innerHTML]="safePageContent"></div>
+
+<app-footer></app-footer>
+

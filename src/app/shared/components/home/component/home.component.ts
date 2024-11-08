@@ -9,12 +9,13 @@ import { Subscription } from 'rxjs';
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { jwtDecode } from 'jwt-decode';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FooterComponent } from "../../footer/footer.component";
 declare var $: any;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, NgxLoadingModule, CommonModule, NavbarComponent ,SharedModule ],
+  imports: [RouterModule, NgxLoadingModule, CommonModule, NavbarComponent, SharedModule, FooterComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

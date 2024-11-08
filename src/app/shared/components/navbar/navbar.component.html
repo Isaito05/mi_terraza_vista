@@ -15,8 +15,7 @@
                 <a routerLink="/" fragment="navbar" class="nav-item nav-link" [class.active]="isActive('navbar')">Home</a>
                 <a routerLink="/" fragment="about" class="nav-item nav-link" [class.active]="isActive('about')">About</a>
                 <a routerLink="/" fragment="service" class="nav-item nav-link" [class.active]="isActive('service')">Service</a>
-                <a routerLink="/" fragment="menu" class="nav-item nav-link" [class.active]="isActive('menu')">Menu</a>
-                <div class="nav-item dropdown">
+                <a routerLink="/pages/menu" fragment="menu" class="nav-item nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Menu</a>                <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="dropdownMenuButton">Pages</a>
                     <div class="dropdown-menu m-0" aria-labelledby="dropdownMenuButton">
                         <a routerLink="/" fragment="reservation" class="dropdown-item" [class.active]="isActive('reservation')">Booking</a>

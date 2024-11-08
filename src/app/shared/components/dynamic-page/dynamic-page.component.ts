@@ -5,12 +5,15 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'; // Importa D
 import { NavbarComponent } from '../navbar/navbar.component';
 import { jwtDecode } from 'jwt-decode';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
+import { SharedModule } from "../../shared.module";
+import { CommonModule } from '@angular/common';
+import { FooterComponent } from "../footer/footer.component";
 declare var $: any;
 
 @Component({
   selector: 'app-dynamic-page',
   standalone: true,
-  imports:[RouterModule, NavbarComponent],
+  imports: [RouterModule, NavbarComponent, SharedModule, CommonModule, FooterComponent],
   templateUrl: './dynamic-page.component.html',
   styleUrls: ['./dynamic-page.component.css']
 })
@@ -20,6 +23,9 @@ export class DynamicPageComponent implements OnInit, AfterViewInit {
   safePageContent: SafeHtml = ''; // SafeHtml para el contenido seguro
   userId!: number;
   usuario: any = {}
+ // Otras propiedades
+ pageName: string = '';
+ isMenuPage: boolean = false;  // Bandera para saber si es la página de menú
 
   constructor(
     private route: ActivatedRoute,
@@ -29,13 +35,32 @@ export class DynamicPageComponent implements OnInit, AfterViewInit {
     private usuarioService:UsuarioService,
     private cd: ChangeDetectorRef
   ) { }
-
+  
   ngOnInit(): void {
     const pageName = this.route.snapshot.paramMap.get('pageName');
+    // if (pageName) {
+    //   this.loadPageContent(pageName);
+    // }
     if (pageName) {
-      this.loadPageContent(pageName);
+      this.pageName = pageName;
+      // Verifica si la página es 'menu' y ajusta la bandera
+      if (this.pageName === 'menu') {
+        this.isMenuPage = true;
+      } else {
+        this.isMenuPage = false;
+        this.loadPageContent(this.pageName); // Si no es 'menu', carga el contenido HTML
+      }
     }
   
+
+    console.log('Page Name:', pageName);  // Para depurar y verificar el valor
+
+    if (pageName) {
+      this.loadPageContent(pageName);  // Usa pageName directamente
+    } else {
+      console.error('Page name is missing!');
+    }
+
     const token = sessionStorage.getItem('token'); 
     console.log('Auth Token:', token); // Verificar token
     if (token) {
@@ -61,19 +86,18 @@ export class DynamicPageComponent implements OnInit, AfterViewInit {
 
   // Cargar el contenido de la página de forma segura
   loadPageContent(pageName: string) {
-    const filePath = `/assets/pages/${pageName}.html`; // Ruta donde están tus archivos HTML
+    const filePath = `/assets/pages/${pageName}.html`;
     this.http.get(filePath, { responseType: 'text' }).subscribe(
       content => {
-        this.safePageContent = this.sanitizer.bypassSecurityTrustHtml(content); // Marcar el contenido como seguro
-
-        // Aplicar el comportamiento del dropdown una vez que el contenido ha sido cargado
-        setTimeout(() => {
-          this.initializeDropdownHover(window.innerWidth);
-        }, 0); // Asegurarse de que el DOM ya se ha renderizado
+        this.safePageContent = this.sanitizer.bypassSecurityTrustHtml(content);
       },
-      err => this.safePageContent = this.sanitizer.bypassSecurityTrustHtml('<h2>Error loading page</h2>') // Manejar errores
+      err => {
+        console.error('Error loading page content:', err);
+        this.safePageContent = this.sanitizer.bypassSecurityTrustHtml('<h2>Error loading page</h2>');
+      }
     );
   }
+  
 
   // Detectar cambios en el tamaño de la pantalla
   @HostListener('window:resize', ['$event'])

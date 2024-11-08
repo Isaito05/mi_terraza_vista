@@ -46,7 +46,7 @@ export class ExcelReportService {
     // Definir la fila de título
     worksheet.mergeCells('A1:H1'); // Ajusta el rango según el número de columnas
     const titleCell = worksheet.getCell('A1');
-    titleCell.value = title;
+    titleCell.value = `Reporte de ${fileName}`;
     titleCell.font = { bold: true, size: 22, color: { argb: 'FFFFFFFF' } };
     titleCell.fill = {
       type: 'pattern',
@@ -81,9 +81,8 @@ export class ExcelReportService {
       {
         state: 'frozen',
         xSplit: 1,
-        ySplit: 1,
-        topLeftCell: 'B2',
-        activeCell: 'B2',
+        ySplit: 2,
+        
       },
     ];
 
@@ -169,6 +168,6 @@ export class ExcelReportService {
     const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    saveAs(blob, `${fileName}.xlsx`);
+    saveAs(blob, `${fileName}_reporte.xlsx`);
   }
 }
