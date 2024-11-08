@@ -117,7 +117,7 @@
       </table>
 
       <!-- Botón de eliminación múltiple -->
-      <div class="d-flex justify-content-end mt-3">
+      <div class="d-flex justify-content-start mt-3">
         <button 
           class="btn btn-danger" 
           type="submit" 
@@ -125,7 +125,7 @@
           [disabled]="selectedCount < 2" 
           aria-label="Eliminar elementos seleccionados"
           *ngIf="title === 'Modulo de Usuario' || title === 'Modulo de Proprov' || title === 'Modulo de Pagos' || title === 'Modulo de Bodega' || title === 'Modulo de Producto en venta' || title === 'Modulo de Proveedor'"
-        >Eliminar</button>
+        ><i class="fa-solid fa-trash"></i></button>
       </div>
 
       <!-- Mensaje de "No hay datos" -->
