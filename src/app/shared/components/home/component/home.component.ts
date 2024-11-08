@@ -8,12 +8,13 @@ import { ImageUploadService } from 'src/app/core/services/image-upload.service';
 import { Subscription } from 'rxjs';
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { jwtDecode } from 'jwt-decode';
+import { SharedModule } from 'src/app/shared/shared.module';
 declare var $: any;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, NgxLoadingModule, CommonModule, NavbarComponent],
+  imports: [RouterModule, NgxLoadingModule, CommonModule, NavbarComponent ,SharedModule ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

@@ -61,6 +61,11 @@ export class TableComponent {
       this.id = 'PED_ID'
       // console.log(this.data_fecha);
     }
+    else if (this.title === 'Modulo de Producto en venta') {
+      // this.data_fecha = 'PED_FECHA'
+      this.id = 'PROD_VENTA_ID'
+      // console.log(this.data_fecha);
+    }
 
     // Establecer la columna por defecto para ordenamiento, por ejemplo, la primera columna
     if (this.columns.length > 0) {
@@ -349,7 +354,7 @@ export class TableComponent {
         seleccionados.forEach(item => {
         const itemId = item[this.id];
           console.log(this.dataService, 'Servicio que se va a utilizar')
-          console.log(item.RGU_ID, 'Id de los datos seleccionados')
+          console.log(item[this.id], 'Id de los datos seleccionados')
           this.dataService.deleteData(itemId).subscribe({
             next: () => {
               // Filtra los datos eliminados de la tabla

@@ -10,6 +10,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ngxLoadingAnimationTypes, NgxLoadingModule } from 'ngx-loading';
 import { CheckBoxComponent } from './components/check-box/check-box.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 
 
@@ -22,20 +23,25 @@ import { CheckBoxComponent } from './components/check-box/check-box.component';
     NgxDatatableModule,
     FormsModule,
     HeaderComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    
+    
   ],
   declarations: [
     SidebarComponent,
     TableComponent,
     ModalComponent,
-    CheckBoxComponent
+    CheckBoxComponent,
+    MenuComponent
   ],
   exports: [
     SidebarComponent,
     TableComponent,
     ModalComponent,
     HeaderComponent,
-    CheckBoxComponent
+    CheckBoxComponent,
+    MenuComponent
+    
   ]
 })
 export class SharedModule { }

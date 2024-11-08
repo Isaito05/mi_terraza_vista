@@ -1,0 +1,67 @@
+<!-- Menu Start -->
+<section id="menu">
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
+                <h1 class="mb-5">Most Popular Items</h1>
+            </div>
+            <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+                <!-- <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+                    <li class="nav-item">
+                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill" href="#tab-1">
+                            <i class="fa fa-coffee fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Popular</small>
+                                <h6 class="mt-n1 mb-0">Breakfast</h6>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill" href="#tab-2">
+                            <i class="fa fa-hamburger fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Special</small>
+                                <h6 class="mt-n1 mb-0">Launch</h6>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-3">
+                            <i class="fa fa-utensils fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Lovely</small>
+                                <h6 class="mt-n1 mb-0">Dinner</h6>
+                            </div>
+                        </a>
+                    </li>
+                </ul> -->
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane fade show p-0 active">
+                      <!-- Usamos un contenedor para manejar el layout -->
+                      <div class="row g-4">
+                        <!-- Recorremos el array de productos y colocamos las tarjetas en 3 columnas -->
+                        <div *ngFor="let item of menuItems" class="col-md-6 col-lg-4">
+                          <div class="card shadow-sm border-light">
+                            <img class="card-img-top" [src]="item.PROD_VENTA_IMAGEN" alt="{{ item.PROD_VENTA_NOMBRE }}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                              <h5 class="card-title d-flex justify-content-between">
+                                <span>{{ item.PROD_VENTA_NOMBRE }}</span>
+                                <span class="text-primary">${{ item.PROD_VENTA_PRECIO }}</span>
+                              </h5>
+                              <p class="card-text text-muted">{{ item.PROD_VENTA_DESCRIPCION }}</p>
+                            </div>
+                            <div class="card-footer text-center">
+                              <button class="btn btn-outline-primary w-100">Añadir al carrito</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Menu End -->
