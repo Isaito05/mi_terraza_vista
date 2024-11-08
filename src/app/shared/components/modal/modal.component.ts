@@ -151,6 +151,11 @@ export class ModalComponent {
     } else if (this.data['RGU_IMG_PROFILE'] === '') {
       this.previsualizacion = ''
     }
+    if (this.data['PROD_VENTA_IMAGEN']) {
+      this.previsualizacion = `${environment.apiUrlHttp}${this.data['PROD_VENTA_IMAGEN']}`;
+    } else if (this.data['PROD_VENTA_IMAGEN'] === '') {
+      this.previsualizacion = ''
+    }
   }
 
   validacionEmail(control: AbstractControl): { [key: string]: boolean } | null {
@@ -261,15 +266,17 @@ export class ModalComponent {
     if (this.form.valid) {
       const formValues = this.form.value; // Obtén los valores del formulario
       this.data = { ...formValues };
-      const fechaRegistro = new Date();
-      const offset = fechaRegistro.getTimezoneOffset();
-      fechaRegistro.setMinutes(fechaRegistro.getMinutes() - offset)
-      this.data['RGU_FCH_REGISTRO'] = fechaRegistro.toISOString();
+      if(this.title === 'Registrar usuario') {
+        const fechaRegistro = new Date();
+        const offset = fechaRegistro.getTimezoneOffset();
+        fechaRegistro.setMinutes(fechaRegistro.getMinutes() - offset)
+        this.data['RGU_FCH_REGISTRO'] = fechaRegistro.toISOString();
+      }
       const formData = this.data;
       const service = this.getServiceBasedOnContext();
       if (service) {
         if (this.isEditing) {
-          if (this.imageFileUsu) {
+          if (this.imageFileUsu || this.imageFile) {
             if (this.imageFileUsu) {
               this.usuarioService.upload(this.imageFileUsu).subscribe(
                 (response: any) => {
@@ -278,6 +285,23 @@ export class ModalComponent {
                     sessionStorage.setItem('i_perfil', response.filePath);
                   }
                   const imageUrl = response.filePath; // Guarda la ruta de la imagen  
+                  delete formData['showProfilePicture'];
+                  this.actualizarDatos(formData);
+                },
+                (error: any) => {
+                  console.error('Error al subir la imagen:', error);
+                }
+              );
+            }
+            if (this.imageFile) {
+              this.usuarioService.upload(this.imageFile).subscribe(
+                (response: any) => {
+                  if (response.filePath) {
+                    this.data['PROD_VENTA_IMAGEN'] = response.filePath;
+                    sessionStorage.setItem('i_perfil', response.filePath);
+                  }
+                  const imageUrl = response.filePath; // Guarda la ruta de la imagen 
+                  console.log('Imagen subida exitosamente:', imageUrl); 
                   delete formData['showProfilePicture'];
                   this.actualizarDatos(formData);
                 },
@@ -513,6 +537,7 @@ export class ModalComponent {
       } else if (fieldId === 'RGU_IMG_PROFILE') {
         this.imageFileUsu = file;
       }
+      console.log(file, 'Aquí viene file')
       this.extraerBase64(file).then((image: any) => {
         this.previsualizacion = image.base; // Establece la vista previa
       }).catch((error) => {

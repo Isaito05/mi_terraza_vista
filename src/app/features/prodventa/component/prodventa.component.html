@@ -14,13 +14,10 @@
     <button type="button" class="align-items-center button-86 d-flex fw-bold w-excel" (click)="generateProdVentaExcel()"><i class="fa-solid fa-file-excel me-2"></i>Exportar a Excel</button>
   </div>
   <app-modal [title]="isViewingDetails ? 'Detalles del producto en venta' : (isEditing ? 'Editar producto en venta' : 'Registrar producto en venta')"
-   [isVisible]="isModalVisible" (close)="handleClose()"
-    (confirmAction)="handleConfirm()"  [fields]="[
-      { id: 'PROD_VENTA_NOMBRE', label: 'Nombre', type: 'text' },
-      { id: 'PROD_VENTA_DESCRIPCION', label: 'Descripcion', type: 'text' },
-      { id: 'PROD_VENTA_PRECIO', label: 'Precio', type: 'number' },
-      { id: 'PROD_VENTA_IMAGEN', label: 'Imagen', type: 'file' }
-    ]"
+    [isVisible]="isModalVisible" 
+    (close)="handleClose()"
+    (confirmAction)="handleConfirm()"  
+    [fields]="modalFields"
     [isEditing]="isEditing"
     [isViewingDetails]="isViewingDetails"
     [data]="editingprodventa">

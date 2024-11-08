@@ -1,13 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProdventaService {
-  private apiUrl = 'http://localhost:3000/prodventa';
-  private apiUrlF = 'http://localhost:3000/upload/file'; 
+export class ProdventaService { 
 
   constructor(private http:HttpClient) { }
 
@@ -15,29 +14,29 @@ export class ProdventaService {
     const formData: FormData = new FormData();
     formData.append('files', file, file.name);
 
-    return this.http.post(this.apiUrlF, formData);
+    return this.http.post(`${environment.apiUrlHttp}/upload/file`, formData);
   }
 
   getData(): Observable<any>{
-    return this.http.get<any>(this.apiUrl)
+    return this.http.get<any>(`${environment.apiUrlHttp}/prodventa`)
   }
 
   saveData(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+    return this.http.post<any>(`${environment.apiUrlHttp}/prodventa`, data);
   }
 
   getProVenById(id: any): Observable<any> {
-    const url = `${this.apiUrl}/${id}`; // Construye la URL con el ID
+    const url = `${environment.apiUrlHttp}/prodventa/${id}`; // Construye la URL con el ID
     return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID
   }
 
   updateData(data: any): Observable<any> {
-    const url = `${this.apiUrl}/${data.PROD_VENTA_ID}`;
+    const url = `${environment.apiUrlHttp}/prodventa/${data.PROD_VENTA_ID}`;
     return this.http.put<any>(url, data);
   }
 
   deleteData(data: any): Observable<any> {
-    const url = `${this.apiUrl}/${data}`;
+    const url = `${environment.apiUrlHttp}/prodventa/${data}`;
     const body = { PROD_VENTA_ESTADO: 2 }; // El cuerpo de la solicitud contiene solo el campo a actualizar
     return this.http.put<any>(url, body);
   }

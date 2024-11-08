@@ -24,6 +24,7 @@ export interface ProdVenta {
 
 export class ProdventaComponent implements OnInit {
   prodventa: any[] = [];
+  modalFields: any [] = [];
   productData = {
     PROD_VENTA_NOMBRE: '',
     PROD_VENTA_DESCRIPCION: '',
@@ -43,7 +44,7 @@ export class ProdventaComponent implements OnInit {
     private datosCompartidos: DatosService,
     private excelReportService: ExcelReportService,
     private pdfReportService: PdfReportService
-  ) { }
+  ) {this.camposProdVenta() }
 
   ngOnInit(): void {
     this.prodventaService.getData().subscribe({
@@ -93,6 +94,7 @@ export class ProdventaComponent implements OnInit {
     this.isViewingDetails = false;
     this.editingprodventa = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
     this.isModalVisible = true;
+    this.camposProdVenta()
   }
 
   handleClose() {
@@ -158,6 +160,19 @@ export class ProdventaComponent implements OnInit {
     formData.append('PROD_VENTA_DESCRIPCION', this.productData.PROD_VENTA_DESCRIPCION);
     formData.append('PROD_VENTA_PRECIO', this.productData.PROD_VENTA_PRECIO.toString());
   
+  }
+
+  camposProdVenta() {
+    this.modalFields = [
+      { id: 'PROD_VENTA_NOMBRE', label: 'Nombre', type: 'text'},
+      { id: 'PROD_VENTA_DESCRIPCION', label: 'Descripcion', type: 'text'},
+      { id: 'PROD_VENTA_PRECIO', label: 'Precio', type: 'number'},
+      { id: 'PROD_VENTA_IMAGEN', label: 'Imagen', type: 'file'}
+    ]
+    if(this.isEditing) {
+      // this.modalFields.push({ id: 'RGU_IMG_PROFILE', label: 'Foto de perfil', type: 'file' }),
+      this.modalFields.push({ id: 'PROD_VENTA_ID', label: 'ID', type: 'number' });
+    }
   }
 
   generateProdVentaPdf() {
