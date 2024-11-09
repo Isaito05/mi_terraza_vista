@@ -10,6 +10,7 @@ import { ResetPasswordComponent } from './core/reset-password/reset-password.com
 import { RegisterComponent } from './shared/components/register/component/register.component'; 
 import { canDeactivateGuard } from './guard/can-deactivate.guard';
 import { ProfileComponent } from './shared/components/profile/component/profile.component';
+import { CarritoListarComponent } from './shared/components/carrito/carrito-listar.component';
 
 const routes: Routes = [
   // Redirige a 'home' si la ruta es vacía
@@ -56,6 +57,11 @@ const routes: Routes = [
     path: 'home', 
     title: 'Mi terraza', 
     component: HomeComponent 
+  },
+
+  { 
+    path: 'carrito', 
+    component: CarritoListarComponent
   },
 
   // Rutas dentro del layout con autenticación (authGuard)

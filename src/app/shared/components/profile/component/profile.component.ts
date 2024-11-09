@@ -15,7 +15,7 @@ declare var $: any;
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ ReactiveFormsModule, RouterModule,NavbarComponent, CommonModule],
+  imports: [ ReactiveFormsModule, RouterModule, NavbarComponent, CommonModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })

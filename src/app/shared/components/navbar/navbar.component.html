@@ -24,8 +24,13 @@
                     </div>
                 </div>
                 <a routerLink="/" fragment="footer" class="nav-item nav-link" [class.active]="isActive('footer')">Contact</a>
+                <a class="nav-item nav-link" [routerLink]="['/carrito']">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
+                </a>
+                
             </div>
-            
+           
             <!-- Mostrar el botón de inicio de sesión si no está logueado -->
             <a *ngIf="!authService.loggedIn()" [routerLink]="['/login']" class="btn btn-primary py-2 px-4">Inicia sesión</a>
     

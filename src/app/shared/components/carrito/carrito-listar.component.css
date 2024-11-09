@@ -1,0 +1,22 @@
+.D_p{
+    background-color: rgb(24, 23, 71);
+    color: white;
+    padding: 10px;
+    width: 75%;
+    box-shadow: -1px 6px 61px 0px rgba(0,0,0,0.75);
+}
+
+.container{
+    max-width: 58.125rem;
+}
+
+.tarjeta{
+    
+    background: rgb(235, 248, 248);
+    box-shadow: -1px 6px 61px 0px rgba(0,0,0,0.75);
+    width: 75%;
+}
+
+.pointer{
+    cursor: pointer;
+}

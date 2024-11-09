@@ -42,7 +42,7 @@ export class ExcelReportService {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Datos');
 
-    excelData.sort((a, b) => a[1].localeCompare(b[1]));
+    // excelData.sort((a, b) => a[1].localeCompare(b[1]));
     // Definir la fila de título
     worksheet.mergeCells('A1:H1'); // Ajusta el rango según el número de columnas
     const titleCell = worksheet.getCell('A1');

@@ -278,6 +278,7 @@ export class ModalComponent {
         if (this.isEditing) {
           if (this.imageFileUsu || this.imageFile) {
             if (this.imageFileUsu) {
+              console.log('entro')
               this.usuarioService.upload(this.imageFileUsu).subscribe(
                 (response: any) => {
                   if (response.filePath) {
@@ -315,8 +316,10 @@ export class ModalComponent {
             this.actualizarDatos(formData);
           }
         } else {
+          console.log(this.imageFile)
           if (this.imageFile || this.imageFileUsu) {
             if (this.imageFile) {
+              console.log('entro')
               this.prodventaService.upload(this.imageFile).subscribe(
                 (response: any) => {
                   if (response.filePath) {
@@ -334,6 +337,7 @@ export class ModalComponent {
               );
             }
             if (this.imageFileUsu) {
+              console.log(this.imageFileUsu)
               this.usuarioService.upload(this.imageFileUsu).subscribe(
                 (response: any) => {
                   if (response.filePath) {
@@ -445,6 +449,7 @@ export class ModalComponent {
   
   private actualizarRegistro(formData: any): void {
     const service = this.getServiceBasedOnContext();
+    console.log(formData, 'esto es formData')
     service.updateData(formData).subscribe(
       (response: any) => {
         this.closeModal();
@@ -531,9 +536,11 @@ export class ModalComponent {
   handleFileInputChange(event: any, fieldId: string) {
     console.log('File input changed:', event);
     const file = event.target.files[0];
+    console.log(fieldId)
     if (file) {
       if (fieldId === 'PROD_VENTA_IMAGEN') {
         this.imageFile = file;
+        console.log(this.imageFile)
       } else if (fieldId === 'RGU_IMG_PROFILE') {
         this.imageFileUsu = file;
       }

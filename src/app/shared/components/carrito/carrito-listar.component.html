@@ -1,0 +1,59 @@
+<app-navbar></app-navbar>
+<div class="container-xxl py-5 bg-dark hero-header mb-5">
+    <div class="container my-5 py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-3 text-white animated slideInLeft"><br>Realiza tu pedido!!!!</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h1>Carrito</h1>
+    <br>
+    <div class="D_p d-flex">
+        <div class="flex-grow-1">
+            <i class="fa-solid fa-bookmark me-1"></i>
+            Detalles de tu pedido
+        </div>
+        <div>
+            <i (click)="vaciarCarrito()" class="fa-solid fa-broom pointer" title="Limpiar carrito"></i>
+        </div>
+    </div>
+    <div class="tarjeta">
+        <div *ngFor="let item of listaItemsCarrito" class="d-flex align-items-center border-bottom py-3 px-3">
+            <!-- Imagen del producto -->
+            <img [src]="item.PROD_VENTA_IMAGEN" alt="{{ item.PROD_VENTA_NOMBRE }}" class="rounded"
+                style="width: 80px; height: 80px; object-fit: cover;">
+
+            <!-- Detalles del producto -->
+            <div class="ms-3 flex-grow-1">
+                <h6 class="mb-1">
+                    <a href="#" class="text-decoration-none text-primary">{{ item.PROD_VENTA_NOMBRE }}</a>
+                </h6>
+                <p class="text-muted small mb-0">{{ item.PROD_VENTA_DESCRIPCION }}</p>
+            </div>
+
+            <!-- Controles de cantidad y precio -->
+            <div class="d-flex align-items-center">
+                <button (click)="decreaseQuantity(item)" class="btn btn-light border me-2"
+                    style="width: 30px; height: 30px; line-height: 0;">
+                    &minus;
+                </button>
+                <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
+                <button (click)="increaseQuantity(item)" class="btn btn-light border ms-2"
+                    style="width: 30px; height: 30px; line-height: 0;">
+                    &#43;
+                </button>
+                <span class="fw-bold ms-3">{{formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD)}}</span>
+                <!-- Icono de eliminación -->
+
+                <i (click)="removeItem(item)" class="fa-solid fa-trash ms-3 pointer" title="Eliminar producto"></i>
+            </div>
+        </div>
+        <div *ngIf="listaItemsCarrito!.length > 0" class="d-flex justify-content-end border-top pt-3 pe-3">
+            <p class="fw-bold">Total: {{ formatCurrency(calculateTotal()) }}</p>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

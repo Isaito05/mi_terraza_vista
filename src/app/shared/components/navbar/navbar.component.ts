@@ -9,12 +9,13 @@ import { Subscription } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import * as CryptoJS from 'crypto-js';
+import { DatosService } from 'src/app/core/services/datos.service';
 declare var $: any;
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, NgxLoadingModule, CommonModule],
+  imports: [RouterModule, NgxLoadingModule, CommonModule],  
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -29,6 +30,7 @@ export class NavbarComponent implements AfterViewInit, OnInit{
   rol_ad: boolean = false;
   userId!: number;
   imangenPerfil: string = '';
+  cartCount: number = 0;
 
   isLoading: boolean = false; // Cambia a 'true' cuando el usuario se loguee
   usuario: any
@@ -46,7 +48,8 @@ export class NavbarComponent implements AfterViewInit, OnInit{
     private router: Router, 
     private renderer: Renderer2, 
     public authService: AuthService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private datoService: DatosService
   ){}
 
   ngOnInit(): void {
@@ -108,7 +111,21 @@ export class NavbarComponent implements AfterViewInit, OnInit{
         // console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
       }
     });
+    // this.datoService.cart$.subscribe(cart => {
+    //   this.cartCount = this.datoService.getCartCount(); // Actualizar el contador
+    // });
+    this.updateCartCount();
   }
+
+  // addProductToCart(product: any) {
+  //   this.datoService.addProduct(product);
+  // }
+  updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+    this.cartCount = cart.reduce((total:any, producto:any) => total + producto.CANTIDAD, 0);
+  }
+
+  
 
   private decryptData(ciphertext: string): string {
     const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);

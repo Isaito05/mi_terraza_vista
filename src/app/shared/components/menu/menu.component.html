@@ -47,12 +47,12 @@
                             <div class="card-body">
                               <h5 class="card-title d-flex justify-content-between">
                                 <span>{{ item.PROD_VENTA_NOMBRE }}</span>
-                                <span class="text-primary">${{ item.PROD_VENTA_PRECIO }}</span>
+                                <span class="text-primary">{{formatCurrency(item.PROD_VENTA_PRECIO)  }}</span>
                               </h5>
                               <p class="card-text text-muted">{{ item.PROD_VENTA_DESCRIPCION }}</p>
                             </div>
                             <div class="card-footer text-center">
-                              <button class="btn btn-outline-primary w-100">Añadir al carrito</button>
+                              <button class="btn btn-outline-primary w-100" (click)="agregarCarrito(item)">Añadir al carrito</button>
                             </div>
                           </div>
                         </div>
