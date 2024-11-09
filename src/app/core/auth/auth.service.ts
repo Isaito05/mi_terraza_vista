@@ -71,6 +71,7 @@ export class AuthService {
     } else {
       this.router.navigate(['/']);
     }
+    localStorage.clear();
   }
 
   public loggedIn(): boolean {

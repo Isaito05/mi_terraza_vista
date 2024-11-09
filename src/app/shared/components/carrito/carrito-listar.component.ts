@@ -93,7 +93,9 @@ export class CarritoListarComponent {
   }
 
   decreaseQuantity(item: any): void {
+    // Asegura que la cantidad mínima sea 1 al reducir la cantidad
     item.CANTIDAD = Math.max(item.CANTIDAD - 1, 1);
+  
     let iCarrito: Product = {
       PROD_VENTA_ID: item.PROD_VENTA_ID,
       PROD_VENTA_NOMBRE: item.PROD_VENTA_NOMBRE,
@@ -101,34 +103,28 @@ export class CarritoListarComponent {
       PROD_VENTA_DESCRIPCION: item.PROD_VENTA_DESCRIPCION,
       PROD_VENTA_IMAGEN: item.PROD_VENTA_IMAGEN,
       PROD_VENTA_ESTADO: item.PROD_VENTA_ESTADO,
-      CANTIDAD: 1,
-    }
-
+      CANTIDAD: item.CANTIDAD,
+    };
+  
     if (localStorage.getItem("carrito") === null) {
       let carrito: Product[] = [];
       carrito.push(iCarrito);
       localStorage.setItem("carrito", JSON.stringify(carrito));
-    }else{
+    } else {
       let carritoStorage = localStorage.getItem("carrito") as string;
       let carrito = JSON.parse(carritoStorage);
-      let index = -1;
-      for(let i = 0; i < carrito.length; i++){
-        let itemC: Product = carrito[i];
-        if(iCarrito.PROD_VENTA_ID === itemC.PROD_VENTA_ID){
-          index = i;
-          break;
-        }
-      }
-      if(index === -1){
+      let index = carrito.findIndex((product: Product) => product.PROD_VENTA_ID === iCarrito.PROD_VENTA_ID);
+  
+      if (index === -1) {
         carrito.push(iCarrito);
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-      }else{
-        let iCarrito: Product = carrito[index];
-        iCarrito.CANTIDAD--;
+      } else {
+        let iCarrito = carrito[index];
+        // Disminuye la cantidad pero asegura que no baje de 1
+        iCarrito.CANTIDAD = Math.max(iCarrito.CANTIDAD - 1, 1);
         carrito[index] = iCarrito;
-        localStorage.setItem("carrito", JSON.stringify(carrito));
       }
-    } // Límite mínimo de 1
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+    }
   }
 
   calculateTotal(): number {
