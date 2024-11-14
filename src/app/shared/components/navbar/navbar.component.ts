@@ -3,7 +3,6 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { NgxLoadingModule } from 'ngx-loading';
-import { ImageUploadService } from 'src/app/core/services/image-upload.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
@@ -36,6 +35,8 @@ export class NavbarComponent implements AfterViewInit, OnInit{
   usuario: any
   secretKey = 'your-secret-key'
   private authSubscription!: Subscription;
+  isSticky: boolean = false;
+
   
   // Método para usar una imagen por defecto si la imagen de perfil falla
   imagenPorDefecto(event: Event) {
@@ -111,21 +112,27 @@ export class NavbarComponent implements AfterViewInit, OnInit{
         // console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
       }
     });
-    // this.datoService.cart$.subscribe(cart => {
-    //   this.cartCount = this.datoService.getCartCount(); // Actualizar el contador
-    // });
-    this.updateCartCount();
+    this.datoService.cart$.subscribe(cart => {
+      this.cartCount = cart.reduce((total, item) => total + item.CANTIDAD, 0);
+    });
   }
 
   // addProductToCart(product: any) {
   //   this.datoService.addProduct(product);
   // }
-  updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
-    this.cartCount = cart.reduce((total:any, producto:any) => total + producto.CANTIDAD, 0);
+  // updateCartCount() {
+  //   const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+  //   this.cartCount = cart.reduce((total:any, producto:any) => total + producto.CANTIDAD, 0);
+  // }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const navbar = document.querySelector('nav');
+    if (navbar) {
+      this.isSticky = navbar.classList.contains('sticky-top');
+    }
   }
 
-  
 
   private decryptData(ciphertext: string): string {
     const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
@@ -159,7 +166,7 @@ export class NavbarComponent implements AfterViewInit, OnInit{
   }
 
   // Método que se ejecuta cuando se cierra la sesión
-    logOut() {
+  logOut() {
       // Mostrar el spinner antes de cerrar sesión
       this.isLoading = true;
 
@@ -170,7 +177,7 @@ export class NavbarComponent implements AfterViewInit, OnInit{
         //   this.isLoading = false;
         // });
       // }, 1000); // Tiempo simulado de espera antes de cerrar sesión
-    }
+  }
 
   isActive(fragment: string): boolean {
     return this.currentFragment === fragment;
@@ -206,7 +213,6 @@ export class NavbarComponent implements AfterViewInit, OnInit{
       return false;
     });
   }
-  
 
   // Dropdown hover functionality
   private initializeDropdownHover(windowWidth: number): void {

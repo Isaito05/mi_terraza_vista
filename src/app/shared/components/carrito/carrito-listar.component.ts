@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { FormsModule } from '@angular/forms';
 
 export interface Product {
   PROD_VENTA_ID: number;
@@ -10,28 +12,72 @@ export interface Product {
   PROD_VENTA_DESCRIPCION: string;
   PROD_VENTA_IMAGEN: string;
   PROD_VENTA_ESTADO: number;
-  CANTIDAD: 1
+  CANTIDAD: number
 }
 
 @Component({
   selector: 'app-carrito-listar',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule],
   templateUrl: './carrito-listar.component.html',
   styleUrl: './carrito-listar.component.css'
 })
 export class CarritoListarComponent {
   listaItemsCarrito: Product[] | undefined;
+  cartCount: number = 0;
+  currentDate: Date = new Date();
+  deliveryOption: string = '';
+  showQrCode: boolean = false;
+
+  constructor(
+    private datoService: DatosService
+  ){}
 
   ngOnInit(): void {
     let carritoStorage = localStorage.getItem("carrito") as string;
-    let carrito = JSON.parse(carritoStorage);
+    let carrito = carritoStorage ? JSON.parse(carritoStorage) : [];
+    this.cartCount = carrito.reduce((total: any, item: any) => total + item.CANTIDAD, 0);
     this.listaItemsCarrito = carrito;
+
+    this.datoService.cart$.subscribe(cart => {
+      this.listaItemsCarrito = cart;
+      this.cartCount = cart.length > 0 ? cart.reduce((total, item) => total + item.CANTIDAD, 0) : 0;
+    });
   }
+
+  calculateSubtotal(): number {
+    return this.listaItemsCarrito!.reduce((total, item) => total + (item.PROD_VENTA_PRECIO * item.CANTIDAD), 0);
+  }
+  
+  calculateTotal(): number {
+    const subtotal = this.calculateSubtotal();
+    const shipping = 20; // o la lógica que desees usar para el costo de envío
+    return subtotal + shipping;
+  }
+
+  onDeliveryOptionChange() {
+    this.showQrCode = this.deliveryOption === 'immediate';
+  }
+
+  confirmOrder() {
+    if (this.deliveryOption === 'immediate' && !this.showQrCode) {
+      alert('Please scan the QR code to complete your payment.');
+      return;
+    }
+    
+    const confirmed = confirm('Please verify your information and address before placing the order. Do you want to continue?');
+    if (confirmed) {
+      // Lógica para finalizar el pedido
+      alert('Order placed successfully!');
+    }
+  }
+  
 
   vaciarCarrito() {
     localStorage.clear();
     this.listaItemsCarrito = [];
+    // this.cartCount = 0;
+    this.datoService.clearCart();
   }
 
   formatCurrency(value: any): string {
@@ -53,91 +99,60 @@ export class CarritoListarComponent {
     return value.toString();
   }
 
-  increaseQuantity(item: any): void {
-    item.CANTIDAD = Math.min(item.CANTIDAD + 1, 100); 
-    let iCarrito: Product = {
-      PROD_VENTA_ID: item.PROD_VENTA_ID,
-      PROD_VENTA_NOMBRE: item.PROD_VENTA_NOMBRE,
-      PROD_VENTA_PRECIO: item.PROD_VENTA_PRECIO,
-      PROD_VENTA_DESCRIPCION: item.PROD_VENTA_DESCRIPCION,
-      PROD_VENTA_IMAGEN: item.PROD_VENTA_IMAGEN,
-      PROD_VENTA_ESTADO: item.PROD_VENTA_ESTADO,
-      CANTIDAD: 1,
-    }
-
-    if (localStorage.getItem("carrito") === null) {
-      let carrito: Product[] = [];
-      carrito.push(iCarrito);
-      localStorage.setItem("carrito", JSON.stringify(carrito));
-    }else{
-      let carritoStorage = localStorage.getItem("carrito") as string;
-      let carrito = JSON.parse(carritoStorage);
-      let index = -1;
-      for(let i = 0; i < carrito.length; i++){
-        let itemC: Product = carrito[i];
-        if(iCarrito.PROD_VENTA_ID === itemC.PROD_VENTA_ID){
-          index = i;
-          break;
-        }
-      }
-      if(index === -1){
-        carrito.push(iCarrito);
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-      }else{
-        let iCarrito: Product = carrito[index];
-        iCarrito.CANTIDAD++;
-        carrito[index] = iCarrito;
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-      }
-    }// Límite máximo de 5
-  }
-
-  decreaseQuantity(item: any): void {
-    // Asegura que la cantidad mínima sea 1 al reducir la cantidad
-    item.CANTIDAD = Math.max(item.CANTIDAD - 1, 1);
-  
-    let iCarrito: Product = {
-      PROD_VENTA_ID: item.PROD_VENTA_ID,
-      PROD_VENTA_NOMBRE: item.PROD_VENTA_NOMBRE,
-      PROD_VENTA_PRECIO: item.PROD_VENTA_PRECIO,
-      PROD_VENTA_DESCRIPCION: item.PROD_VENTA_DESCRIPCION,
-      PROD_VENTA_IMAGEN: item.PROD_VENTA_IMAGEN,
-      PROD_VENTA_ESTADO: item.PROD_VENTA_ESTADO,
-      CANTIDAD: item.CANTIDAD,
-    };
-  
-    if (localStorage.getItem("carrito") === null) {
-      let carrito: Product[] = [];
-      carrito.push(iCarrito);
-      localStorage.setItem("carrito", JSON.stringify(carrito));
+  increaseQuantity(item: Product): void {
+    // Obtener el carrito actual del localStorage
+    let carrito: Product[] = JSON.parse(localStorage.getItem("carrito") || '[]');
+    
+    // Encontrar el producto en el carrito y aumentar la cantidad
+    const index = carrito.findIndex((product) => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
+    if (index > -1) {
+      item.CANTIDAD = carrito[index].CANTIDAD = Math.min(carrito[index].CANTIDAD + 1, 100); // Limitar la cantidad a 100
     } else {
-      let carritoStorage = localStorage.getItem("carrito") as string;
-      let carrito = JSON.parse(carritoStorage);
-      let index = carrito.findIndex((product: Product) => product.PROD_VENTA_ID === iCarrito.PROD_VENTA_ID);
-  
-      if (index === -1) {
-        carrito.push(iCarrito);
-      } else {
-        let iCarrito = carrito[index];
-        // Disminuye la cantidad pero asegura que no baje de 1
-        iCarrito.CANTIDAD = Math.max(iCarrito.CANTIDAD - 1, 1);
-        carrito[index] = iCarrito;
-      }
-      localStorage.setItem("carrito", JSON.stringify(carrito));
+      // Si el producto no existe en el carrito, lo agregamos
+      item.CANTIDAD = 1;
+      carrito.push(item);
     }
+  
+    // Actualizar el carrito en el localStorage
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    
+    // Emitir el carrito actualizado al servicio para actualizar el contador
+    this.datoService.addProduct(carrito);
   }
-
-  calculateTotal(): number {
-    return this.listaItemsCarrito!.reduce((acc, item) => acc + (item.PROD_VENTA_PRECIO * item.CANTIDAD), 0);
+  
+  decreaseQuantity(item: Product): void {
+    // Obtener el carrito actual del localStorage
+    let carrito: Product[] = JSON.parse(localStorage.getItem("carrito") || '[]');
+    
+    // Encontrar el producto en el carrito y reducir la cantidad
+    const index = carrito.findIndex((product) => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
+    if (index > -1) {
+      item.CANTIDAD = carrito[index].CANTIDAD = Math.max(carrito[index].CANTIDAD - 1, 1); // Limitar la cantidad mínima a 1
+    }
+  
+    // Actualizar el carrito en el localStorage
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    
+    // Emitir el carrito actualizado al servicio para actualizar el contador
+    this.datoService.addProduct(carrito);
   }
-
+  
   removeItem(item: any): void {
+    // Buscar el índice del elemento en la lista del carrito
     const index = this.listaItemsCarrito!.indexOf(item);
     if (index > -1) {
-        this.listaItemsCarrito!.splice(index, 1);
-
-        // Actualizar el localStorage después de eliminar el elemento
-        localStorage.setItem("carrito", JSON.stringify(this.listaItemsCarrito));
+      this.listaItemsCarrito?.splice(index, 1);
+      localStorage.setItem("carrito", JSON.stringify(this.listaItemsCarrito));
+      this.datoService.updateCart(this.listaItemsCarrito!); // Actualizar el servicio
     }
-}
+  }
+
+  getTruncatedText(text: string): string {
+    if (!text) return ''; // Maneja casos donde el texto sea nulo o indefinido
+    return text.length > 40 ? text.substring(0, 40) + '...' : text;
+  }
+  
+  // calculateTotal(): number {
+  //   return this.listaItemsCarrito!.reduce((acc, item) => acc + (item.PROD_VENTA_PRECIO * item.CANTIDAD), 0);
+  // }
 }

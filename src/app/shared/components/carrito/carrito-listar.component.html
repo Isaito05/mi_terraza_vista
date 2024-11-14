@@ -1,59 +1,139 @@
-<app-navbar></app-navbar>
-<div class="container-xxl py-5 bg-dark hero-header mb-5">
-    <div class="container my-5 py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6 text-center text-lg-start">
-                <h1 class="display-3 text-white animated slideInLeft"><br>Realiza tu pedido!!!!</h1>
-            </div>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<div class="container-xxl bg-white p-0">
+    <section id="navbar">
+        <div class="container-xxl position-relative p-0">
+        <app-navbar></app-navbar>
+            <!-- <div class="container-xxl py-5 bg-dark hero-header mb-5">
+            </div> -->
+        </div>
+    </section>
+    <div class="container-xxl py-5 bg-dark hero-header mb-5">
+        <div class="container text-center my-5 pt-5 pb-4">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Detalles de tu pedido</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Menu</li>
+                </ol>
+            </nav>
         </div>
     </div>
+    <div class="container">
+        <div class="row">
+            <!-- Carrito de Compras -->
+            <div class="col-md-8">
+                <div class="card p-3 mb-4 shadow-sm"> <!-- Card principal para el carrito -->
+                    <h5><a class="text-decoration-none text-dark me-1"><i class="fa-solid fa-chevron-left"></i> </a>Seguir comprando</h5>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <hr class="flex-grow-1 me-2 text-dark" />
+                        <hr class="flex-grow-1 ms-2 text-dark" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div>
+                            <p style="margin-bottom: 0;">Carrito de compras</p>
+                        </div>
+                        <div class="d-flex">
+                            <p class="flex-grow-1" style="margin-top: 0;">Tienes {{ listaItemsCarrito!.length }} productos en tu carrito.</p>
+                            <div>
+                                <i style="cursor: pointer;" class="fa-solid fa-trash-arrow-up" (click)="vaciarCarrito()"></i>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Lista de productos -->
+                    <div *ngFor="let item of listaItemsCarrito" class="d-flex align-items-center border-bottom py-3 px-3 shadow-sm rounded mb-3">
+                        <img [src]="item.PROD_VENTA_IMAGEN" alt="{{ item.PROD_VENTA_NOMBRE }}" class="rounded"
+                            style="width: 50px; height: 50px; object-fit: cover;">
+    
+                        <div class="ms-3 flex-grow-1">
+                            <h6 class="mb-1">{{ item.PROD_VENTA_NOMBRE }}</h6>
+                            <p class="text-muted small mb-0">{{ getTruncatedText(item.PROD_VENTA_DESCRIPCION) }}</p>
+                        </div>
+    
+                        <div class="d-flex align-items-center">
+                            <button (click)="decreaseQuantity(item)" class="btn me-2"><i class="fa-solid fa-minus"></i></button>
+                            <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
+                            <button (click)="increaseQuantity(item)" class="btn ms-2"><i class="fa-solid fa-plus"></i></button>
+                            <span class="fw-bold ms-3">{{ formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD) }}</span>
+                            <i (click)="removeItem(item)" class="fa-solid fa-trash ms-3 pointer" title="Eliminar producto"></i>
+                        </div>
+                    </div>
+    
+                    <!-- Total del carrito -->
+                    <div *ngIf="listaItemsCarrito!.length > 0" class="d-flex justify-content-end border-top pt-3">
+                        <p class="fw-bold">Total: {{ formatCurrency(calculateTotal()) }}</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Detalles de Pago -->
+            <div class="col-md-4">
+                <div class="card order-summary-card">
+                    <h6>Informacion del pedido</h6>
+                    
+                    <!-- Número y Fecha del Pedido -->
+                    <div class="d-flex">
+                        <div class="me-5">
+                            <p style="font-size: 13px;"><strong>Numero de orden #:</strong> 123456</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 13px;"><strong>Dia:</strong> {{ currentDate | date:'MMM d, y' }}</p>
+                        </div>
+                    </div>
+            
+                    <!-- Lista de Productos -->
+                    <div *ngFor="let item of listaItemsCarrito" class="product-item">
+                        <div>
+                            <p class="mb-0">{{ item.PROD_VENTA_NOMBRE }}</p>
+                            <small>Cantidad: {{ item.CANTIDAD }}</small>
+                        </div>
+                        <p>{{ formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD) }}</p>
+                    </div>
+            
+                    <!-- Opciones de Entrega -->
+                    <div class="mt-3">
+                        <p><strong>Opciones de entrega:</strong></p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="immediateDelivery" value="immediate" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
+                            <label class="form-check-label" for="immediateDelivery">Entrega inmediata</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="cashOnDelivery" value="cash" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
+                            <label class="form-check-label" for="cashOnDelivery">Contraentrega</label>
+                        </div>
+                    </div>
+            
+                    <!-- Imagen QR para Entrega Inmediata -->
+                    <div *ngIf="showQrCode" class="text-center mt-3">
+                        <p>Por favor, escanea el QR para enviar el pedido:</p>
+                        <img src="path/to/qr-code.png" alt="QR Code" style="width: 150px; height: 150px;">
+                    </div>
+            
+                    <!-- Totales -->
+                    <div class="d-flex justify-content-between mt-3">
+                        <p>Subtotal:</p>
+                        <p>{{ formatCurrency(calculateSubtotal()) }}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p>Shipping:</p>
+                        <p>{{ formatCurrency(20) }}</p>
+                    </div>
+                    <div class="total d-flex justify-content-between">
+                        <p>Total (Incl. taxes):</p>
+                        <p>{{ formatCurrency(calculateTotal() + 20) }}</p>
+                    </div>
+            
+                    <!-- Botón de Confirmar Pedido -->
+                    <button class="btn btn-primary w-100 mt-3" (click)="confirmOrder()">Realizar pedido</button>
+                </div>
+            </div>
+                        
+        </div>
+    </div>
+    
+    
+    <app-footer></app-footer>
 </div>
-<div class="container">
-    <h1>Carrito</h1>
-    <br>
-    <div class="D_p d-flex">
-        <div class="flex-grow-1">
-            <i class="fa-solid fa-bookmark me-1"></i>
-            Detalles de tu pedido
-        </div>
-        <div>
-            <i (click)="vaciarCarrito()" class="fa-solid fa-broom pointer" title="Limpiar carrito"></i>
-        </div>
-    </div>
-    <div class="tarjeta">
-        <div *ngFor="let item of listaItemsCarrito" class="d-flex align-items-center border-bottom py-3 px-3">
-            <!-- Imagen del producto -->
-            <img [src]="item.PROD_VENTA_IMAGEN" alt="{{ item.PROD_VENTA_NOMBRE }}" class="rounded"
-                style="width: 80px; height: 80px; object-fit: cover;">
-
-            <!-- Detalles del producto -->
-            <div class="ms-3 flex-grow-1">
-                <h6 class="mb-1">
-                    <a href="#" class="text-decoration-none text-primary">{{ item.PROD_VENTA_NOMBRE }}</a>
-                </h6>
-                <p class="text-muted small mb-0">{{ item.PROD_VENTA_DESCRIPCION }}</p>
-            </div>
-
-            <!-- Controles de cantidad y precio -->
-            <div class="d-flex align-items-center">
-                <button (click)="decreaseQuantity(item)" class="btn btn-light border me-2"
-                    style="width: 30px; height: 30px; line-height: 0;">
-                    &minus;
-                </button>
-                <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
-                <button (click)="increaseQuantity(item)" class="btn btn-light border ms-2"
-                    style="width: 30px; height: 30px; line-height: 0;">
-                    &#43;
-                </button>
-                <span class="fw-bold ms-3">{{formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD)}}</span>
-                <!-- Icono de eliminación -->
-
-                <i (click)="removeItem(item)" class="fa-solid fa-trash ms-3 pointer" title="Eliminar producto"></i>
-            </div>
-        </div>
-        <div *ngIf="listaItemsCarrito!.length > 0" class="d-flex justify-content-end border-top pt-3 pe-3">
-            <p class="fw-bold">Total: {{ formatCurrency(calculateTotal()) }}</p>
-        </div>
-    </div>
-</div>
-<app-footer></app-footer>

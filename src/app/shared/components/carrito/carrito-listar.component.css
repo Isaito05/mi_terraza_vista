@@ -1,4 +1,4 @@
-.D_p{
+/* .D_p{
     background-color: rgb(24, 23, 71);
     color: white;
     padding: 10px;
@@ -19,4 +19,31 @@
 
 .pointer{
     cursor: pointer;
+} */
+
+.order-summary-card {
+    background-color: #f8f9fa;
+    color: #333;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary-card h6 {
+    font-weight: bold;
+    text-align: center;
+}
+
+.order-summary-card .product-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.order-summary-card .total {
+    font-weight: bold;
+    border-top: 1px solid #e9ecef;
+    padding-top: 10px;
 }

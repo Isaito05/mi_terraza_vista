@@ -190,7 +190,18 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     },1000);
   }
   
-
+  getSaludo(): string {
+    const hora = new Date().getHours();
+    // console.log(hora)
+    if (hora < 12) {
+      return '¡Buenos días';
+    } else if (hora < 18) {
+      return '¡Buenas tardes';
+    } else {
+      return '¡Buenas noches';
+    }
+  }
+  
   // Dropdown hover functionality
   private initializeDropdownHover(windowWidth: number): void {
     const dropdowns = document.querySelectorAll('.dropdown');

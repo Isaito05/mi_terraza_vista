@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { DatosService } from 'src/app/core/services/datos.service';
 import { ProdventaService } from 'src/app/features/prodventa/services/prodventa.service';
 import { environment } from 'src/environments/environment';
 
@@ -24,21 +25,16 @@ export class MenuComponent implements OnInit{
   cartCount: number = 0;
 
 
-  constructor(private prodventaService: ProdventaService) { }
+  constructor(private prodventaService: ProdventaService,  private datoService: DatosService) { }
 
   ngOnInit(): void {
     this.loadMenuItems();
+    // this.datoService.cart$.subscribe(cart => {
+    //   console.log('Contenido actualizado del carrito:', cart);
+    //   this.cartCount = cart.reduce((total, producto) => total + producto.CANTIDAD, 0); // Actualizar el contador con la cantidad total
+    // })
    
   }
-
- ngOnChange(){
-  this.updateCartCount();
- }
-
- updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
-  this.cartCount = cart.length; // Número de productos en el carrito
-}
 
   loadMenuItems(): void {
     this.prodventaService.getData().subscribe((items: Product[]) => {
@@ -58,7 +54,7 @@ export class MenuComponent implements OnInit{
   }
 
   agregarCarrito(item: Product) {
-    // console.log(item, 'samuel');
+    // Crear el producto para el carrito, inicializando CANTIDAD en 1
     let iCarrito: Product = {
       PROD_VENTA_ID: item.PROD_VENTA_ID,
       PROD_VENTA_NOMBRE: item.PROD_VENTA_NOMBRE,
@@ -67,34 +63,29 @@ export class MenuComponent implements OnInit{
       PROD_VENTA_IMAGEN: item.PROD_VENTA_IMAGEN,
       PROD_VENTA_ESTADO: item.PROD_VENTA_ESTADO,
       CANTIDAD: 1,
-    }
-
-    if (localStorage.getItem("carrito") === null) {
-      let carrito: Product[] = [];
+    };
+  
+    let carrito: Product[] = JSON.parse(localStorage.getItem("carrito") || '[]');
+  
+    // Buscar si el producto ya existe en el carrito
+    const existingProductIndex = carrito.findIndex((p) => p.PROD_VENTA_ID === iCarrito.PROD_VENTA_ID);
+  
+    if (existingProductIndex === -1) {
+      // Si el producto no está en el carrito, lo agregamos
       carrito.push(iCarrito);
-      localStorage.setItem("carrito", JSON.stringify(carrito));
-    }else{
-      let carritoStorage = localStorage.getItem("carrito") as string;
-      let carrito = JSON.parse(carritoStorage);
-      let index = -1;
-      for(let i = 0; i < carrito.length; i++){
-        let itemC: Product = carrito[i];
-        if(iCarrito.PROD_VENTA_ID === itemC.PROD_VENTA_ID){
-          index = i;
-          break;
-        }
-      }
-      if(index === -1){
-        carrito.push(iCarrito);
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-      }else{
-        let iCarrito: Product = carrito[index];
-        iCarrito.CANTIDAD++;
-        carrito[index] = iCarrito;
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-      }
+    } else {
+      // Si el producto ya está, incrementamos la cantidad
+      carrito[existingProductIndex].CANTIDAD += 1;
     }
+  
+    // Actualizamos el carrito en localStorage
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+  
+    // Emitimos el carrito completo a través de `cartSubject` en el servicio `DatosService`
+    this.datoService.addProduct(carrito);
   }
+  
+
   formatCurrency(value: any): string {
     if (value == null) {
       return '';

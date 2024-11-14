@@ -64,6 +64,7 @@ export class AuthService {
   }
 
   logout() {
+    localStorage.clear();
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     if(this.rol === 'Administrador' || this.rol === 'Trabajador' ){
@@ -71,7 +72,6 @@ export class AuthService {
     } else {
       this.router.navigate(['/']);
     }
-    localStorage.clear();
   }
 
   public loggedIn(): boolean {

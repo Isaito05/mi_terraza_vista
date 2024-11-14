@@ -1,9 +1,4 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-        <!-- <div *ngIf="isLoading" id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div> -->
         <a href="" class="navbar-brand p-0">
             <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Restoran</h1>
         </a>
@@ -15,7 +10,7 @@
                 <a routerLink="/" fragment="navbar" class="nav-item nav-link" [class.active]="isActive('navbar')">Home</a>
                 <a routerLink="/" fragment="about" class="nav-item nav-link" [class.active]="isActive('about')">About</a>
                 <a routerLink="/" fragment="service" class="nav-item nav-link" [class.active]="isActive('service')">Service</a>
-                <a routerLink="/pages/menu" fragment="menu" class="nav-item nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Menu</a>                <div class="nav-item dropdown">
+                <a routerLink="/pages/menu" fragment="menu" class="nav-item nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Menu</a><div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="dropdownMenuButton">Pages</a>
                     <div class="dropdown-menu m-0" aria-labelledby="dropdownMenuButton">
                         <a routerLink="/" fragment="reservation" class="dropdown-item" [class.active]="isActive('reservation')">Booking</a>
@@ -24,10 +19,14 @@
                     </div>
                 </div>
                 <a routerLink="/" fragment="footer" class="nav-item nav-link" [class.active]="isActive('footer')">Contact</a>
-                <a class="nav-item nav-link" [routerLink]="['/carrito']">
+                <a routerLink="/carrito" fragment="carrito" class="nav-item nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                     <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
+                    <span class="cart-count" [ngClass]="{'sticky-cart-count': isSticky}" *ngIf="cartCount > 0">{{ cartCount }}</span>
                 </a>
+                <!-- <a class="nav-item nav-link" [routerLink]="['/carrito']">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count" [ngClass]="{'sticky-cart-count': isSticky}" *ngIf="cartCount > 0">{{ cartCount }}</span>
+                </a> -->
                 
             </div>
            

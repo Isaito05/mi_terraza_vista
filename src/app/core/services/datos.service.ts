@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+export interface Product {
+  PROD_VENTA_ID: number;
+  PROD_VENTA_NOMBRE: string;
+  PROD_VENTA_PRECIO: number;
+  PROD_VENTA_DESCRIPCION: string;
+  PROD_VENTA_IMAGEN: string;
+  PROD_VENTA_ESTADO: number;
+  CANTIDAD: number
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -20,17 +29,18 @@ export class DatosService {
   }
 
   // Agregar producto al carrito
-  addProduct(product: any) {
-    const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
-    const existingProduct = cart.find((item: any) => item.PROD_VENTA_ID === product.PROD_VENTA_ID);
-    if (existingProduct) {
-      existingProduct.CANTIDAD += product.CANTIDAD;
-    } else {
-      cart.push(product);
-    }
-    localStorage.setItem('carrito', JSON.stringify(cart));
-    this.cartSubject.next(cart);  // Emitir el nuevo carrito
+  addProduct(cart: Product[]) {
+    this.cartSubject.next(cart); // Emitimos el carrito actualizado
   }
+
+  updateCart(cart: Product[]): void {
+    this.cartSubject.next(cart);
+  }
+  // Método para vaciar el carrito
+  clearCart(): void {
+    this.cartSubject.next([]); // Emite un carrito vacío
+  }
+  
 
   // Obtener la cantidad total de productos en el carrito
   getCartCount() {
