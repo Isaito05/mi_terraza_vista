@@ -43,15 +43,15 @@ export class TableComponent {
   ngOnInit() {
     this.filteredData = [...this.data];
     // console.log(this.filteredData)
-    console.log(this.title)
+    // console.log(this.title)
     if (this.title === 'Modulo de Pagos') {
       this.data_fecha = 'PAGO_FECHA'
       this.id = 'PAGO_ID'
-      console.log(this.id);
+      // console.log(this.id);
     } else if (this.title === 'Modulo de Usuario') {
       this.data_fecha = 'RGU_FCH_REGISTRO'
       this.id = 'RGU_ID'
-      console.log(this.id);
+      // console.log(this.id);
     } else if (this.title === 'Modulo de Proprov') {
       this.data_fecha = 'PROPROV_FCH_INGRESO'
       // console.log(this.data_fecha);
@@ -83,7 +83,7 @@ export class TableComponent {
     // Obtener el valor del input de búsqueda (si es un campo de texto)
     let val = '';
     if (event && event.target && event.target.type === 'text') {
-      val = event.target.value.toLowerCase(); // Solo procesar el valor si es un input de texto
+      val = event.target.value.toLowerCase().trim(); // Solo procesar el valor si es un input de texto
     }
 
     // Variables para los filtros de checkbox
@@ -141,7 +141,7 @@ export class TableComponent {
   }
 
   sortData(columnKey: string) {
-    console.log(columnKey)
+    // console.log(columnKey)
     if (this.sortColumn === columnKey) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {

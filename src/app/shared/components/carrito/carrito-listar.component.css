@@ -1,25 +1,11 @@
-/* .D_p{
-    background-color: rgb(24, 23, 71);
-    color: white;
-    padding: 10px;
-    width: 75%;
-    box-shadow: -1px 6px 61px 0px rgba(0,0,0,0.75);
-}
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono&family=Lexend+Deca:wght@100..900&family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Rethink+Sans:ital,wght@0,500;1,500&display=swap');
 
-.container{
-    max-width: 58.125rem;
-}
-
-.tarjeta{
-    
-    background: rgb(235, 248, 248);
-    box-shadow: -1px 6px 61px 0px rgba(0,0,0,0.75);
-    width: 75%;
-}
-
-.pointer{
-    cursor: pointer;
-} */
+.geist-mono {
+    font-family: "Geist Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
 
 .order-summary-card {
     background-color: #f8f9fa;

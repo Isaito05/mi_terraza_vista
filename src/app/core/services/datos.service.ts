@@ -28,9 +28,46 @@ export class DatosService {
     return this.ItemsSeleccionados;
   }
 
-  // Agregar producto al carrito
-  addProduct(cart: Product[]) {
-    this.cartSubject.next(cart); // Emitimos el carrito actualizado
+  // // Agregar producto al carrito
+  // addProduct(cart: Product[]) {
+  //   this.cartSubject.next(cart); // Emitimos el carrito actualizado
+  // }
+
+  generateProductKey(product: any): string {
+    const size = product.selectedSize || '';
+    const ingredients = product.extraIngredients ? product.extraIngredients.map((i: any) => i.name).join(',') : '';
+    const descripcion = product.specialInstructions || ''
+
+    console.log(product,"esta vina trae lo siguinete ")
+    
+    // Generar una clave que incluya tamaño, ingredientes y otros detalles de personalización
+    const key = `${product.PROD_VENTA_ID}-${size}-${ingredients}-${descripcion}`;
+    
+    console.log('Generated product key:', key); // Verifica la nueva clave generada
+    return key;
+  }
+
+  addProduct(product: any, customizations: any) {
+    const customizedProduct = {
+      ...product,
+      ...customizations,
+    };
+   console.log(customizedProduct,"esta vina trae lo siguinete ")
+    // Generar la clave única para el producto personalizado
+    const productKey = this.generateProductKey(customizedProduct);
+  
+    const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+  
+    const existingProduct = cart.find((item: any) => this.generateProductKey(item) === productKey);
+  
+    if (existingProduct) {
+      existingProduct.CANTIDAD += customizedProduct.CANTIDAD;
+    } else {
+      cart.push({ ...customizedProduct, productKey });
+    }
+  
+    localStorage.setItem('carrito', JSON.stringify(cart));
+    this.cartSubject.next(cart);
   }
 
   updateCart(cart: Product[]): void {
