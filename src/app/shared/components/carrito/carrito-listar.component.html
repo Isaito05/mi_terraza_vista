@@ -44,74 +44,64 @@
                     </div>
     
                     <!-- Lista de productos -->
-                    <div *ngFor="let item of listaItemsCarrito; let i = index" class="d-flex align-items-center border-bottom py-3 px-3 shadow-sm rounded mb-3">
-                        <img [src]="item.PROD_VENTA_IMAGEN" alt="{{ item.PROD_VENTA_NOMBRE }}" class="rounded"
-                            style="width: 50px; height: 50px; object-fit: cover;">
-    
-                        <div class="ms-3 flex-grow-1">
+                    <div *ngFor="let item of listaItemsCarrito; let i = index" class="d-flex align-items-start border-bottom py-3 px-3 shadow-sm rounded mb-3">
+                        <!-- Imagen del producto -->
+                        <img [src]="item.PROD_VENTA_IMAGEN" alt="{{ item.PROD_VENTA_NOMBRE }}" class="rounded me-3"
+                            style="width: 70px; height: 70px; object-fit: cover;">
+                    
+                        <!-- Contenido del producto -->
+                        <div class="flex-grow-1">
                             <h6 class="mb-1">{{ item.PROD_VENTA_NOMBRE }}</h6>
-                            <p class="text-muted small mb-0">{{ getTruncatedText(item.PROD_VENTA_DESCRIPCION) }}</p>
-                           
-                        </div>
-    
-                         <!-- Descripción breve con botón para ver más detalles -->
-                        <div *ngIf="!item.isExpanded">
-                            <p class="mb-0 text-muted small">Detalles del producto...</p>
-                            <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = true">Ver más</button>
-                        </div>
+                            <p class="text-muted small mb-1">{{ getTruncatedText(item.PROD_VENTA_DESCRIPCION) }}</p>
+                            
+                            <div *ngIf="!item.isExpanded">
+                                <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = true">Ver más</button>
+                            </div>
+                    
+                            <!-- Detalles completos desplegables -->
+                            <div *ngIf="item.isExpanded">
+                                <div class="d-flex align-items-center text-muted small mb-2">
+                                    <!-- Icono de Tamaño con tooltip -->
+                                    <i class="fa-solid fa-ruler-combined me-2" matTooltip="Tamaño: {{ item.selectedSize }}"></i>
 
-                        <!-- Detalles completos mostrados al hacer clic en 'Ver más' -->
-                        <div *ngIf="item.isExpanded">
-                            <p class="mb-0"><strong>Tamaño:</strong> {{ item.selectedSize }}</p>
-                            <p class="mb-0"><strong>Ingredientes adicionales:</strong><br>
-                                <span *ngIf="item.extraIngredients!.length > 0">
-                                <span *ngFor="let ingredient of item.extraIngredients">
-                                    {{ ingredient.name }} ({{ formatCurrency(ingredient.price) }}),
-                                </span>
-                                </span>
-                                <span *ngIf="!item.extraIngredients || item.extraIngredients.length === 0">Sin adicionales</span>
-                            </p>
-                            <p class="mb-0"><strong>Descripción:</strong>
-                            <span *ngIf="item.specialInstructions"> {{ item.specialInstructions }}</span>
-                            <span *ngIf="!item.specialInstructions || item.specialInstructions.length === 0">Sin instrucciones especiales</span>
-                            </p>
-                        
-                            <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = false">Ver menos</button>
+                                    
+                                    <!-- Icono de Ingredientes adicionales con tooltip -->
+                                    <i class="fa-solid fa-utensils me-2" 
+                                       matTooltip="Ingredientes adicionales: {{ getIngredientList(item.extraIngredients) }}"></i>
+                                    
+                                    <!-- Icono de Descripción con tooltip -->
+                                    <i class="fa-solid fa-info-circle me-2" 
+                                       matTooltip="Descripción: {{ item.specialInstructions || 'Sin instrucciones especiales' }}"></i>
+                                </div>
+                    
+                                <!-- Botón para contraer detalles -->
+                                <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = false">Ver menos</button>
+                            </div>
                         </div>
-
-                        <!-- <div class="d-flex align-items-center">
-                            <button (click)="decreaseQuantity(item)" class="btn me-2"><i class="fa-solid fa-minus"></i></button>
-                            <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
-                            <button (click)="increaseQuantity(item)" class="btn ms-2"><i class="fa-solid fa-plus"></i></button>
-                            <span class="fw-bold ms-3">{{ formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD) }}</span>
-                            <i (click)="removeItem(item)" class="fa-solid fa-trash ms-3 pointer" title="Eliminar producto"></i>
-                        </div> -->
-
-                         <!-- Controles de cantidad y precio -->
+                    
+                        <!-- Controles de cantidad y precio -->
                         <div class="d-flex align-items-center">
-                            <button *ngIf="item.CANTIDAD > 1; else deleteIcon" (click)="decreaseQuantity(item)" class="btn btn-light border me-2 rounded-circle shadow-sm"style="width: 30px; height: 30px; line-height: 0;">&minus;</button>
+                            <button *ngIf="item.CANTIDAD > 1; else deleteIcon" (click)="decreaseQuantity(item)" class="btn btn-light me-2 shadow-sm" style="background: none;">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
                             
                             <ng-template #deleteIcon>
-                            <button (click)="confirmDelete(item)" class="btn btn-light border me-2 rounded-circle shadow-sm text-danger"style="width: 30px; height: 30px; line-height: 0;">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                                <button (click)="confirmDelete(item)" class="btn btn-light me-2 shadow-sm text-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </ng-template>
                             
                             <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
                             
-                            <button (click)="increaseQuantity(item)" class="btn btn-light border ms-2 rounded-circle shadow-sm"style="width: 30px; height: 30px; line-height: 0;">&#43;
+                            <button (click)="increaseQuantity(item)" class="btn btn-light ms-2 shadow-sm" style="background: none;">
+                                <i class="fa-solid fa-plus"></i>
                             </button>
                             
-                            <span class="fw-bold ms-3">
-                            {{ formatCurrency((item.PROD_VENTA_PRECIO + calculateExtras(item.extraIngredients)) * item.CANTIDAD) }}
-                            </span>
-
+                            <span class="fw-bold ms-3">{{ formatCurrency((item.PROD_VENTA_PRECIO + calculateExtras(item.extraIngredients)) * item.CANTIDAD) }}</span>
+                            
                             <!-- Botón de editar -->
-                            <button (click)="openEditModal(item)"class="btn btn-warning btn-sm ms-3">Editar</button>
-
+                            <button (click)="openEditModal(item)" class="btn btn-warning btn-sm ms-3">Editar</button>
                         </div>
-                       
-
                     </div>
     
                     <!-- Total del carrito -->
@@ -175,7 +165,7 @@
                     </div> -->
                     <div class="total d-flex justify-content-between">
                         <p class="geist-mono">Total: </p>
-                        <p class="geist-mono">{{ formatCurrency(calculateTotal() + 20) }}</p>
+                        <p class="geist-mono">{{ formatCurrency(calculateTotal()) }}</p>
                     </div>
             
                     <!-- Botón de Confirmar Pedido -->

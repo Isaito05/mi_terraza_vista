@@ -16,7 +16,7 @@ export interface Product {
 export class DatosService {
   private ItemsSeleccionados: any[] = [];
 
-  private cartSubject = new BehaviorSubject<any[]>(JSON.parse(localStorage.getItem('carrito') || '[]'));
+  public cartSubject = new BehaviorSubject<any[]>(JSON.parse(localStorage.getItem('carrito') || '[]'));
   cart$ = this.cartSubject.asObservable();
   
   setSelectedItems(items: any[]) {

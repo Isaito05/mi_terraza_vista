@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 import { DatosService } from 'src/app/core/services/datos.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import Swal from 'sweetalert2';
 import * as bootstrap from 'bootstrap';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +26,7 @@ export interface Product {
 @Component({
   selector: 'app-carrito-listar',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule],
+  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule],
   templateUrl: './carrito-listar.component.html',
   styleUrl: './carrito-listar.component.css'
 })
@@ -66,29 +67,9 @@ export class CarritoListarComponent {
   ){}
 
   ngOnInit(): void {
-    let carritoStorage = localStorage.getItem("carrito") as string;
-    let carrito = carritoStorage ? JSON.parse(carritoStorage) : [];
-    this.cartCount = carrito.reduce((total: any, item: any) => total + item.CANTIDAD, 0);
-    this.listaItemsCarrito = carrito;
-
-    this.datoService.cart$.subscribe(cart => {
-      this.listaItemsCarrito = cart;
-      this.cartCount = cart.length > 0 ? cart.reduce((total, item) => total + item.CANTIDAD, 0) : 0;
-    });
     this.cargarCarritoDesdeLocalStorage();
     this.listaItemsCarrito = this.listaItemsCarrito.map(item => ({ ...item, isExpanded: false }));
-  
   }
-
-  calculateSubtotal(): number {
-    return this.listaItemsCarrito!.reduce((total, item) => total + (item.PROD_VENTA_PRECIO * item.CANTIDAD), 0);
-  }
-  
-  // calculateTotal(): number {
-  //   const subtotal = this.calculateSubtotal();
-  //   const shipping = 20; // o la lógica que desees usar para el costo de envío
-  //   return subtotal + shipping;
-  // }
 
   calculateTotal(): number {
     return this.listaItemsCarrito.reduce((total, item) => {
@@ -113,33 +94,19 @@ export class CarritoListarComponent {
       alert('Order placed successfully!');
     }
   }
-  
 
+  getIngredientList(ingredients: any[]): string {
+    return ingredients && ingredients.length > 0 
+    ? ingredients.map(ingredient => `${ingredient.name} (${this.formatCurrency(ingredient.price)})`).join(', ')
+    : 'Sin adicionales';
+  }
+
+  
   vaciarCarrito() {
     localStorage.clear();
     this.listaItemsCarrito = [];
-    // this.cartCount = 0;
-    // this.datoService.clearCart();
+    this.guardarCarritoEnLocalStorage();
   }
-
-  // formatCurrency(value: any): string {
-  //   if (value == null) {
-  //     return '';
-  //   }
-
-  //   if (typeof value === 'number') {
-  //     return `$ ${value.toLocaleString('es-ES')}`;
-  //   }
-
-  //   // Convertir cadenas numéricas a número
-  //   const numericValue = parseFloat(value.toString().replace(/[^0-9.-]+/g, ''));
-  //   if (!isNaN(numericValue)) {
-  //     return `$ ${numericValue.toLocaleString('es-ES')}`;
-  //   }
-
-  //   // Si no es un número, devolver el valor como cadena
-  //   return value.toString();
-  // }
 
   formatCurrency(value: any): string {
     if (typeof value === 'number') {
@@ -149,49 +116,11 @@ export class CarritoListarComponent {
     return isNaN(numericValue) ? value.toString() : `$ ${numericValue.toLocaleString('es-ES')}`;
   }
 
-  // increaseQuantity(item: Product): void {
-  //   // Obtener el carrito actual del localStorage
-  //   let carrito: Product[] = JSON.parse(localStorage.getItem("carrito") || '[]');
-    
-  //   // Encontrar el producto en el carrito y aumentar la cantidad
-  //   const index = carrito.findIndex((product) => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
-  //   if (index > -1) {
-  //     item.CANTIDAD = carrito[index].CANTIDAD = Math.min(carrito[index].CANTIDAD + 1, 100); // Limitar la cantidad a 100
-  //   } else {
-  //     // Si el producto no existe en el carrito, lo agregamos
-  //     item.CANTIDAD = 1;
-  //     carrito.push(item);
-  //   }
-  
-  //   // Actualizar el carrito en el localStorage
-  //   localStorage.setItem("carrito", JSON.stringify(carrito));
-    
-  //   // Emitir el carrito actualizado al servicio para actualizar el contador
-  //   // this.datoService.addProduct(carrito);
-  // }
-
   increaseQuantity(item: Product): void {
     item.CANTIDAD += 1;
     console.log("Cantidad aumentada:", item.CANTIDAD);
     this.guardarCarritoEnLocalStorage();
   }
-  
-  // decreaseQuantity(item: Product): void {
-  //   // Obtener el carrito actual del localStorage
-  //   let carrito: Product[] = JSON.parse(localStorage.getItem("carrito") || '[]');
-    
-  //   // Encontrar el producto en el carrito y reducir la cantidad
-  //   const index = carrito.findIndex((product) => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
-  //   if (index > -1) {
-  //     item.CANTIDAD = carrito[index].CANTIDAD = Math.max(carrito[index].CANTIDAD - 1, 1); // Limitar la cantidad mínima a 1
-  //   }
-  
-  //   // Actualizar el carrito en el localStorage
-  //   localStorage.setItem("carrito", JSON.stringify(carrito));
-    
-  //   // Emitir el carrito actualizado al servicio para actualizar el contador
-  //   // this.datoService.addProduct(carrito);
-  // }
 
   decreaseQuantity(item: Product): void {
     if (item.CANTIDAD > 1) {
@@ -207,16 +136,6 @@ export class CarritoListarComponent {
   }
   this.guardarCarritoEnLocalStorage();
   }
-  
-  // removeItem(item: any): void {
-  //   // Buscar el índice del elemento en la lista del carrito
-  //   const index = this.listaItemsCarrito!.indexOf(item);
-  //   if (index > -1) {
-  //     this.listaItemsCarrito?.splice(index, 1);
-  //     localStorage.setItem("carrito", JSON.stringify(this.listaItemsCarrito));
-  //     this.datoService.updateCart(this.listaItemsCarrito!); // Actualizar el servicio
-  //   }
-  // }
 
   removeItem(item: Product): void {
     const index = this.listaItemsCarrito.indexOf(item);
@@ -245,6 +164,7 @@ export class CarritoListarComponent {
   guardarCarritoEnLocalStorage(): void {
     console.log("Guardando en localStorage:", this.listaItemsCarrito);
     localStorage.setItem("carrito", JSON.stringify(this.listaItemsCarrito));
+    this.datoService.cartSubject.next(this.listaItemsCarrito);
   }
 
   // Calcular el precio de los ingredientes extras
@@ -286,73 +206,73 @@ export class CarritoListarComponent {
   }
   
  // Método para actualizar el item en el carrito
- updateItem() {
-  if (this.selectedItem) {
-    // Aseguramos que 'extraIngredients' de selectedItem sea un array independiente.
-    // Si no tiene ingredientes, inicializamos el array vacío.
-    if (!this.selectedItem.extraIngredients) {
-      this.selectedItem.extraIngredients = [];
+  updateItem() {
+    if (this.selectedItem) {
+      // Aseguramos que 'extraIngredients' de selectedItem sea un array independiente.
+      // Si no tiene ingredientes, inicializamos el array vacío.
+      if (!this.selectedItem.extraIngredients) {
+        this.selectedItem.extraIngredients = [];
+      }
+
+      // Filtramos los ingredientes seleccionados y asignamos una copia profunda de los ingredientes seleccionados
+      const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
+
+      // Hacemos una copia profunda de 'selectedItem' y de sus ingredientes, para que no haya referencias compartidas
+      const updatedItem = {
+        ...this.selectedItem, // Copia superficial de todos los campos
+        extraIngredients: [...selectedIngredients], // Copia profunda solo de los ingredientes seleccionados
+      };
+
+      // Encuentra el índice del producto en la lista de carrito
+      const index = this.listaItemsCarrito.findIndex(item => item.PROD_VENTA_ID === this.selectedItem.PROD_VENTA_ID);
+      
+      if (index !== -1) {
+        // Reemplazamos el producto en la lista con el producto actualizado
+        this.listaItemsCarrito[index] = updatedItem;
+
+        // Hacemos un log para verificar los cambios
+        console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
+
+        // Guardamos el carrito actualizado en localStorage
+        this.guardarCarritoEnLocalStorage();
+      }
+
+      // Cerramos el modal después de la actualización
+      const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
+      customizationModal?.hide(); 
     }
-
-    // Filtramos los ingredientes seleccionados y asignamos una copia profunda de los ingredientes seleccionados
-    const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
-
-    // Hacemos una copia profunda de 'selectedItem' y de sus ingredientes, para que no haya referencias compartidas
-    const updatedItem = {
-      ...this.selectedItem, // Copia superficial de todos los campos
-      extraIngredients: [...selectedIngredients], // Copia profunda solo de los ingredientes seleccionados
-    };
-
-    // Encuentra el índice del producto en la lista de carrito
-    const index = this.listaItemsCarrito.findIndex(item => item.PROD_VENTA_ID === this.selectedItem.PROD_VENTA_ID);
-    
-    if (index !== -1) {
-      // Reemplazamos el producto en la lista con el producto actualizado
-      this.listaItemsCarrito[index] = updatedItem;
-
-      // Hacemos un log para verificar los cambios
-      console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
-
-      // Guardamos el carrito actualizado en localStorage
-      this.guardarCarritoEnLocalStorage();
-    }
-
-    // Cerramos el modal después de la actualización
-    const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
-    customizationModal?.hide(); 
   }
-}
   
-updateCart(item: Product): void {
-  const index = this.listaItemsCarrito.findIndex(product => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
-  if (index > -1) {
-      this.listaItemsCarrito[index].CANTIDAD = item.CANTIDAD;
-      console.log("Carrito actualizado:", this.listaItemsCarrito);
-      this.guardarCarritoEnLocalStorage();
-  }
-}
-
-confirmDelete(item: Product): void {
-    
-  Swal.fire({
-    title: '¿Estás seguro?',
-    text: '¿Deseas eliminar este producto del carrito?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.removeItem(item);
-      Swal.fire(
-        'Eliminado!',
-        'El producto ha sido eliminado del carrito.',
-        'success'
-      );
+  updateCart(item: Product): void {
+    const index = this.listaItemsCarrito.findIndex(product => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
+    if (index > -1) {
+        this.listaItemsCarrito[index].CANTIDAD = item.CANTIDAD;
+        console.log("Carrito actualizado:", this.listaItemsCarrito);
+        this.guardarCarritoEnLocalStorage();
     }
-  });
-}
+  }
+
+  confirmDelete(item: Product): void {
+      
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas eliminar este producto del carrito?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.removeItem(item);
+        Swal.fire(
+          'Eliminado!',
+          'El producto ha sido eliminado del carrito.',
+          'success'
+        );
+      }
+    });
+  }
 
 }

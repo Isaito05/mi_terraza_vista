@@ -33,3 +33,31 @@
     border-top: 1px solid #e9ecef;
     padding-top: 10px;
 }
+
+.des-info {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.des-info-sub {
+    font-size: 14px;
+    color: #6c757d;
+    margin-left: 5px;
+}
+
+button.btn-link {
+    font-size: 0.9rem;
+    color: #007bff;
+}
+
+i.fa-solid {
+    color: #6c757d; /* Cambia el color del icono */
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.fa-ruler-combined,
+.fa-utensils,
+.fa-info-circle {
+    margin-right: 10px;
+}
