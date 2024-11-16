@@ -7,6 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import Swal from 'sweetalert2';
 import * as bootstrap from 'bootstrap';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 export interface Product {
   isExpanded: any;
@@ -26,7 +27,7 @@ export interface Product {
 @Component({
   selector: 'app-carrito-listar',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule],
+  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule, RouterModule],
   templateUrl: './carrito-listar.component.html',
   styleUrl: './carrito-listar.component.css'
 })
@@ -103,9 +104,33 @@ export class CarritoListarComponent {
 
   
   vaciarCarrito() {
-    localStorage.clear();
-    this.listaItemsCarrito = [];
-    this.guardarCarritoEnLocalStorage();
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esto eliminará todos los productos del carrito.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, vaciar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Vaciar el carrito si se confirma
+        localStorage.clear();
+        this.listaItemsCarrito = [];
+        this.guardarCarritoEnLocalStorage();
+        Swal.fire(
+          'Carrito vacío',
+          'Todos los productos han sido eliminados del carrito.',
+          'success'
+        );
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Mensaje opcional si se cancela
+        Swal.fire(
+          'Acción cancelada',
+          'No se eliminaron los productos del carrito.',
+          'info'
+        );
+      }
+    });
   }
 
   formatCurrency(value: any): string {

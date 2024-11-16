@@ -61,3 +61,7 @@ i.fa-solid {
 .fa-info-circle {
     margin-right: 10px;
 }
+
+.btn:focus {
+    box-shadow: none;
+}

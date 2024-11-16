@@ -158,7 +158,7 @@
                         <div class="modal-footer bg-light d-flex">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                           <button type="button" class="btn btn-primary" (click)="productoPersonalizado()">Agregar al carrito</button>
-                          <button type="button" class="btn btn-primary" (click)="productoPersonalizado()">Ir a facturar</button>
+                          <button type="button" class="btn btn-primary" (click)="productoPersonalizado()" [routerLink]="['/carrito']">Realizar pedido</button>
                         </div>
                       </div>
                     </div>

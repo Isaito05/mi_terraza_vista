@@ -172,6 +172,7 @@ export class NavbarComponent implements AfterViewInit, OnInit{
 
       // setTimeout(() => {
         this.authService.logout(); // Aquí se hace el logout
+        this.datoService.clearCart();
         // this.router.navigate(['/home']).then(() => {
         //   // Ocultar el spinner después de navegar
         //   this.isLoading = false;
