@@ -7,8 +7,6 @@
     <section id="navbar">
         <div class="container-xxl position-relative p-0">
             <app-navbar></app-navbar>
-            <!-- <div class="container-xxl py-5 bg-dark hero-header mb-5">
-            </div> -->
         </div>
     </section>
     <div class="container-xxl py-5 bg-dark hero-header mb-5">
@@ -30,7 +28,7 @@
                 <div class="card p-3 mb-4 shadow-sm"> <!-- Card principal para el carrito -->
                     <div class="d-flex">
                         <h5 class="flex-grow-1"><a class="text-decoration-none text-dark me-1"
-                                [routerLink]="['/pages/menu']"><i class="fa-solid fa-chevron-left"></i> </a>Seguir
+                                [routerLink]="['/pages/menu']"><i class="fa-solid fa-chevron-left fs-4"></i> </a>Seguir
                             comprando</h5>
                         <div>
                             <i style="cursor: pointer;" class="fa-solid fa-trash-arrow-up text-danger"
@@ -38,16 +36,15 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-center">
-                        <hr class="flex-grow-1 me-2 text-dark" />
+                        <!-- <hr class="flex-grow-1 me-2 text-dark" /> -->
                         <hr class="flex-grow-1 ms-2 text-dark" />
                     </div>
-                    <div class="d-flex flex-column">
-                        <div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
                             <p style="margin-bottom: 0;">Carrito de compras</p>
                         </div>
-                        <div class="d-flex">
-                            <p class="flex-grow-1" style="margin-top: 0;">Tienes {{ listaItemsCarrito!.length }}
-                                productos en tu carrito.</p>
+                        <div>
+                            <p class="" style="margin-top: 0;">{{ listaItemsCarrito!.length }} producto.</p>
                         </div>
                     </div>
 
@@ -93,103 +90,169 @@
                         </div>
 
                         <!-- Controles de cantidad y precio -->
-                        <div class="d-flex align-items-center">
-                            <button *ngIf="item.CANTIDAD > 1; " (click)="decreaseQuantity(item)" class="btn me-2"
-                                style="background: none;">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-
-                            <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
-
-                            <button (click)="increaseQuantity(item)" class="btn ms-2" style="background: none;">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-
-                            <span class="fw-bold ms-3">{{ formatCurrency((item.PROD_VENTA_PRECIO +
-                                calculateExtras(item.extraIngredients)) * item.CANTIDAD) }}</span>
-
-                            <button (click)="confirmDelete(item)" class="btn me-2 text-danger"  matTooltip="Eliminar producto">
-                                <i class="fa-solid fa-trash text-danger"></i>
-                            </button>
-
-                            <!-- Botón de editar -->
-                            <!-- <button (click)="openEditModal(item)" class="btn btn-warning btn-sm ms-3">Editar</button> -->
+                        <!-- <div class="d-flex align-items-center"> -->
+                            <div class="d-flex align-items-center py-3">
+                                <button *ngIf="item.CANTIDAD > 1; " (click)="decreaseQuantity(item)" class="btn me-2"
+                                    style="background: none;">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+    
+                                <span class="fw-bold mx-2">{{ item.CANTIDAD }}</span>
+    
+                                <button (click)="increaseQuantity(item)" class="btn ms-2" style="background: none;">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+    
+                                <span class="fw-bold ms-3">{{ formatCurrency((item.PROD_VENTA_PRECIO +
+                                    calculateExtras(item.extraIngredients)) * item.CANTIDAD) }}</span>
+    
+                                <button (click)="confirmDelete(item)" class="btn me-2 text-danger"  matTooltip="Eliminar producto">
+                                    <i class="fa-solid fa-trash text-danger fs-6"></i>
+                                </button>
+    
+                                <!-- Botón de editar -->
+                                <!-- <button (click)="openEditModal(item)" class="btn btn-warning btn-sm ms-3">Editar</button> -->
+                            <!-- </div> -->
                         </div>
                     </div>
 
                     <!-- Total del carrito -->
-                    <div *ngIf="listaItemsCarrito!.length > 0" class="d-flex justify-content-end border-top pt-3">
+                    <!-- <div *ngIf="listaItemsCarrito!.length > 0" class="d-flex justify-content-end border-top pt-3">
                         <p class="fw-bold">Total: {{ formatCurrency(calculateTotal()) }}</p>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
-            <!-- Detalles de Pago -->
-            <div class="col-md-4">
-                <div class="card order-summary-card">
-                    <h6 class="geist-mono">INFORMACION DEL PEDIDO</h6>
+           <!-- Detalles del pedido -->
+            <div class="col-md-4 geist-mono">
+                <div class="card order-summary-card borde-inferior-rasgado">
+                    <h6 class="geist-mono">INFORMACIÓN DEL PEDIDO</h6>
 
                     <!-- Número y Fecha del Pedido -->
-                    <div class="d-flex">
-                        <div class="me-5">
-                            <p class="geist-mono" style="font-size: 13px;"><strong>Nro. de
-                                    orden:</strong><span>123456</span></p>
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Nro. de orden:</strong><span>123456</span></p>
                         </div>
-                        <div>
-                            <p class="geist-mono" style="font-size: 13px;"><strong>Dia:</strong> {{ currentDate |
-                                date:'MMM d, y' }}</p>
+                        <div class="col-6">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dia:</strong> {{ currentDate | date: 'MMM d, y' }}</p>
                         </div>
+
+                        <!-- Información del Cliente -->
+                        <!-- <div class="col-9">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Nombre:</strong> Giyu Jose Rincon Aguirre</p>
+                        </div>
+                        <div class="col">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Teléfono:</strong> 322522222</p>
+                        </div>
+                        <div class="col">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dirección:</strong> Cra 15b #46 12</p>
+                        </div> -->
                     </div>
 
                     <!-- Lista de Productos -->
-                    <div *ngFor="let item of listaItemsCarrito" class="product-item">
-                        <div>
-                            <p class="mb-0 geist-mono">{{ item.PROD_VENTA_NOMBRE }}</p>
-                            <small class="geist-mono">Cantidad: {{ item.CANTIDAD }}</small>
+                    <div class="product-list">
+                        <!-- Encabezados -->
+                        <div class="row text-center border-bottom">
+                            <div class="col-4 me-3 text-start">
+                                <p class="mb-0 geist-mono" style="font-size: 14px;"><strong>PRODUCTO</strong></p>
+                            </div>
+                            <div class="col">
+                                <p class="mb-0 geist-mono" style="font-size: 14px;"><strong>CANT.</strong></p>
+                            </div>
+                            <div class="col-auto pe-1 text-end">
+                                <p class="mb-0 geist-mono" style="font-size: 14px;"><strong>PRECIO UNI.</strong></p>
+                            </div>
                         </div>
-                        <p class="geist-mono">{{ formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD) }}</p>
+
+                        <!-- Productos -->
+                        <div *ngFor="let item of listaItemsCarrito" class="pb-3">
+                            <div class="row text-center">
+                                <div class="col-5 text-start">
+                                    <p class="mb-0 geist-mono" style="font-size: 13px; text-transform: uppercase;">{{ item.PROD_VENTA_NOMBRE }}</p>
+                                </div>
+                                <div class="col">
+                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ item.CANTIDAD }}</p>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ formatCurrency(item.PROD_VENTA_PRECIO) }}</p>
+                                </div>
+                            </div>
+                            <!-- Adicionales -->
+                            <div class="d-flex">
+                                <div>
+                                    <p style="font-size: 11px; margin-bottom: 0;"><strong>Adicionales:</strong></p>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <i class="fa-solid fa-pizza-slice ms-1 position-absolute" style="font-size: 14px;" matTooltip="{{ getIngredientListFac(item.extraIngredients) }}"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ calcularTotalAdicionales(item.extraIngredients) }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Opciones de Entrega -->
                     <div class="geist-mono">
-                        <p style="margin-bottom: 0;">OPCIONES DE ENTREGA</p>
+                        <p style="margin-bottom: 0; font-size: 14px;"><strong>OPCIONES DE ENTREGA</strong></p>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deliveryOption" id="immediateDelivery"
-                                value="immediate" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
-                            <label class="form-check-label" for="immediateDelivery">Entrega inmediata</label>
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="immediateDelivery" value="immediate" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
+                            <label class="form-check-label" for="immediateDelivery" style="font-size: 14px;">Entrega inmediata</label>
+                            <!-- <mat-radio-button value="1"><span class="geist-mono">Option 1</span></mat-radio-button> -->
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deliveryOption" id="cashOnDelivery"
-                                value="cash" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
-                            <label class="form-check-label" for="cashOnDelivery">Contraentrega</label>
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="cashOnDelivery" value="cash" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
+                            <label class="form-check-label" for="cashOnDelivery" style="font-size: 14px;">Contraentrega</label>
+                            <!-- <mat-radio-button value="2"><span class="geist-mono">Option 2</span></mat-radio-button> -->
                         </div>
                     </div>
 
                     <!-- Imagen QR para Entrega Inmediata -->
                     <div *ngIf="showQrCode" class="text-center mt-3">
                         <p>Por favor, escanea el QR para enviar el pedido:</p>
-                        <img src="assets/images/qr isaac nequi.jpg" alt="QR Code" style="width: 150px; height: 150px;">
+                        <img src="assets/images/qr.jpg" alt="QR Code" style="width: 150px; height: 150px; border-radius: 8px;">
+                    </div>
+
+                    <!-- Detalles de Entrega -->
+                    <div class="geist-mono mt-3">
+                        <!-- <p style="font-size: 14px;"><strong>Detalles de la Entrega</strong></p>
+                        <p class="geist-mono" style="font-size: 13px;">Tipo de entrega: {{ deliveryOption === 'immediate' ? 'Entrega inmediata' : 'Contraentrega' }}</p> -->
+                        <p class="geist-mono text-center" style="font-size: 13px;">Tiempo estimado: {{ estimatedDeliveryTime }}</p>
+                    </div>
+
+                    <!-- Resumen del Pedido -->
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">Subtotal:</p>
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">{{ formatCurrency(calculateSubtotal()) }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">IVA (10%):</p>
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">{{ formatCurrency(calculateIVA()) }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">Descuento:</p>
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">{{ formatCurrency(calculateDiscount()) }}</p>
+                        </div>
                     </div>
 
                     <!-- Totales -->
-                    <!-- <div class="d-flex justify-content-between mt-3">
-                        <p>Subtotal:</p>
-                        <p>{{ formatCurrency(calculateSubtotal()) }}</p>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <p>Shipping:</p>
-                        <p>{{ formatCurrency(20) }}</p>
-                    </div> -->
                     <div class="total d-flex justify-content-between">
-                        <p class="geist-mono">Total: </p>
-                        <p class="geist-mono">{{ formatCurrency(calculateTotal()) }}</p>
+                        <p class="geist-mono"><strong>TOTAL: </strong></p>
+                        <p class="geist-mono"><strong>{{ formatCurrency(calculateTotal()) }}</strong></p>
                     </div>
 
                     <!-- Botón de Confirmar Pedido -->
                     <button class="btn btn-primary w-100 mt-3" (click)="confirmOrder()">Realizar pedido</button>
+
+                    <!-- Nota de Agradecimiento -->
+                    <div class="text-center mt-3">
+                        <p class="geist-mono" style="font-size: 12px; color: gray;">
+                            Gracias por elegirnos. Si tienes alguna consulta, contáctanos al 322 522222.
+                        </p>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 

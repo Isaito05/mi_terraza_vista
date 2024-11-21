@@ -1,13 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 import { DatosService } from 'src/app/core/services/datos.service';
+
+import {MatRadioModule} from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import Swal from 'sweetalert2';
+
 import * as bootstrap from 'bootstrap';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
 
 export interface Product {
   isExpanded: any;
@@ -27,7 +31,7 @@ export interface Product {
 @Component({
   selector: 'app-carrito-listar',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule, RouterModule],
+  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule, RouterModule, MatRadioModule],
   templateUrl: './carrito-listar.component.html',
   styleUrl: './carrito-listar.component.css'
 })
@@ -38,6 +42,8 @@ export class CarritoListarComponent {
   currentDate: Date = new Date();
   deliveryOption: string = '';
   showQrCode: boolean = false;
+  deliveryOption_e: string = 'immediate'; // Valor inicial
+  estimatedDeliveryTime: string = '30-45 minutos';
 
   // selectedItem: any = null;
   sizes = ['Pequeño', 'Mediano', 'Grande']; // Ejemplo de tamaños disponibles
@@ -70,6 +76,7 @@ export class CarritoListarComponent {
   ngOnInit(): void {
     this.cargarCarritoDesdeLocalStorage();
     this.listaItemsCarrito = this.listaItemsCarrito.map(item => ({ ...item, isExpanded: false }));
+    console.log(this.listaItemsCarrito, 'a')
   }
 
   calculateTotal(): number {
@@ -77,6 +84,26 @@ export class CarritoListarComponent {
       const extrasCost = this.calculateExtras(item.extraIngredients || []);
       return total + (item.PROD_VENTA_PRECIO + extrasCost) * item.CANTIDAD;
     }, 0);
+  }
+
+  calculateSubtotal(): number {
+    // Calcula el subtotal
+    return this.listaItemsCarrito.reduce((acc, item) => acc + item.CANTIDAD * item.PROD_VENTA_PRECIO, 0);
+  }
+
+  calculateIVA(): number {
+    // Calcula el IVA como el 10% del subtotal
+    return this.calculateSubtotal() * 0.1;
+  }
+
+  onDeliveryOptionChangeFac(): void {
+    // Actualiza la estimación del tiempo de entrega según la opción seleccionada
+    this.estimatedDeliveryTime = this.deliveryOption_e === 'immediate' ? '30-45 minutos' : '1-2 horas';
+  }
+
+  calculateDiscount(): number {
+    // Retorna un descuento fijo (si aplica)
+    return 50; // Ejemplo
   }
 
   onDeliveryOptionChange() {
@@ -101,6 +128,23 @@ export class CarritoListarComponent {
     ? ingredients.map(ingredient => `${ingredient.name} (${this.formatCurrency(ingredient.price)})`).join(', ')
     : 'Sin adicionales';
   }
+
+  getIngredientListFac(ingredients: any[]): string {
+    if (!ingredients || ingredients.length === 0) {
+        return 'Sin adicionales';
+    }
+    const ingredientList = ingredients
+        .map(ingredient => `${ingredient.name}`)
+        .join(', ');
+
+    return `${ingredientList}.`;
+  }
+
+  calcularTotalAdicionales(ingredients: any[]): string {
+    const total = ingredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+    return this.formatCurrency(total);
+  }
+
 
   
   vaciarCarrito() {
