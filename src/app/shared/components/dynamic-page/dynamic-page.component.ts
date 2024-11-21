@@ -36,51 +36,55 @@ export class DynamicPageComponent implements OnInit, AfterViewInit {
     private cd: ChangeDetectorRef
   ) { }
   
+  // ngOnInit(): void {
+  //   const pageName = this.route.snapshot.paramMap.get('pageName');
+  //   // if (pageName) {
+  //   //   this.loadPageContent(pageName);
+  //   // }
+  //   if (pageName) {
+  //     this.pageName = pageName;
+  //     // Verifica si la página es 'menu' y ajusta la bandera
+  //     if (this.pageName === 'menu') {
+  //       this.isMenuPage = true;
+  //     } else {
+  //       this.isMenuPage = false;
+  //       this.loadPageContent(this.pageName); // Si no es 'menu', carga el contenido HTML
+  //     }
+  //   }
+  
+
+  //   console.log('Page Name:', pageName);  // Para depurar y verificar el valor
+
+  //   if (pageName) {
+  //     this.loadPageContent(pageName);  // Usa pageName directamente
+  //   } else {
+  //     console.error('Page name is missing!');
+  //   }
+
+  // }
+
+
   ngOnInit(): void {
-    const pageName = this.route.snapshot.paramMap.get('pageName');
-    // if (pageName) {
-    //   this.loadPageContent(pageName);
-    // }
-    if (pageName) {
-      this.pageName = pageName;
-      // Verifica si la página es 'menu' y ajusta la bandera
-      if (this.pageName === 'menu') {
-        this.isMenuPage = true;
-      } else {
-        this.isMenuPage = false;
-        this.loadPageContent(this.pageName); // Si no es 'menu', carga el contenido HTML
-      }
-    }
-  
+    // Escucha los cambios en el parámetro "pageName"
+    this.route.paramMap.subscribe(paramMap => {
+      const pageName = paramMap.get('pageName');
+      if (pageName) {
+        this.pageName = pageName;
 
-    console.log('Page Name:', pageName);  // Para depurar y verificar el valor
+        // Si es la página "menu", ajusta la bandera
+        this.isMenuPage = this.pageName === 'menu';
 
-    if (pageName) {
-      this.loadPageContent(pageName);  // Usa pageName directamente
-    } else {
-      console.error('Page name is missing!');
-    }
-
-    const token = sessionStorage.getItem('token'); 
-    console.log('Auth Token:', token); // Verificar token
-    if (token) {
-      const decodedToken: any = jwtDecode(token);
-      console.log('User token:', decodedToken); 
-      this.userId = decodedToken.id;
-      console.log('User ID:', this.userId); // Verificar userId
-  
-      this.usuarioService.getUsuarioById(this.userId).subscribe(
-        (data) => {
-          this.usuario = data;
-          console.log('Usuario obtenido:', this.usuario);
-
-          this.cd.detectChanges();
-        },
-        (error) => {
-          console.error('Error al obtener los datos del usuario', error);
+        // Cargar el contenido correspondiente
+        if (this.isMenuPage) {
+          // No se requiere cargar un archivo, ya que mostrarás el componente Menu
+          console.log('Cargando componente Menu...');
+        } else {
+          this.loadPageContent(this.pageName);
         }
-      );
-    }
+      } else {
+        console.error('Page name is missing!');
+      }
+    });
   }
   
 
@@ -97,6 +101,7 @@ export class DynamicPageComponent implements OnInit, AfterViewInit {
       }
     );
   }
+  
   
 
   // Detectar cambios en el tamaño de la pantalla

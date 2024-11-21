@@ -14,6 +14,7 @@ import * as bootstrap from 'bootstrap';
 import Swal from 'sweetalert2';
 
 export interface Product {
+  productKey: any;
   isExpanded: any;
   PROD_VENTA_ID: number;
   PROD_VENTA_NOMBRE: string;
@@ -36,6 +37,7 @@ export interface Product {
   styleUrl: './carrito-listar.component.css'
 })
 export class CarritoListarComponent {
+
   // listaItemsCarrito: Product[] | undefined;
   listaItemsCarrito: Product[] = [];
   cartCount: number = 0;
@@ -66,8 +68,10 @@ export class CarritoListarComponent {
     CANTIDAD: 1,
     selectedSize: '',
     extraIngredients: [],
-    specialInstructions: ''
+    specialInstructions: '',
+    productKey: undefined
   };
+  imagen: any;
 
   constructor(
     private datoService: DatosService
@@ -224,9 +228,18 @@ export class CarritoListarComponent {
   //   return this.listaItemsCarrito!.reduce((acc, item) => acc + (item.PROD_VENTA_PRECIO * item.CANTIDAD), 0);
   // }
 
+  hasSelectedIngredients(): boolean {
+    return this.extraIngredients.some(ingredient => ingredient.selected);
+  }
+
   cargarCarritoDesdeLocalStorage(): void {
     const carritoStorage = localStorage.getItem("carrito");
     this.listaItemsCarrito = carritoStorage ? JSON.parse(carritoStorage) : [];
+    this.listaItemsCarrito.forEach(item => {
+      if (!item.productKey) {
+        item.productKey = this.datoService.generateProductKey(item);
+      }
+    });
     console.log("Carrito cargado desde localStorage:", this.listaItemsCarrito);
   }
   
@@ -252,6 +265,7 @@ export class CarritoListarComponent {
   openEditModal(item: Product) {
     // Copiamos los datos del producto para no modificar el original
     this.selectedItem = { ...item };
+    this.imagen = this.selectedItem.PROD_VENTA_IMAGEN
     
     // Asegurarnos de que los ingredientes adicionales estén correctamente inicializados
     this.selectedItem.extraIngredients = this.selectedItem.extraIngredients || [];
@@ -274,43 +288,116 @@ export class CarritoListarComponent {
     customizationModal.show();
   }
   
- // Método para actualizar el item en el carrito
-  updateItem() {
-    if (this.selectedItem) {
-      // Aseguramos que 'extraIngredients' de selectedItem sea un array independiente.
-      // Si no tiene ingredientes, inicializamos el array vacío.
-      if (!this.selectedItem.extraIngredients) {
-        this.selectedItem.extraIngredients = [];
-      }
+ // Método para actualizar el item en el carrito en el modal
+ updateItem() {
+  this.cargarCarritoDesdeLocalStorage();
 
-      // Filtramos los ingredientes seleccionados y asignamos una copia profunda de los ingredientes seleccionados
-      const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
+  if (this.selectedItem) {
+    // Aseguramos que 'extraIngredients' de selectedItem sea un array independiente.
+    // Si no tiene ingredientes, inicializamos el array vacío.
+    if (!this.selectedItem.extraIngredients) {
+      this.selectedItem.extraIngredients = [];
+    }
 
-      // Hacemos una copia profunda de 'selectedItem' y de sus ingredientes, para que no haya referencias compartidas
-      const updatedItem = {
-        ...this.selectedItem, // Copia superficial de todos los campos
-        extraIngredients: [...selectedIngredients], // Copia profunda solo de los ingredientes seleccionados
+    // Filtramos los ingredientes seleccionados y asignamos una copia profunda de los ingredientes seleccionados
+    const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
+
+    // Hacemos una copia profunda de 'selectedItem' y de sus ingredientes, para que no haya referencias compartidas
+    const updatedItem = {
+      ...this.selectedItem, // Copia superficial de todos los campos
+      extraIngredients: [...selectedIngredients] // Los ingredientes seleccionados
+    };
+
+    // Recalcular la productKey después de la actualización (si cambió algo que influye en ella)
+    // updatedItem.productKey = this.datoService.generateProductKey(updatedItem);
+
+    // Encuentra el índice del producto en la lista de carrito
+    const index = this.listaItemsCarrito.findIndex(item => item.productKey === this.selectedItem.productKey);
+
+    // if (index !== -1) {
+    //   // Reemplazamos el producto en la lista con el producto actualizado
+    //   this.listaItemsCarrito[index] = updatedItem;
+
+    //   // Guardamos el carrito actualizado en localStorage
+    //   this.guardarCarritoEnLocalStorage();
+
+    //   // Hacemos un log para verificar los cambios
+    //   console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
+    // }
+
+    if (index !== -1) {
+      // Recalcular la clave del producto después de actualizar los detalles
+      const newProductKey = this.datoService.generateProductKey(updatedItem);
+
+      // Actualizar la clave y otros detalles del producto en el carrito
+      this.listaItemsCarrito[index] = {
+        ...updatedItem,
+        productKey: newProductKey, // Asignar la nueva clave generada
       };
 
-      // Encuentra el índice del producto en la lista de carrito
-      const index = this.listaItemsCarrito.findIndex(item => item.PROD_VENTA_ID === this.selectedItem.PROD_VENTA_ID);
-      
-      if (index !== -1) {
-        // Reemplazamos el producto en la lista con el producto actualizado
-        this.listaItemsCarrito[index] = updatedItem;
+      // Guardar el carrito actualizado en localStorage
+      this.guardarCarritoEnLocalStorage();
 
-        // Hacemos un log para verificar los cambios
-        console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
-
-        // Guardamos el carrito actualizado en localStorage
-        this.guardarCarritoEnLocalStorage();
-      }
-
-      // Cerramos el modal después de la actualización
-      const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
-      customizationModal?.hide(); 
+      // Debugging: Verificar la actualización
+      console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
     }
+
+    // Cerramos el modal después de la actualización
+    const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
+    customizationModal?.hide();
   }
+}
+
+// updateItem() {
+//   this.cargarCarritoDesdeLocalStorage(); // Carga el carrito desde localStorage
+
+//   if (this.selectedItem) {
+//     // Aseguramos que 'extraIngredients' sea un array independiente
+//     if (!this.selectedItem.extraIngredients) {
+//       this.selectedItem.extraIngredients = [];
+//     }
+
+//     // Filtrar los ingredientes seleccionados
+//     const selectedIngredients = this.extraIngredients.filter(
+//       (ingredient) => ingredient.selected
+//     );
+
+//     // Hacer una copia profunda del producto actualizado
+//     const updatedItem = {
+//       ...this.selectedItem, // Copia superficial de todos los campos
+//       extraIngredients: [...selectedIngredients], // Ingredientes seleccionados
+//     };
+
+//     // Encuentra el índice del producto original en el carrito
+//     const index = this.listaItemsCarrito.findIndex(
+//       (item) => item.productKey === this.selectedItem.productKey
+//     );
+
+//     if (index !== -1) {
+//       // Recalcular la clave del producto después de actualizar los detalles
+//       const newProductKey = this.datoService.generateProductKey(updatedItem);
+
+//       // Actualizar la clave y otros detalles del producto en el carrito
+//       this.listaItemsCarrito[index] = {
+//         ...updatedItem,
+//         productKey: newProductKey, // Asignar la nueva clave generada
+//       };
+
+//       // Guardar el carrito actualizado en localStorage
+//       this.guardarCarritoEnLocalStorage();
+
+//       // Debugging: Verificar la actualización
+//       console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
+//     }
+
+//     // Cerrar el modal después de la actualización
+//     const customizationModal = bootstrap.Modal.getInstance(
+//       document.getElementById('customizationModal')!
+//     );
+//     customizationModal?.hide();
+//   }
+// }
+
   
   updateCart(item: Product): void {
     const index = this.listaItemsCarrito.findIndex(product => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
@@ -343,5 +430,5 @@ export class CarritoListarComponent {
       }
     });
   }
-
+  
 }

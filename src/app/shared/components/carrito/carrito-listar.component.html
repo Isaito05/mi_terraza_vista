@@ -10,7 +10,7 @@
         </div>
     </section>
     <div class="container-xxl py-5 bg-dark hero-header mb-5">
-        <div class="container text-center my-5 pt-5 pb-4">
+        <!-- <div class="container text-center my-5 pt-5 pb-4">
             <h1 class="display-3 text-white mb-3 animated slideInDown">Realiza tu pedido</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center text-uppercase">
@@ -19,7 +19,7 @@
                     <li class="breadcrumb-item text-white active" aria-current="page">Menu</li>
                 </ol>
             </nav>
-        </div>
+        </div> -->
     </div>
     <div class="container">
         <div class="row">
@@ -60,6 +60,9 @@
                             <h6 class="mb-1">{{ item.PROD_VENTA_NOMBRE }}</h6>
                             <p class="text-muted small mb-1">{{ getTruncatedText(item.PROD_VENTA_DESCRIPCION) }}</p>
 
+                            <!-- <span > {{getIngredientList(item.extraIngredients) }}</span> <br>
+                            <span > {{item.selectedSize}}</span>  -->
+
                             <div *ngIf="!item.isExpanded">
                                 <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = true">Ver
                                     más</button>
@@ -76,6 +79,7 @@
                                     <!-- Icono de Ingredientes adicionales con tooltip -->
                                     <i class="fa-solid fa-utensils me-2"
                                         matTooltip="Ingredientes adicionales: {{ getIngredientList(item.extraIngredients) }}"></i>
+                                                                         
 
                                     <!-- Icono de Descripción con tooltip -->
                                     <i class="fa-solid fa-info-circle me-2"
@@ -257,43 +261,82 @@
     </div>
 
     <!-- Modal de Bootstrap para personalizar el producto -->
-    <div class="modal fade" id="customizationModal" tabindex="-1" aria-labelledby="customizationModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="customizationModal" tabindex="-1" aria-labelledby="customizationModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <!-- Encabezado del modal -->
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="customizationModalLabel">Editar Producto</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
+    
                 <!-- Cuerpo del modal -->
-                <div class="modal-body">
-
-                    <div *ngIf="selectedItem">
-                        <select id="size" [(ngModel)]="selectedItem.selectedSize"
-                            class="form-select border border-primary shadow-sm">
-                            <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
-                        </select>
-
-                        <div *ngFor="let ingredient of extraIngredients">
-                            <input type="checkbox" [(ngModel)]="ingredient.selected" class="form-check-input"
-                                [id]="ingredient.name">
-                            <label [for]="ingredient.name">{{ ingredient.name }} (+ {{ formatCurrency(ingredient.price)
-                                }})</label>
+                <div class="modal-body p-4">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <!-- Columna izquierda -->
+                            <div class="col-md-6">
+                                <!-- Selección de tamaño -->
+                                <div class="mb-4">
+                                    <label for="size" class="form-label h6">Tamaño del Producto</label>
+                                    <select id="size" [(ngModel)]="selectedItem.selectedSize" class="form-select border border-primary shadow-sm">
+                                        <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
+                                    </select>
+                                </div>
+    
+                                <!-- Ingredientes Extra -->
+                                <div class="mb-4">
+                                    <label class="form-label h6">Ingredientes Extra</label>
+                                    <div class="p-3 border rounded shadow-sm bg-light">
+                                        <div *ngFor="let ingredient of extraIngredients" class="form-check">
+                                            <input type="checkbox" [(ngModel)]="ingredient.selected" class="form-check-input" [id]="ingredient.name">
+                                            <label [for]="ingredient.name" class="form-check-label">
+                                                {{ ingredient.name }} ({{ formatCurrency(ingredient.price) }})
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <!-- Columna derecha -->
+                            <div class="col-md-6">
+                                <!-- Imagen del producto -->
+                                <div class="">
+                                    <img class="card-img-top" [src]="imagen" style="height: 200px; object-fit: cover;">
+                                </div>
+    
+                                <!-- Resumen del costo total -->
+                                <div class="mb-3 border-top pt-3">
+                                    <p><strong>Costo Base:</strong> {{ formatCurrency(basePrice) }}</p>
+                                </div>
+    
+                                <!-- Información adicional de personalización -->
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong>Tamaño seleccionado:</strong> {{ selectedItem.selectedSize || 'Ninguno' }}</p>
+                                    <p><strong>Ingredientes seleccionados:</strong></p>
+                                    <ul class="list-unstyled">
+                                        <!-- Verificar si hay ingredientes seleccionados -->
+                                        <li *ngIf="!hasSelectedIngredients()" class="text-muted">
+                                            Sin ingredientes extra
+                                        </li>
+    
+                                        <!-- Listar los ingredientes seleccionados -->
+                                        <ng-container *ngFor="let ingredient of extraIngredients">
+                                            <li *ngIf="ingredient.selected" class="d-flex justify-content-between">
+                                                <span>{{ ingredient.name }}</span>
+                                                <span class="text-muted">{{ formatCurrency(ingredient.price) }}</span>
+                                            </li>
+                                        </ng-container>
+                                    </ul>
+    
+                                    <p><strong>Ingredientes Adicionales:</strong> {{ formatCurrency(totalExtras) }}</p>
+                                    <p><strong>Total:</strong> {{ formatCurrency(calculateTotalPrice()) }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Resumen del costo total -->
-                    <div class="mb-3 border-top pt-3">
-                        <p><strong>Costo Base:</strong> {{ formatCurrency(basePrice) }}</p>
-                        <p><strong>Ingredientes Adicionales:</strong> {{ formatCurrency(totalExtras) }}</p>
-                        <p><strong>Total:</strong> {{ formatCurrency(calculateTotalPrice()) }}</p>
-                    </div>
-
                 </div>
-
+    
                 <!-- Footer del modal -->
                 <div class="modal-footer bg-light d-flex">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -302,6 +345,8 @@
             </div>
         </div>
     </div>
+    
+
 
     <app-footer></app-footer>
 

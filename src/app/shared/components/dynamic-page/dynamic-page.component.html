@@ -1,11 +1,41 @@
-<app-navbar></app-navbar>
-<div [innerHTML]="safePageContent"></div>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="assets/images/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<app-navbar></app-navbar>
+
+<div  *ngIf="isMenuPage" class="container-xxl position-relative p-0">    
+    <div class="container-xxl py-5 bg-dark hero-header mb-5">
+        <div class="container text-center my-5 pt-5 pb-4">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Food Menu</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Menu</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
 <!-- Mostrar el componente Menu si es la página 'menu' -->
 <app-menu *ngIf="isMenuPage"></app-menu>
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
 <!-- Mostrar el contenido HTML dinámico si no es la página 'menu' -->
 <div *ngIf="!isMenuPage" [innerHTML]="safePageContent"></div>
 
 <app-footer></app-footer>
-

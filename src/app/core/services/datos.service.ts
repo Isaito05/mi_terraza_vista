@@ -37,9 +37,6 @@ export class DatosService {
     const size = product.selectedSize || '';
     const ingredients = product.extraIngredients ? product.extraIngredients.map((i: any) => i.name).join(',') : '';
     const descripcion = product.specialInstructions || ''
-
-    console.log(product,"esta vina trae lo siguinete ")
-    
     // Generar una clave que incluya tamaño, ingredientes y otros detalles de personalización
     const key = `${product.PROD_VENTA_ID}-${size}-${ingredients}-${descripcion}`;
     
@@ -61,11 +58,11 @@ export class DatosService {
     const existingProduct = cart.find((item: any) => this.generateProductKey(item) === productKey);
   
     if (existingProduct) {
-      existingProduct.CANTIDAD += customizedProduct.CANTIDAD;
+      existingProduct.CANTIDAD += customizedProduct.CANTIDAD || 1;
     } else {
+      // productKey = productKey + timestamp + randomNumber
       cart.push({ ...customizedProduct, productKey });
     }
-  
     localStorage.setItem('carrito', JSON.stringify(cart));
     this.cartSubject.next(cart);
   }
