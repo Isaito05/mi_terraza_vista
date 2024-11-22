@@ -61,6 +61,7 @@ export class UsuarioService {
           RGU_NOMBRES: response.RGU_NOMBRES,
           RGU_APELLIDOS: response.RGU_APELLIDOS,
           RGU_IMG_PROFILE: response.RGU_IMG_PROFILE,
+          RGU_DIRECCION: response.DIRECCION,
         }
         // const encryptedUsuario = encryptData(JSON.stringify(usuarioActualizado));
         sessionStorage.setItem('user', this.encryptData(usuarioActualizado));

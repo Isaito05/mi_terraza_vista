@@ -202,14 +202,17 @@
                     <div class="geist-mono">
                         <p style="margin-bottom: 0; font-size: 14px;"><strong>OPCIONES DE ENTREGA</strong></p>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deliveryOption" id="immediateDelivery" value="immediate" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
-                            <label class="form-check-label" for="immediateDelivery" style="font-size: 14px;">Entrega inmediata</label>
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="immediateDelivery" value="Entrega_inmediata" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
+                            <label class="form-check-label" for="Entrega_inmediata" style="font-size: 14px;">Entrega inmediata</label>
                             <!-- <mat-radio-button value="1"><span class="geist-mono">Option 1</span></mat-radio-button> -->
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deliveryOption" id="cashOnDelivery" value="cash" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
-                            <label class="form-check-label" for="cashOnDelivery" style="font-size: 14px;">Contraentrega</label>
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="cashOnDelivery" value="Contraentrega" [(ngModel)]="deliveryOption" (change)="onDeliveryOptionChange()">
+                            <label class="form-check-label" for="ContraentregaOnDelivery" style="font-size: 14px;">Contraentrega</label>
                             <!-- <mat-radio-button value="2"><span class="geist-mono">Option 2</span></mat-radio-button> -->
+                        </div>
+                        <div *ngIf="!deliveryOption" class="text-danger" style="font-size: 14px;">
+                           <span style="font-size: 11px;">Selecciona un método de entrega antes de continuar.</span>
                         </div>
                     </div>
 
@@ -249,7 +252,7 @@
                     </div>
 
                     <!-- Botón de Confirmar Pedido -->
-                    <button class="btn btn-primary w-100 mt-3" (click)="confirmOrder()">Realizar pedido</button>
+                    <button class="btn btn-primary w-100 mt-3" (click)="confirmOrder()" [disabled]="!deliveryOption" >Realizar pedido</button>
 
                     <!-- Nota de Agradecimiento -->
                     <div class="text-center mt-3">

@@ -1,14 +1,18 @@
 import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit, Renderer2 } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 import { NavbarComponent } from '../../navbar/navbar.component';
-import { jwtDecode } from 'jwt-decode';
+
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { CommonModule } from '@angular/common';
+
 import { environment } from 'src/environments/environment';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
+
+import { jwtDecode } from 'jwt-decode';
 import * as bootstrap from 'bootstrap';
+import Swal from 'sweetalert2';
 
 declare var $: any;
 

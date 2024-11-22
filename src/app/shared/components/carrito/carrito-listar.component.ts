@@ -11,9 +11,13 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
-import * as bootstrap from 'bootstrap';
-import Swal from 'sweetalert2';
 import { EditarDireccionComponent } from '../editar-direccion/editar-direccion.component';
+
+import * as bootstrap from 'bootstrap';
+import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
+import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
+import { id } from '@swimlane/ngx-datatable';
 
 export interface Product {
   productKey: any;
@@ -30,6 +34,7 @@ export interface Product {
   specialInstructions?: string;
   priceWithCustomization?: number;
   salsa: any[];
+  nuevaDireccion?: string
 }
 
 @Component({
@@ -45,7 +50,7 @@ export class CarritoListarComponent {
   currentDate: Date = new Date();
   deliveryOption: string = '';
   showQrCode: boolean = false;
-  deliveryOption_e: string = 'immediate'; // Valor inicial
+  deliveryOption_e: string = 'Entrega_inmediata'; // Valor inicial
   estimatedDeliveryTime: string = '30-45 minutos';
   selectedQuantity: number = 0;
   specialInstructions?: string = '';
@@ -81,17 +86,26 @@ export class CarritoListarComponent {
     productKey: undefined,
     salsa: []
   };
- 
+  direccion_u: string = '';
+  id_u: number = 0;
+
 
   constructor(
     private datoService: DatosService,
-    private bottomSheet: MatBottomSheet
+    private bottomSheet: MatBottomSheet,
+    private pedidoService: PedidoService
   ){}
 
   ngOnInit(): void {
     this.cargarCarritoDesdeLocalStorage();
     this.listaItemsCarrito = this.listaItemsCarrito.map(item => ({ ...item, isExpanded: false }));
     console.log(this.listaItemsCarrito, 'a')
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwtDecode(token)
+      this.direccion_u = decodedToken.direccion;
+      this.id_u = decodedToken.id
+    }
   }
 
   calculateTotal(): number {
@@ -122,16 +136,18 @@ export class CarritoListarComponent {
   }
 
   onDeliveryOptionChange() {
-    this.showQrCode = this.deliveryOption === 'immediate';
+    this.showQrCode = this.deliveryOption === 'Entrega_inmediata';
   }
 
   confirmOrder() {
-    const direccionActual = "Calle 123 #45-67, Ciudad"; // Reemplázalo con la dirección del usuario.
+    this.direccion_u // Reemplázalo con la dirección del usuario.
+    // const direccionActual = "Calle 123 #45-67, Ciudad"; // Reemplázalo con la dirección del usuario.
+    console.log(this.listaItemsCarrito, 'B')
       Swal.fire({
       title: 'Confirma tu dirección',
       html: `
         <p>Esta es la dirección registrada para el envío:</p>
-        <strong>${direccionActual}</strong>
+        <strong>${this.direccion_u}</strong>
         <p>¿Es correcta?</p>
       `,
       icon: 'info',
@@ -140,7 +156,7 @@ export class CarritoListarComponent {
       cancelButtonText: 'Editar dirección',
     }).then((result) => {
       if (result.isConfirmed) {
-        // this.procesarPedido(); // Llama a tu función para procesar el pedido
+        this.procesarPedido(); // Llama a tu función para procesar el pedido
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         this.editarDireccion(); // Llama a la función para editar la dirección
       }
@@ -152,12 +168,51 @@ export class CarritoListarComponent {
   
     bottomSheetRef.afterDismissed().subscribe((nuevaDireccion) => {
       if (nuevaDireccion) {
+        // Asignar la nueva dirección a un producto específico
+        this.listaItemsCarrito.forEach((producto: Product) => {
+          producto.nuevaDireccion = nuevaDireccion; // Asignar al campo nuevaDireccion
+        });
+  
+        this.direccion_u = nuevaDireccion; // Actualizar la dirección general del usuario
         console.log('Nueva dirección:', nuevaDireccion);
-        this.actualizarDireccion(nuevaDireccion); // Llama a tu método para actualizar la dirección
+        this.confirmOrder(); // Llama a tu método para confirmar el pedido
       } else {
         console.log('El usuario canceló la edición');
       }
     });
+  }
+  
+  procesarPedido(){
+    const pedido = {
+      PED_RGU_ID: this.id_u, // ID del usuario
+      PED_FECHA: new Date().toISOString(), // Fecha y hora actual en formato ISO
+      PED_ESTADO: 'Pendiente', // Estado inicial del pedido
+      PED_DESCRIPCION:this.listaItemsCarrito
+      .map((producto: Product) => producto.specialInstructions)
+      .join(', '), // Une las descripciones en una sola cadena separada por comas
+      PED_PRECIO_TOTAL: this.calculateTotal(), // Calcula el precio total
+      PED_MET_PAGO: this.deliveryOption, // Método de pago (entrega inmediata o contraentrega)
+      PED_INFO: JSON.stringify(this.listaItemsCarrito.map((producto: Product) => ({
+        id: producto.PROD_VENTA_ID,
+        cantidad: producto.CANTIDAD,
+        tamaño: producto.selectedSize,
+        ingredientesAdicionales: producto.extraIngredients
+          .filter((ing: any) => ing.selected)
+          .map((ing: any) => ({ nombre: ing.name, precio: ing.price })),
+        }))),
+      PED_CANCELADO: 'no'
+    };
+    console.log('Pedido a enviar:', pedido);
+    this.pedidoService.saveData(pedido).subscribe(
+      (response) => {
+        console.log('Pedido procesado con éxito:', response);
+        Swal.fire('Éxito', 'Tu pedido ha sido procesado.', 'success');
+      },
+      (error) => {
+        console.error('Error al procesar el pedido:', error);
+        Swal.fire('Error', 'Hubo un problema al procesar tu pedido.', 'error');
+      }
+    );
   }
 
   actualizarDireccion(nuevaDireccion: string) {

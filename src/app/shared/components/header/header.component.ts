@@ -38,10 +38,7 @@ export class HeaderComponent {
       this.apellido = decodedToken.apellido;
       this.i_perfil = decodedToken.i_perfil;
     }
-
-    // if(this.i_perfil=== '') {
-    //   this.i_perfil = 'assets/images/pf.jpg'
-    // }
+    
     this.imangenPerfil = this.getImagenUsuario();
     // console.log(this.imangenPerfil)
     this.usuarioService.$usuario.subscribe((usuario) => {

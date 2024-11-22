@@ -41,7 +41,8 @@ export class AuthService {
         const user = {
           RGU_NOMBRES: decodedToken.nombre,
           RGU_APELLIDOS: decodedToken.apellido,
-          RGU_IMG_PROFILE: decodedToken.i_perfil
+          RGU_IMG_PROFILE: decodedToken.i_perfil,
+          RGU_DIRECCION: decodedToken.direccion
         }
         sessionStorage.setItem('user', JSON.stringify(user));
         // Emitir los cambios del usuario

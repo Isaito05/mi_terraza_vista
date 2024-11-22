@@ -1,7 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
 @import '~bootstrap-icons/font/bootstrap-icons.css';
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
@@ -173,4 +170,15 @@ body {
 .mat-mdc-radio-button .mdc-radio {
     padding: 0 !important;
 }
+
+/* Cambia el color del borde al enfocar el input */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+    color: #4caf50; /* Verde */
+    border-color: #4caf50;
+  }
+  
+  .mat-button, .mat-raised-button{
+    background-color:red;
+} 
+  
 

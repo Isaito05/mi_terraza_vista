@@ -1,0 +1,16 @@
+.p-icon {
+    top: 50%;
+    right: 35.4rem;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.p-ci {
+    padding-left: 2.2rem !important;
+}
+
+.form-control:focus {
+    border: 2px solid orange;
+    box-shadow: none;
+}
