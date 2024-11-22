@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { CanComponentDeactivate, CanDeactivateType } from 'src/app/guard/can-deactivate.guard';
+import { CanComponentDeactivate, CanDeactivateType } from 'src/app/core/guard/can-deactivate.guard';
 
 @Component({
   selector: 'app-register',

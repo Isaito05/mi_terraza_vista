@@ -8,7 +8,7 @@ import { DynamicPageComponent } from './shared/components/dynamic-page/dynamic-p
 import { ForgotPasswordComponent } from './core/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './core/reset-password/reset-password.component';
 import { RegisterComponent } from './shared/components/register/component/register.component'; 
-import { canDeactivateGuard } from './guard/can-deactivate.guard';
+import { canDeactivateGuard } from './core/guard/can-deactivate.guard';
 import { ProfileComponent } from './shared/components/profile/component/profile.component';
 import { CarritoListarComponent } from './shared/components/carrito/carrito-listar.component';
 

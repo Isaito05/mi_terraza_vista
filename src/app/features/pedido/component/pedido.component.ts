@@ -1,39 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+
+import { Pedido } from '../models/pedido.interface';
+import { Usuario } from '../../usuario/models/usuario.interface';
+
 import { PedidoService } from '../../pedido/service/pedido.service';
-import Swal from 'sweetalert2';
 import { UsuarioService } from '../../usuario/service/usuario.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 import { ProdventaService } from '../../prodventa/services/prodventa.service';
 import { ExcelReportService } from 'src/app/core/services/excel-report.service';
 
-
-export interface Usuario {
-  RGU_ID: number;
-  RGU_NOMBRES: string;
-  RGU_APELLIDOS: string;
-}
-
-export interface Pedido {
-  PED_CANCELADO: boolean;
-  PED_DESCRIPCION: string;
-  PED_ESTADO: string;
-  PED_ESTADOE: string;
-  PED_FECHA: Date;
-  PED_ID: number;
-  PED_INFO: string; // Suponiendo que contiene ID y cantidad de productos
-  PED_MET_PAGO: string;
-  PED_NOTIFICACION: string;
-  PED_PRECIO_TOTAL: number;
-  PED_RGU_ID: number;
-  rguUsuario: {
-    RGU_ID: number;
-    RGU_IDENTIFICACION: string;
-    RGU_NOMBRES: string;
-    RGU_APELLIDOS: string;
-    RGU_GENERO: string;
-  };
-}
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pedido',
@@ -56,7 +32,13 @@ export class PedidoComponent implements OnInit {
   selectedEstado: string = '';
   filtersApplied: boolean = false; // Para mostrar si los filtros han sido aplicados
 
-  constructor(private pedidoservice: PedidoService, private usuarioService: UsuarioService, private prodventaService: ProdventaService, private pdfReportService: PdfReportService ,private excelReportService: ExcelReportService, ) { }
+  constructor(
+    private pedidoservice: PedidoService, 
+    private usuarioService: UsuarioService, 
+    private prodventaService: ProdventaService, 
+    private pdfReportService: PdfReportService,
+    private excelReportService: ExcelReportService 
+  ) { }
 
   selectedFields: any = {
     pedidoId: false,
@@ -214,7 +196,6 @@ export class PedidoComponent implements OnInit {
     document.body.style.overflow = 'auto'; // Reactiva el scroll de la página
   }
 
-
   filters = {
     dateRange: { startDate: null, endDate: null },
     status: "",  // 'Cancelado', 'Enviado', 'Pendiente'
@@ -304,7 +285,6 @@ export class PedidoComponent implements OnInit {
 
     return filteredPedidos;
   }
-
   generatePedidoPdf(): void {
     // Verificar si al menos un campo está seleccionado
     const anyFieldSelected = Object.values(this.selectedFields).some(value => value);
@@ -406,8 +386,7 @@ export class PedidoComponent implements OnInit {
         this.loading = false; // Asegúrate de finalizar el estado de carga incluso si hay un error
       });
     });
-  }
-  
+  }  
   seleccionarTodo(): void {
     console.log(this.todo, 'todo')
     if (this.todo) {
@@ -435,7 +414,7 @@ export class PedidoComponent implements OnInit {
     }
   }
 
-   // Método para generar el reporte
+  // Método para generar el reporte
    async generatePedidoExcel() {
     const columns: (keyof Pedido | string)[] = [
       'Nombres', 'Apellidos', 'Genero', // Información del usuario
@@ -491,6 +470,4 @@ export class PedidoComponent implements OnInit {
     // this.excelReportService.generateExcel<Pedido>(pedidosConInfo, columns, 'Pedido', keyMapping);
     this.excelReportService.generateExcel<Pedido>(pedidosConInfo, updatedColumns, 'Pedido', keyMapping, colorMapping);
   }
-
-
 }

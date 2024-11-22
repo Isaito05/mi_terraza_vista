@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { Observable, map } from 'rxjs';
 
-export interface ProProv {
-  PROPROV_ID: number;
-  PROPROV_NOMBRE: string;
-}
+import { ProProv } from '../models/proprov.interface';
 
 @Injectable({
   providedIn: 'root'

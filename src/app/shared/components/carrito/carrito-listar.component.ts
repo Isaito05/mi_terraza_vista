@@ -7,11 +7,13 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 import { DatosService } from 'src/app/core/services/datos.service';
 
-import {MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 import * as bootstrap from 'bootstrap';
 import Swal from 'sweetalert2';
+import { EditarDireccionComponent } from '../editar-direccion/editar-direccion.component';
 
 export interface Product {
   productKey: any;
@@ -37,8 +39,6 @@ export interface Product {
   styleUrl: './carrito-listar.component.css'
 })
 export class CarritoListarComponent {
-
-  // listaItemsCarrito: Product[] | undefined;
   listaItemsCarrito: Product[] = [];
   cartCount: number = 0;
   currentDate: Date = new Date();
@@ -46,8 +46,6 @@ export class CarritoListarComponent {
   showQrCode: boolean = false;
   deliveryOption_e: string = 'immediate'; // Valor inicial
   estimatedDeliveryTime: string = '30-45 minutos';
-
-  // selectedItem: any = null;
   sizes = ['Pequeño', 'Mediano', 'Grande']; // Ejemplo de tamaños disponibles
   extraIngredients = [
     { name: 'Queso extra', price: 2000, selected: false },
@@ -56,7 +54,6 @@ export class CarritoListarComponent {
   ]; // Ejemplo de ingredientes adicionales
   basePrice = 0;
   totalExtras = 0;
-
   selectedItem: Product = {
     isExpanded: false,
     PROD_VENTA_ID: 0,
@@ -74,7 +71,8 @@ export class CarritoListarComponent {
   imagen: any;
 
   constructor(
-    private datoService: DatosService
+    private datoService: DatosService,
+    private bottomSheet: MatBottomSheet
   ){}
 
   ngOnInit(): void {
@@ -115,17 +113,51 @@ export class CarritoListarComponent {
   }
 
   confirmOrder() {
-    if (this.deliveryOption === 'immediate' && !this.showQrCode) {
-      alert('Please scan the QR code to complete your payment.');
-      return;
-    }
-    
-    const confirmed = confirm('Please verify your information and address before placing the order. Do you want to continue?');
-    if (confirmed) {
-      // Lógica para finalizar el pedido
-      alert('Order placed successfully!');
-    }
+    const direccionActual = "Calle 123 #45-67, Ciudad"; // Reemplázalo con la dirección del usuario.
+      Swal.fire({
+      title: 'Confirma tu dirección',
+      html: `
+        <p>Esta es la dirección registrada para el envío:</p>
+        <strong>${direccionActual}</strong>
+        <p>¿Es correcta?</p>
+      `,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, continuar',
+      cancelButtonText: 'Editar dirección',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // this.procesarPedido(); // Llama a tu función para procesar el pedido
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.editarDireccion(); // Llama a la función para editar la dirección
+      }
+    });
   }
+
+  editarDireccion() {
+    const bottomSheetRef = this.bottomSheet.open(EditarDireccionComponent);
+  
+    bottomSheetRef.afterDismissed().subscribe((nuevaDireccion) => {
+      if (nuevaDireccion) {
+        console.log('Nueva dirección:', nuevaDireccion);
+        this.actualizarDireccion(nuevaDireccion); // Llama a tu método para actualizar la dirección
+      } else {
+        console.log('El usuario canceló la edición');
+      }
+    });
+  }
+
+  actualizarDireccion(nuevaDireccion: string) {
+    // Aquí puedes guardar la nueva dirección en tu backend o estado de la aplicación
+    console.log('Dirección actualizada:', nuevaDireccion);
+    Swal.fire({
+      title: 'Dirección actualizada',
+      text: `Tu nueva dirección es: ${nuevaDireccion}`,
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+    });
+  }
+  
 
   getIngredientList(ingredients: any[]): string {
     return ingredients && ingredients.length > 0 
@@ -149,8 +181,6 @@ export class CarritoListarComponent {
     return this.formatCurrency(total);
   }
 
-
-  
   vaciarCarrito() {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -217,7 +247,7 @@ export class CarritoListarComponent {
       console.log("Producto eliminado:", item);
       this.guardarCarritoEnLocalStorage();
     }
-}
+  }
 
   getTruncatedText(text: string): string {
     if (!text) return ''; // Maneja casos donde el texto sea nulo o indefinido
@@ -289,7 +319,7 @@ export class CarritoListarComponent {
   }
   
  // Método para actualizar el item en el carrito en el modal
- updateItem() {
+  updateItem() {
   this.cargarCarritoDesdeLocalStorage();
 
   if (this.selectedItem) {
@@ -346,66 +376,6 @@ export class CarritoListarComponent {
     const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
     customizationModal?.hide();
   }
-}
-
-// updateItem() {
-//   this.cargarCarritoDesdeLocalStorage(); // Carga el carrito desde localStorage
-
-//   if (this.selectedItem) {
-//     // Aseguramos que 'extraIngredients' sea un array independiente
-//     if (!this.selectedItem.extraIngredients) {
-//       this.selectedItem.extraIngredients = [];
-//     }
-
-//     // Filtrar los ingredientes seleccionados
-//     const selectedIngredients = this.extraIngredients.filter(
-//       (ingredient) => ingredient.selected
-//     );
-
-//     // Hacer una copia profunda del producto actualizado
-//     const updatedItem = {
-//       ...this.selectedItem, // Copia superficial de todos los campos
-//       extraIngredients: [...selectedIngredients], // Ingredientes seleccionados
-//     };
-
-//     // Encuentra el índice del producto original en el carrito
-//     const index = this.listaItemsCarrito.findIndex(
-//       (item) => item.productKey === this.selectedItem.productKey
-//     );
-
-//     if (index !== -1) {
-//       // Recalcular la clave del producto después de actualizar los detalles
-//       const newProductKey = this.datoService.generateProductKey(updatedItem);
-
-//       // Actualizar la clave y otros detalles del producto en el carrito
-//       this.listaItemsCarrito[index] = {
-//         ...updatedItem,
-//         productKey: newProductKey, // Asignar la nueva clave generada
-//       };
-
-//       // Guardar el carrito actualizado en localStorage
-//       this.guardarCarritoEnLocalStorage();
-
-//       // Debugging: Verificar la actualización
-//       console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
-//     }
-
-//     // Cerrar el modal después de la actualización
-//     const customizationModal = bootstrap.Modal.getInstance(
-//       document.getElementById('customizationModal')!
-//     );
-//     customizationModal?.hide();
-//   }
-// }
-
-  
-  updateCart(item: Product): void {
-    const index = this.listaItemsCarrito.findIndex(product => product.PROD_VENTA_ID === item.PROD_VENTA_ID);
-    if (index > -1) {
-        this.listaItemsCarrito[index].CANTIDAD = item.CANTIDAD;
-        console.log("Carrito actualizado:", this.listaItemsCarrito);
-        this.guardarCarritoEnLocalStorage();
-    }
   }
 
   confirmDelete(item: Product): void {
@@ -430,5 +400,4 @@ export class CarritoListarComponent {
       }
     });
   }
-  
 }

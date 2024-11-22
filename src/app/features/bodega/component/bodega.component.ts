@@ -1,33 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; // Importa HttpClient
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+import { Bodega } from '../models/bodega.interface';
+import { ProProv } from '../../proprov/models/proprov.interface';
+
 import { BodegaService } from '../service/bodega.service';
 import { ProprovService } from '../../proprov/service/proprov.service';
-import Swal from 'sweetalert2';
 import { DatosService } from 'src/app/core/services/datos.service';
 import { ExcelReportService } from 'src/app/core/services/excel-report.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
-export interface ProProv {
-  PROPROV_ID: number;
-  PROPROV_NOMBRE: string;
-}
-export interface Bodega {
-  BOD_ID: number;
-  BOD_STOCK_MINIMO: number;
-  BOD_ESTADO: string;
-  BOD_PROPROV_ID: string;
-  proprov: {
-    PROPROV_CANTIDAD: number,
-    PROPROV_DESCRIPCION: string;
-    PROPROV_ESTADO: number;
-    PROPROV_FCH_INGRESO: Date;
-    PROPROV_ID: number
-    PROPROV_NOMBRE: string;
-    PROPROV_PRECIO_UNITARIO: number;
-    PROPROV_PROV_ID: number;
-  }
-}
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-bodega',

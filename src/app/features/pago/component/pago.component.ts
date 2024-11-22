@@ -1,33 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; // Importa HttpClient
+
+import { Pago } from '../models/pago.interface';
+import { Usuario } from '../../usuario/models/usuario.interface';
+
 import { PagoService } from '../service/pago.service';
 import { UsuarioService } from '../../usuario/service/usuario.service';
-import Swal from 'sweetalert2';
 import { DatosService } from 'src/app/core/services/datos.service';
 import { ExcelReportService } from 'src/app/core/services/excel-report.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
-export interface Usuario {
-  RGU_ID: number;
-  RGU_NOMBRES: string;
-  RGU_APELLIDOS: string;
-  RGU_IDENTIFICACION: string;
-  RGU_ROL: string;
-}
-
-export interface Pago {
-  PAGO_ID: number;
-  PAGO_FECHA: Date;
-  PAGO_MONTO: number;
-  PAGO_DESCRIPCION: string;
-  rguUsuario: {
-    RGU_ID: number;
-    RGU_IDENTIFICACION: string;
-    RGU_NOMBRES: string;
-    RGU_APELLIDOS: string;
-    RGU_GENERO: string;
-  };
-}
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pago',

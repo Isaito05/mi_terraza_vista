@@ -1,10 +1,14 @@
 // usuario.component.ts
 import { Component, OnInit } from '@angular/core';
-import { Usuario, UsuarioService } from '../service/usuario.service'; // Importa el servicio
+
+import { Usuario } from '../models/usuario.interface';
+
+import { UsuarioService } from '../service/usuario.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
-import Swal from 'sweetalert2';
 import { DatosService } from 'src/app/core/services/datos.service';
 import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-usuario',
   templateUrl: './usuario.component.html',

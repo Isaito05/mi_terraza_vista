@@ -1,20 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
+import { ProdVenta } from '../models/prodventa.interface';
+
 import { ProdventaService } from '../services/prodventa.service';
-import Swal from 'sweetalert2';
 import { environment } from 'src/environments/environment';
 import { DatosService } from 'src/app/core/services/datos.service';
 import { ExcelReportService } from 'src/app/core/services/excel-report.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
-export interface ProdVenta {
-  PROD_VENTA_ID: number;
-  PROD_VENTA_NOMBRE: string;
-  PROD_VENTA_PRECIO: number;
-  PROD_VENTA_IMAGEN: File;
-  PROD_VENTA_DESCRIPCION: string;
-}
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-prodventa',

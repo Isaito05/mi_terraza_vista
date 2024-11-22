@@ -3,14 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import * as CryptoJS from 'crypto-js';
-
-export interface Usuario {
-  RGU_ID: number;
-  RGU_NOMBRES: string;
-  RGU_APELLIDOS: string;
-  RGU_ROL: string;
-  RGU_IDENTIFICACION: string;
-}
+import { Usuario } from '../models/usuario.interface';
 
 @Injectable({
   providedIn: 'root'

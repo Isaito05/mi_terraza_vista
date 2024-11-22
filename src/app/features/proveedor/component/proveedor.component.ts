@@ -1,18 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { Proveedor } from '../models/proveedor.interface';
+
 import { ProveedorService } from '../service/proveedor.service';
-import Swal from 'sweetalert2';
 import { DatosService } from 'src/app/core/services/datos.service';
 import { ExcelReportService } from 'src/app/core/services/excel-report.service';
 import { PdfReportService } from 'src/app/core/services/pdf-report.service';
 
-export interface Proveedor {
-  PROV_NOMBRE: string;
-  PROV_CORREO: string;
-  PROV_DIRECCION: string;
-  PROV_NIT: number;
-  PROV_TELEFONO: number;
-}
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-proveedor',
   templateUrl: './proveedor.component.html',
@@ -70,7 +67,6 @@ export class ProveedorComponent implements OnInit {
       }
     });
   }
-
   openModal(user?: any) {
     console.log('Abrir modal con usuario:', user);
     this.isEditing = !!user; // Determina si estamos en modo de edición
@@ -151,7 +147,6 @@ export class ProveedorComponent implements OnInit {
         console.error('Error al generar el PDF:', error);
     }
   }
-
 
   generateProveedorExcel() {
     const columns: (keyof Proveedor | string)[] = ['Nombre del proveedor','Correo del proveedor','Telefono del proveedor','Direccion del proveedor','Nit del proveedor'];
