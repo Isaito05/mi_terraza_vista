@@ -29,6 +29,7 @@ export interface Product {
   extraIngredients: any[];
   specialInstructions?: string;
   priceWithCustomization?: number;
+  salsa: any[];
 }
 
 @Component({
@@ -46,7 +47,18 @@ export class CarritoListarComponent {
   showQrCode: boolean = false;
   deliveryOption_e: string = 'immediate'; // Valor inicial
   estimatedDeliveryTime: string = '30-45 minutos';
+  selectedQuantity: number = 0;
+  specialInstructions?: string = '';
+  imagen: any;
+  CANTIDAD: number = 0;
+
+  // selectedItem: any = null;
   sizes = ['Pequeño', 'Mediano', 'Grande']; // Ejemplo de tamaños disponibles
+  sauces = [
+    { name: 'Ketchup', selected: false },
+    { name: 'Mostaza', selected: false },
+    { name: 'Mayonesa', selected: false },
+  ];
   extraIngredients = [
     { name: 'Queso extra', price: 2000, selected: false },
     { name: 'Pepperoni', price: 2500, selected: false },
@@ -66,9 +78,10 @@ export class CarritoListarComponent {
     selectedSize: '',
     extraIngredients: [],
     specialInstructions: '',
-    productKey: undefined
+    productKey: undefined,
+    salsa: []
   };
-  imagen: any;
+ 
 
   constructor(
     private datoService: DatosService,
@@ -299,7 +312,12 @@ export class CarritoListarComponent {
     
     // Asegurarnos de que los ingredientes adicionales estén correctamente inicializados
     this.selectedItem.extraIngredients = this.selectedItem.extraIngredients || [];
-  
+    this.selectedItem.salsa = this.selectedItem.salsa || [];
+    this.selectedQuantity = item.CANTIDAD;
+    this.specialInstructions = item.specialInstructions
+    
+    console.log(item, "eta vaina")
+    
     // Guardamos el precio base y calculamos el costo de los extras
     this.basePrice = item.PROD_VENTA_PRECIO;
     this.totalExtras = this.calculateExtras(this.selectedItem.extraIngredients);
@@ -308,6 +326,14 @@ export class CarritoListarComponent {
     this.extraIngredients.forEach(ingredient => {
       // Marca si el ingrediente está seleccionado en el producto
       const isSelected = this.selectedItem.extraIngredients.some(
+        (selected: any) => selected.name === ingredient.name && selected.selected
+      );
+      ingredient.selected = isSelected; // Marcar como seleccionado o no
+    });
+
+    this.sauces.forEach(ingredient => {
+      // Marca si el ingrediente está seleccionado en el producto
+      const isSelected = this.selectedItem.salsa.some(
         (selected: any) => selected.name === ingredient.name && selected.selected
       );
       ingredient.selected = isSelected; // Marcar como seleccionado o no
@@ -321,39 +347,36 @@ export class CarritoListarComponent {
  // Método para actualizar el item en el carrito en el modal
   updateItem() {
   this.cargarCarritoDesdeLocalStorage();
-
+  
+  console.log("esto trae", this.selectedItem)
   if (this.selectedItem) {
-    // Aseguramos que 'extraIngredients' de selectedItem sea un array independiente.
     // Si no tiene ingredientes, inicializamos el array vacío.
     if (!this.selectedItem.extraIngredients) {
       this.selectedItem.extraIngredients = [];
     }
+    
+    if (!this.selectedItem.salsa) {
+      this.selectedItem.salsa = [];
+    }
 
     // Filtramos los ingredientes seleccionados y asignamos una copia profunda de los ingredientes seleccionados
     const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
+    const selectedSalsa = this.sauces.filter(ingredient => ingredient.selected);
 
     // Hacemos una copia profunda de 'selectedItem' y de sus ingredientes, para que no haya referencias compartidas
     const updatedItem = {
       ...this.selectedItem, // Copia superficial de todos los campos
-      extraIngredients: [...selectedIngredients] // Los ingredientes seleccionados
+      extraIngredients: [...selectedIngredients],
+      salsa: [...selectedSalsa],
+      specialInstructions:this.specialInstructions,
+      CANTIDAD: this.selectedQuantity
+      
     };
-
-    // Recalcular la productKey después de la actualización (si cambió algo que influye en ella)
-    // updatedItem.productKey = this.datoService.generateProductKey(updatedItem);
+    console.log("esto trae el select", this.selectedQuantity)
+    console.log("esto trae lo sielect.cantidad ", this.selectedItem.CANTIDAD)
 
     // Encuentra el índice del producto en la lista de carrito
     const index = this.listaItemsCarrito.findIndex(item => item.productKey === this.selectedItem.productKey);
-
-    // if (index !== -1) {
-    //   // Reemplazamos el producto en la lista con el producto actualizado
-    //   this.listaItemsCarrito[index] = updatedItem;
-
-    //   // Guardamos el carrito actualizado en localStorage
-    //   this.guardarCarritoEnLocalStorage();
-
-    //   // Hacemos un log para verificar los cambios
-    //   console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
-    // }
 
     if (index !== -1) {
       // Recalcular la clave del producto después de actualizar los detalles
@@ -400,4 +423,19 @@ export class CarritoListarComponent {
       }
     });
   }
+
+  updateQuantity(quantity: number) {
+    if (quantity > 0) {
+      this.selectedQuantity = quantity;
+      console.log("Carrito cargado desde localStorage:", this.listaItemsCarrito);
+
+    }
+  }
+
+  // Función para seleccionar/deseleccionar salsas
+  toggleSauce(sauce: any): void {
+    sauce.selected = !sauce.selected;
+    console.log(`Salsa ${sauce.name} seleccionada: ${sauce.selected}`);
+  }
+  
 }

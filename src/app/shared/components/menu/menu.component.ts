@@ -16,6 +16,7 @@ export interface Product {
   extraIngredients: any[]; // Ingredientes adicionales seleccionados
   specialInstructions?: string;
   priceWithCustomization?: number;
+  salsa: any[];
 }
 @Component({
   selector: 'app-menu',
@@ -162,9 +163,9 @@ export class MenuComponent implements OnInit {
     const customizedProduct: Product = {
       ...this.selectedProduct,
       CANTIDAD: this.selectedQuantity,
-      priceWithCustomization:
-        this.selectedProduct.PROD_VENTA_PRECIO + additionalCost,
+      priceWithCustomization: this.selectedProduct.PROD_VENTA_PRECIO + additionalCost,
       specialInstructions: this.specialInstructions,
+      salsa: this.sauces, 
       selectedSize: this.selectedSize,
       extraIngredients: this.extraIngredients.filter(
         (ingredient) => ingredient.selected
