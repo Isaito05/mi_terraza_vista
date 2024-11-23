@@ -111,6 +111,9 @@
                                         <th>Nombre del producto</th>
                                         <th>Descripción</th>
                                         <th>Precio</th>
+                                        <th>tamaño</th>
+                                        <th>Direcciónde envio</th>
+                                        <th>ingredientes extras</th>
                                         <th>Cantidad</th>
                                         <th>Total</th>
                                     </tr>
@@ -120,6 +123,15 @@
                                         <td>{{ item.nombre }}</td>
                                         <td>{{ item.descripcion }}</td>
                                         <td>{{ formatCurrency(item.precio) }}</td>
+                                        <td>{{ item.tamano }}</td>
+                                        <td>{{ item.direccion }}</td>
+                                        <td>
+                                            <ul>
+                                              <li *ngFor="let ingrediente of item.ingredientesAdicionales">
+                                                {{ ingrediente.nombre }} - {{ ingrediente.precio | currency:'USD':'symbol':'1.0-0' }}
+                                              </li>
+                                            </ul>
+                                          </td>
                                         <td>{{ item.cantidad }}</td>
                                         <td>{{ formatCurrency(item.subtotal) }}</td>
                                     </tr>

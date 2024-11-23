@@ -555,22 +555,34 @@ export class ModalComponent {
 
   Tablapedido(pedId: any) {
     this.pedidoService.getData().subscribe(data => {
-      console.log(pedId, 'idiota');
       const pedidosFiltrados = data.filter((pedido: { PED_ID: number; }) => pedido.PED_ID === pedId);
-
-      const productosMap = new Map<string, number>(); // Para evitar duplicados
-      console.log(productosMap)
+  
+      const productosMap = new Map<string, { cantidad: number; tamano: string; direccion_new: string; ingredientesAdicionales: any[] }>(); // Mapa con detalles
+  
       pedidosFiltrados.forEach((pedido: { PED_INFO: string | any[]; }) => {
         if (typeof pedido.PED_INFO === 'string') {
           try {
             const pedInfoArray = JSON.parse(pedido.PED_INFO);
-            pedInfoArray.forEach((info: { id: string; cantidad: number; }) => {
+            console.log(pedInfoArray, 'holii')
+            pedInfoArray.forEach((info: { id: string; cantidad: number; tamano: string; direccion_new: string; ingredientesAdicionales: any[] }) => {
               const id = info.id;
-              const cantidad = info.cantidad;
               if (productosMap.has(id)) {
-                productosMap.set(id, productosMap.get(id)! + cantidad); // Sumar la cantidad si ya existe
+                // Sumar cantidad y mantener otros detalles si ya existe
+                const existing = productosMap.get(id)!;
+                productosMap.set(id, {
+                  cantidad: existing.cantidad + info.cantidad,
+                  tamano: info.tamano,
+                  direccion_new: info.direccion_new,
+                  ingredientesAdicionales: info.ingredientesAdicionales
+                });
               } else {
-                productosMap.set(id, cantidad); // Agregar nuevo producto
+                // Agregar nuevo producto con todos los detalles
+                productosMap.set(id, {
+                  cantidad: info.cantidad,
+                  tamano: info.tamano,
+                  direccion_new: info.direccion_new,
+                  ingredientesAdicionales: info.ingredientesAdicionales
+                });
               }
             });
           } catch (error) {
@@ -578,29 +590,44 @@ export class ModalComponent {
           }
         }
       });
-
+  
       // Convertir el Map a un array de promesas para obtener los detalles de los productos
-      const productPromises = Array.from(productosMap.keys()).map(id =>
-        this.prodventaService.getProVenById(id).toPromise().then(data => ({
-          nombre: data.PROD_VENTA_NOMBRE,
-          precio: data.PROD_VENTA_PRECIO,
-          descripcion: data.PROD_VENTA_DESCRIPCION,
-          cantidad: productosMap.get(id)!,
-          subtotal: data.PROD_VENTA_PRECIO * productosMap.get(id)!
-        })).catch(error => {
-          console.error('Error al obtener los datos:', error);
-          return null; // Manejar el error
-        })
-      );
-      console.log(productPromises)
+      const productPromises = Array.from(productosMap.entries()).map(([id, details]) =>
+      this.prodventaService.getProVenById(id).toPromise().then(data => {
+      // Calcular el precio total de los ingredientes adicionales
+      const totalIngredientes = details.ingredientesAdicionales
+      ? details.ingredientesAdicionales.reduce((sum, ingrediente) => sum + ingrediente.precio, 0)
+      : 0;
 
+    // Calcular el subtotal incluyendo ingredientes adicionales
+    const subtotal = (data.PROD_VENTA_PRECIO + totalIngredientes) * details.cantidad;
+
+    return {
+      id,
+      nombre: data.PROD_VENTA_NOMBRE,
+      precio: data.PROD_VENTA_PRECIO,
+      descripcion: data.PROD_VENTA_DESCRIPCION,
+      cantidad: details.cantidad,
+      tamano: details.tamano,
+      direccion: details.direccion_new,
+      ingredientesAdicionales: details.ingredientesAdicionales,
+      subtotal
+    };
+    }).catch(error => {
+      console.error('Error al obtener los datos:', error);
+      return null; // Manejar el error
+    })
+  );
+
+  
       // Esperar a que todas las promesas se resuelvan
       Promise.all(productPromises).then(results => {
         this.pedidos = results.filter(result => result !== null); // Filtrar resultados nulos en caso de error
-        console.log(this.pedidos = results.filter(result => result !== null))
+        console.log(this.pedidos);
       });
     });
   }
+  
 
   getTotal(): number {
     return this.pedidos.reduce((acc, item) => acc + item.subtotal, 0);

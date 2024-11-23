@@ -195,10 +195,11 @@ export class CarritoListarComponent {
       PED_INFO: JSON.stringify(this.listaItemsCarrito.map((producto: Product) => ({
         id: producto.PROD_VENTA_ID,
         cantidad: producto.CANTIDAD,
-        tamaño: producto.selectedSize,
+        tamano: producto.selectedSize,
         ingredientesAdicionales: producto.extraIngredients
           .filter((ing: any) => ing.selected)
           .map((ing: any) => ({ nombre: ing.name, precio: ing.price })),
+        direccion_new: producto.nuevaDireccion
         }))),
       PED_CANCELADO: 'no'
     };
