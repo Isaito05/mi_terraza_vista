@@ -31,7 +31,8 @@
             </div>
            
             <!-- Mostrar el botón de inicio de sesión si no está logueado -->
-            <a *ngIf="!authService.loggedIn()" [routerLink]="['/login']" class="btn btn-primary py-2 px-4">Inicia sesión</a>
+            <a *ngIf="!authService.loggedIn()" [routerLink]="['/login']" class="btn btn-primary py-2 px-4 me-2 co-sesion">Inicia sesión</a>
+            <a *ngIf="!authService.loggedIn()" [routerLink]="['/register']" class="btn btn-primary py-2 px-4">Crear Cuenta</a>
     
             <!-- Mostrar imagen de perfil y dropdown si el usuario está logueado -->
             <div *ngIf="authService.loggedIn()" class="d-flex align-items-center text-end">
@@ -39,11 +40,14 @@
                     <span class="m-text "> {{ getNombreUsuario() }} </span> <span class="m-text">{{ getApellidoUsuario() }}</span> ‎ <span class="m-text" style="font-weight: bold;">{{ role }}</span>
                   </span>
                 <div class="dropdown ">
-                    <img [src]="imangenPerfil" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer; margin-right: -3rem;" data-bs-toggle="dropdown" aria-expanded="false" (error)="imagenPorDefecto($event)" />
+                    <img [src]="imangenPerfil" alt="Logo" class="logo-image" style="width: 40px; height:40px; border-radius: 50%; cursor: pointer; margin-right: -3rem;" data-bs-toggle="dropdown" aria-expanded="false" (error)="imagenPorDefecto($event)"/>
+                    <div class="notificacion" *ngIf="pedidoService.getEstadoNotificacion()">
+                        <i class="circle"></i>
+                      </div>
                     <span class="px-md-5 status-indicator"></span>
                     <ul class="dropdown-menu" style="right: 3rem;">
                         <li *ngIf="rol_ad"><a class="dropdown-item active" [routerLink]="['/pedido']">Administracion</a></li>
-                        <li><a class="dropdown-item" href="/profile">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i></a></li>
+                        <li><a class="dropdown-item" [routerLink]="['/profile']" (click)="limpiarNotificacion()">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i><div class="punto-notificacion" *ngIf="pedidoService.getEstadoNotificacion()"></div></a></li>
                         <li><a class="dropdown-item" href="#">Notificaciones  <i class="fa-solid fa-bell ms-1"></i></a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item d-flex justify-content-end" (click)="logOut()" style="cursor: pointer;">Salir  <i class="bi bi-door-open-fill m-icon"></i></a></li>

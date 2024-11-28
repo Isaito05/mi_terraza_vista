@@ -25,6 +25,11 @@ export class ProdventaService {
     return this.http.post<any>(`${environment.apiUrlHttp}/prodventa`, data);
   }
 
+  getProVenByIds(ids: number[]): Observable<any[]> {
+    const params = { ids: ids.join(',') }; // Convierte el arreglo de IDs a un string separado por comas
+    return this.http.get<any[]>(`${environment.apiUrlHttp}/prodventa/bulk`, { params });
+  }
+
   getProVenById(id: any): Observable<any> {
     const url = `${environment.apiUrlHttp}/prodventa/${id}`; // Construye la URL con el ID
     return this.http.get<any>(url); // Realiza la solicitud GET a la URL con el ID

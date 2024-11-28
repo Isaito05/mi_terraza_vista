@@ -1,58 +1,137 @@
-import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
 
 import { NavbarComponent } from '../../navbar/navbar.component';
 
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
 
 import { environment } from 'src/environments/environment';
 
 import { jwtDecode } from 'jwt-decode';
 import * as bootstrap from 'bootstrap';
 import Swal from 'sweetalert2';
+import { FacturaModalComponent } from '../../factura-modal/factura-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 declare var $: any;
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ ReactiveFormsModule, RouterModule, NavbarComponent, CommonModule],
+  imports: [ 
+    ReactiveFormsModule, 
+    RouterModule, 
+    NavbarComponent, 
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatTooltipModule
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 
 export class ProfileComponent implements OnInit, AfterViewInit {
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
+  private paginator!: MatPaginator;
+  private sort!: MatSort;
   editForm!: FormGroup;
   userId!: number;
   usuario: any = {}
   imangenPerfil: string = '';
   i_perfil: string = '';
+  historialPedidos: any[] = [];
+  hayNotificacion: boolean = false;
+
+  displayedColumns: string[] = ['PED_ID', 'PED_MET_PAGO', 'PED_FECHA', 'PED_ESTADO', 'icono'];
+  
+  estadoPedidos = [
+    { PED_ID: 127, PED_FECHA: new Date(), PED_ESTADO: 'Pendiente' },
+    { PED_ID: 128, PED_FECHA: new Date(), PED_ESTADO: 'Completado' },
+  ];
+  
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    if(mp != undefined) {
+      this.paginator = mp
+      this.setDataSourceAttributes();
+    } 
+  };
+  @ViewChild(MatSort) set matSort(ms: MatSort){
+    if(ms != undefined){
+      this.sort = ms
+      this.setDataSourceAttributes();
+    }
+  };
+  dataSource!: MatTableDataSource<any>;
 
   constructor(
     private renderer: Renderer2,
     private usuarioService:UsuarioService,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private pedidoService: PedidoService, private cdref: ChangeDetectorRef
   ) { }
 
+  setDataSourceAttributes() {    
+    // this.dataSource = new MatTableDataSource( this.listOfApplications['data']);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;    
+    this.cdref.detectChanges();
+  }
+
+  openFactura(pedido: any): void {
+    const dialogRef = this.dialog.open(FacturaModalComponent, {
+        width: '400px', // Ajusta el tamaño del modal
+        data: pedido, // Envía los datos del pedido al modal
+      });
+      console.log(pedido)
+
+    dialogRef.afterClosed().subscribe(result => {
+        console.log('El modal se cerró:', result);
+    });
+}
+
+  ngAfterViewInit(): void {
+    // console.log('Paginator', this.dataSource.paginator);
+    // this.dataSource.paginator = this.paginator;
+    this.initializeScrollToTop(); // Inicializar el botón "back to top"
+    this.initializeSpinner();
+
+    // Iniciar el comportamiento del dropdown con el tamaño actual de la ventana
+    this.initializeDropdownHover(window.innerWidth);
+  }
+
   ngOnInit(): void {
+    this.hayNotificacion = this.pedidoService.getEstadoNotificacion()
+    this.pedidoService.notificacion$.subscribe((estado) => {
+      this.hayNotificacion = estado;
+    });
     const token = sessionStorage.getItem('token'); 
-    console.log('Auth Token:', token); // Verificar token
     if (token) {
       const decodedToken: any = jwtDecode(token);
       this.userId = decodedToken.id;
       this.i_perfil = decodedToken.i_perfil;
     }
-      console.log(this.i_perfil)
       this.usuarioService.getUsuarioById(this.userId).subscribe(
         (data) => {
           this.usuario = data;
-          console.log('Usuario obtenido:', this.usuario);
+          // console.log('Usuario obtenido:', this.usuario);
       
           // Inicializa el formulario con los valores del usuario (nombre y apellidos)
           this.editForm = this.fb.group({
@@ -64,7 +143,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
             RGU_DIRECCION: [this.usuario?.RGU_DIRECCION || '', Validators.required],
             // RGU_GENERO: [this.usuario?.RGU_CORREO || '', Validators.required],
           });
-          console.log(this.editForm);
+          // console.log(this.editForm);
         },
         (error) => {
           console.error('Error al obtener los datos del usuario', error);
@@ -72,7 +151,6 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       );      
     // }
     this.imangenPerfil = this.getImagenUsuario();
-    console.log(this.imangenPerfil)
     this.usuarioService.$usuario.subscribe((usuario) => {
       if (usuario) {
         this.usuario = usuario;
@@ -80,6 +158,52 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
       }
     });
+    this.cargarPedidos(this.userId)
+    
+  }
+
+  cargarPedidos(id: number): void {
+    this.pedidoService.getPedidoByUsuId(id).subscribe({
+      next: (pedidos) => {
+        // this.dataSource = new MatTableDataSource<any>([pedidos]);
+        this.historialPedidos = pedidos;
+        console.log('Pedidos cargados:', pedidos);
+        this.dataSource = new MatTableDataSource(pedidos);
+        this.dataSource.paginator = this.paginator;
+        // this.dataSource.data = this.historialPedidos;
+        
+        console.log('Número de pedidos en historialPedidos:', this.historialPedidos.length);
+        console.log('Número de pedidos en dataSource:', this.dataSource.data.length); 
+
+        console.log(this.historialPedidos.length, 'Número de pedidos');
+        
+        // Solo cambiar notificación si no existe en localStorage
+        if (!localStorage.getItem('hayNotificacion')) {
+          this.hayNotificacion = pedidos.length > 0;
+          localStorage.setItem('hayNotificacion', JSON.stringify(this.hayNotificacion));
+        }
+  
+        this.pedidoService.actualizarPedidos(pedidos); // Notifica cambios globalmente
+      },
+      error: (error) => {
+        console.error('Error al cargar pedidos:', error);
+      },
+    });
+  }
+
+  marcarPedidosRevisados(): void {
+    // Marcar los pedidos como revisados
+    localStorage.setItem('hayNotificacion', JSON.stringify(true));
+    // Opcionalmente, realizar alguna acción adicional
+  }
+  
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    // if (this.dataSource.paginator) {
+    //   this.dataSource.paginator.firstPage();
+    // }
   }
 
   onSubmit() {
@@ -141,13 +265,13 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   }
 
   getImagenUsuario(): string {
-    console.log(this.i_perfil)
+    // console.log(this.i_perfil)
     const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
-    console.log(imagen)
+    // console.log(imagen)
     if (imagen !== undefined) {
       return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
     }
-    console.log(`${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`)
+    // console.log(`${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`)
     return `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`; // Ruta de la imagen por defecto
   }
 
@@ -246,13 +370,5 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   private cleanHoverListeners(): void {
     this.hoverListeners.forEach(unlisten => unlisten());  // Eliminar los listeners previos
     this.hoverListeners = [];  // Vaciar el array
-  }
-
-  ngAfterViewInit(): void {
-    this.initializeScrollToTop(); // Inicializar el botón "back to top"
-    this.initializeSpinner();
-
-    // Iniciar el comportamiento del dropdown con el tamaño actual de la ventana
-    this.initializeDropdownHover(window.innerWidth);
   }
 }

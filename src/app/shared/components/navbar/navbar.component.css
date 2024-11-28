@@ -19,3 +19,36 @@
   top: 10px;
   /* Ajuste cuando el navbar es sticky */
 }
+
+.notificacion {
+  position: absolute;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  top: -42px;
+  right: -48px;
+}
+
+.punto-notificacion {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 44px;
+  right: 52px;
+  border: 2px solid white; /* Opcional para contraste */
+}
+
+.btn {
+  border-radius: 23px;
+}
+
+.co-sesion {
+  background: transparent;
+}

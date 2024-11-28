@@ -75,3 +75,85 @@
     font-size: 1.2rem;
     color: black;
 }
+
+.mat-elevation-z8 {
+    box-shadow: none;
+}
+
+.demo-table {
+    width: 100%;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
+}
+
+.demo-row-is-clicked {
+  font-weight: bold;
+}
+
+.badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.badge-pendiente {
+  background-color: #0d6efd;
+}
+
+.badge-enviado {
+  background-color: #4caf50;
+}
+
+.badge-perparacion {
+  background-color: #f57c00;
+}
+
+.badge-cancelado {
+  background-color: #dc3545;
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.profile-pic {
+  border: 4px solid #fff;
+}
+
+.stats p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+#btn-datos-personales,
+#btn-historial-pedidos {
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#btn-datos-personales:hover {
+  background-color: #ffc107;
+  color: white;
+}
+
+#btn-historial-pedidos:hover {
+  background-color: #ff9800;
+  color: white;
+}

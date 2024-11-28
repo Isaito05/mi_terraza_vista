@@ -56,8 +56,6 @@ export class CarritoListarComponent {
   specialInstructions?: string = '';
   imagen: any;
   CANTIDAD: number = 0;
-
-  // selectedItem: any = null;
   sizes = ['Pequeño', 'Mediano', 'Grande']; // Ejemplo de tamaños disponibles
   sauces = [
     { name: 'Ketchup', selected: false },
@@ -88,6 +86,7 @@ export class CarritoListarComponent {
   };
   direccion_u: string = '';
   id_u: number = 0;
+  historialPedidos: any[] = [];
 
 
   constructor(
@@ -106,6 +105,8 @@ export class CarritoListarComponent {
       this.direccion_u = decodedToken.direccion;
       this.id_u = decodedToken.id
     }
+    // this.historialPedidos = this.pedidoService.obtenerHistorial();
+    // console.log('Historial cargado en ProfileComponent:', this.historialPedidos);
   }
 
   calculateTotal(): number {
@@ -183,9 +184,12 @@ export class CarritoListarComponent {
   }
   
   procesarPedido(){
+    const fechaRegistro = new Date();
+    const offset = fechaRegistro.getTimezoneOffset();
+    fechaRegistro.setMinutes(fechaRegistro.getMinutes() - offset)
     const pedido = {
       PED_RGU_ID: this.id_u, // ID del usuario
-      PED_FECHA: new Date().toISOString(), // Fecha y hora actual en formato ISO
+      PED_FECHA: fechaRegistro.toISOString(), // Fecha y hora actual en formato ISO
       PED_ESTADO: 'Pendiente', // Estado inicial del pedido
       PED_DESCRIPCION:this.listaItemsCarrito
       .map((producto: Product) => producto.specialInstructions)
@@ -208,12 +212,26 @@ export class CarritoListarComponent {
       (response) => {
         console.log('Pedido procesado con éxito:', response);
         Swal.fire('Éxito', 'Tu pedido ha sido procesado.', 'success');
+        // Agregar el pedido al historial
+        // this.pedidoService.agregarPedido(pedido);
+        this.pedidoService.activarNotificacion(); 
+
+        // Mostrar el Toast
+        this.mostrarToast();
       },
       (error) => {
         console.error('Error al procesar el pedido:', error);
         Swal.fire('Error', 'Hubo un problema al procesar tu pedido.', 'error');
       }
     );
+  }
+
+  mostrarToast() {
+    const toastElement = document.getElementById('pedidoToast');
+    if (toastElement) {
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
+    }
   }
 
   actualizarDireccion(nuevaDireccion: string) {
@@ -226,7 +244,6 @@ export class CarritoListarComponent {
       confirmButtonText: 'Aceptar',
     });
   }
-  
 
   getIngredientList(ingredients: any[]): string {
     return ingredients && ingredients.length > 0 

@@ -9,6 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import * as CryptoJS from 'crypto-js';
 import { DatosService } from 'src/app/core/services/datos.service';
+import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
 declare var $: any;
 
 @Component({
@@ -36,6 +37,7 @@ export class NavbarComponent implements AfterViewInit, OnInit{
   secretKey = 'your-secret-key'
   private authSubscription!: Subscription;
   isSticky: boolean = false;
+  hayNotificacion: boolean = false;
 
   
   // Método para usar una imagen por defecto si la imagen de perfil falla
@@ -50,10 +52,18 @@ export class NavbarComponent implements AfterViewInit, OnInit{
     private renderer: Renderer2, 
     public authService: AuthService,
     private usuarioService: UsuarioService,
-    private datoService: DatosService
+    private datoService: DatosService,
+    public pedidoService: PedidoService
   ){}
 
   ngOnInit(): void {
+    this.hayNotificacion = this.pedidoService.getEstadoNotificacion();
+    console.log('Estado inicial de notificación:', this.hayNotificacion);
+    // const notificacionGuardada = localStorage.getItem('hayNotificacion');
+    // this.hayNotificacion = notificacionGuardada ? JSON.parse(notificacionGuardada) : false;
+    this.pedidoService.notificacion$.subscribe((estado) => {
+      this.hayNotificacion = estado;
+    });
     const token = sessionStorage.getItem('token')
     // console.log('Auth Token:', token); // Verificar token
     if (token) {
@@ -115,6 +125,11 @@ export class NavbarComponent implements AfterViewInit, OnInit{
     this.datoService.cart$.subscribe(cart => {
       this.cartCount = cart.reduce((total, item) => total + item.CANTIDAD, 0);
     });
+  }
+
+  limpiarNotificacion(): void {
+    this.hayNotificacion = false;
+    this.pedidoService.desactivarNotificacion()
   }
 
   // addProductToCart(product: any) {

@@ -1,0 +1,118 @@
+<div mat-dialog-content>
+    <!-- Usa aquí el contenido de la factura que ya tienes -->
+    <!-- Asegúrate de utilizar datos dinámicos -->
+    <div class="geist-mono">
+        <div class="card order-summary-card borde-inferior-rasgado">
+            <h6 class="geist-mono">MI TERRAZA</h6>
+            <div class="text-center">
+                <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">CIUDAD DEL PUERTO CRA. 19 - 20</p>
+            </div>
+            <div class="col-6">
+                <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>NIT. </strong><span>690. 123 123 - 3</span></p>
+            </div>
+
+            <!-- Número y Fecha del Pedido -->
+            <div class="row mb-2">
+                <div class="text-center col-12">
+                   <p class="geist-mono mb-0" style="font-size: 13px; text-transform: uppercase;"><strong class="">NOMBRE:</strong><span style="margin-left: 10px;">{{ data.rguUsuario.RGU_NOMBRES}}</span> {{data.rguUsuario.RGU_APELLIDOS}}</p>
+               </div>
+               <div class="text-center col-8">
+                   <p class="geist-mono mb-0" style="font-size: 13px;"><strong class="">TELEFONO:</strong> {{data.rguUsuario.RGU_TELEFONO}} </p>
+               </div>
+               <div class="text-center pe-4">
+                   <p class="geist-mono text-uppercase mb-0" style="font-size: 13px;"><strong class="ms-4">FECHA DE REALIZACION:</strong> {{ data.PED_FECHA | date:'MMM dd yyyy hh:mm a' }}</p>
+               </div>
+            </div>
+
+            <!-- Lista de Productos -->
+            <div class="product-list">
+                <!-- Encabezados -->
+                <div class="row text-center border-bottom">
+                    <div class="col-4 me-3 text-start">
+                        <p class="mb-0 geist-mono" style="font-size: 14px;"><strong>PRODUCTO</strong></p>
+                    </div>
+                    <div class="col">
+                        <p class="mb-0 geist-mono" style="font-size: 14px;"><strong>CANT.</strong></p>
+                    </div>
+                    <div class="col-auto pe-1 text-end">
+                        <p class="mb-0 geist-mono" style="font-size: 14px;"><strong>PRECIO UNI.</strong></p>
+                    </div>
+                </div>
+
+                <!-- Productos -->
+                    <div *ngFor="let producto  of productos" class="pb-3">
+                        <div class="row text-center">
+                            <div class="col-5 text-start">
+                                <p class="mb-0 geist-mono" style="font-size: 13px; text-transform: uppercase;">{{ producto.nombre }}</p>
+                            </div>
+                            <div class="col">
+                                <p class="mb-0 geist-mono" style="font-size: 13px;">{{ producto.cantidad }}</p>
+                            </div>
+                            <div class="col-4 text-end">
+                                <p class="mb-0 geist-mono" style="font-size: 13px;">{{ formatCurrency(producto.prec_unitario) }}</p>
+                            </div>
+                        </div>
+                        <!-- Adicionales -->
+                        <div class="d-flex">
+                            <div>
+                                <p style="font-size: 11px; margin-bottom: 0;"><strong class="me-1">Adicionales:</strong> {{ producto.adicionales }}</p>
+                                <p style="font-size: 11px; margin-bottom: 0;"><strong class="me-1">Tamaño:</strong> {{ producto.tamano }}</p>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Opciones de Entrega -->
+            <div class="geist-mono">
+                <p style="margin-bottom: 0; font-size: 14px;"><strong>DETALLES DE ENTREGA</strong></p>
+
+            <!-- Detalles de Entrega -->
+            <div class="geist-mono mt-1">
+                <div class="row text-center">
+                    <p class="geist-mono text-center text-uppercase mb-0" style="font-size: 13px;"><strong>Tipo de entrega:</strong> {{ data.PED_MET_PAGO }}</p>
+                    <p class="geist-mono text-center text-uppercase mb-0" style="font-size: 13px;"><strong>Direccion:</strong> <span> {{dir_nueva || data.rguUsuario.RGU_DIRECCION}}</span>
+                    <p class="geist-mono text-center text-uppercase mb-0" style="font-size: 13px;"><strong>Informacion Adicional:</strong> {{ data.PED_DESCRIPCION }}</p>
+                </div>
+            </div>
+
+            <!-- Resumen del Pedido -->
+            <div class="mt-2">
+                <!-- <div *ngFor="let producto of productos">
+                    <div class="d-flex justify-content-between">
+                        <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">Subtotal:</p>
+                        <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">{{ producto.sub_total }}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">IVA (10%):</p>
+                        <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">{{producto.iva }}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">Descuento:</p>
+                        <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;">{{ calculateDiscount() }}</p>
+                    </div>
+                </div> -->
+            </div>
+
+            <!-- Totales -->
+            <div class="total d-flex justify-content-between">
+                <p class="geist-mono"><strong>TOTAL: </strong></p>
+                <p class="geist-mono"><strong>{{ formatCurrency(data.PED_PRECIO_TOTAL) }}</strong></p>
+            </div>
+
+            <!-- Botón de Confirmar Pedido -->
+            <div class="w-100 mt-3 ds-estado" [ngClass]="{'badge-pendiente': data.PED_ESTADO === 'Pendiente', 'badge-enviado': data.PED_ESTADO === 'Enviado', 'badge-cancelado': data.PED_ESTADO === 'Cancelado', 'badge-perparacion': data.PED_ESTADO === 'En preparacion'}">{{data.PED_ESTADO}}</div>
+
+            <!-- Nota de Agradecimiento -->
+            <div class="text-center mt-3">
+                <p class="geist-mono" style="font-size: 12px; color: gray;">
+                    Gracias por elegirnos. Si tienes alguna consulta, contáctanos al 322 522222.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cerrar</button>
+</div> -->

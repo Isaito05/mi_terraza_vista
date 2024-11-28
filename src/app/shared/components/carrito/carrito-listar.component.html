@@ -138,7 +138,7 @@
                             <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Nro. de orden:</strong><span>123456</span></p>
                         </div>
                         <div class="col-6">
-                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dia:</strong> {{ currentDate | date: 'MMM d, y' }}</p>
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dia:</strong> {{ currentDate | date: 'dd/MM/yyyy:HH:mm' }}</p>
                         </div>
                         <!-- <div class="col">
                             <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dirección:</strong> Cra 15b #46 12</p>
@@ -376,5 +376,17 @@
             </div>
         </div>
     </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="pedidoToast" class="toast text-light bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+           <div class="d-flex">
+               <div class="toast-body">
+                    <strong>Tu pedido se ha realizado con exito!</strong>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+           </div> 
+        </div>
+    </div>
+      
     <app-footer></app-footer>
 </div>
