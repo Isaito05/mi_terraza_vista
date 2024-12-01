@@ -35,19 +35,26 @@ export class DatosService {
 
   generateProductKey(product: any): string {
     const size = product.selectedSize || '';
-    const ingredients = product.extraIngredients ? product.extraIngredients.map((i: any) => i.name).join(',') : '';
+    // const ingredients = product.extraIngredients ? product.extraIngredients.map((i: any) => i.name).join(',') : '';
+    const selectedIngredients = product.extraIngredients ? product.extraIngredients.filter((i: any) => i.selected).map((i: any) => i.name).join(','): '';
     const descripcion = product.specialInstructions || ''
     // Generar una clave que incluya tamaño, ingredientes y otros detalles de personalización
-    const key = `${product.PROD_VENTA_ID}-${size}-${ingredients}-${descripcion}`;
+    const key = `${product.PROD_VENTA_ID}-${size}-${selectedIngredients}-${descripcion}`;
     
-    console.log('Generated product key:', key); // Verifica la nueva clave generada
+    console.log('Generated ingrediente key:', selectedIngredients); // Verifica la nueva clave generada
+    console.log('Generated product key:', key); // Verifica la nueva clave ge
     return key;
   }
 
+  
+
+
   addProduct(product: any, customizations: any) {
+    console.log('Detalles de producto:', product);
+    console.log('Detalles de customizacon:', customizations);
     const customizedProduct = {
       ...product,
-      ...customizations,
+      // ...customizations,
     };
    console.log(customizedProduct,"esta vina trae lo siguinete ")
     // Generar la clave única para el producto personalizado

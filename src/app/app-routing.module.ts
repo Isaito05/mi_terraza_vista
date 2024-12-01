@@ -20,26 +20,26 @@ const routes: Routes = [
     pathMatch: 'full' 
   },
 
-  // Rutas públicas (fuera del layout)
+ // Rutas públicas (fuera del layout)
   { 
     path: 'login', 
-    title: 'Inicio de sesión',
+    title: 'Inicia sesión | Mi Terraza', 
     loadChildren: () => import('./core/login/login.module').then(m => m.LoginModule),
   },
   { 
     path: 'forgot-password', 
-    title: 'Recuperar contraseña', 
+    title: '¿Olvidaste tu contraseña? | Mi Terraza', 
     component: ForgotPasswordComponent 
   },
   { 
     path: 'reset-password', 
-    title: 'Cambiar contraseña', 
+    title: 'Establece tu nueva contraseña | Mi Terraza', 
     component: ResetPasswordComponent, 
     canDeactivate: [canDeactivateGuard]
   },
   { 
     path: 'register', 
-    title: 'Registrar usuario', 
+    title: 'Crea tu cuenta | Mi Terraza', 
     component: RegisterComponent, 
     canDeactivate: [canDeactivateGuard]
   },
@@ -49,21 +49,20 @@ const routes: Routes = [
   },
   { 
     path: 'profile', 
-    title: 'Mi perfil', 
+    title: 'Mi perfil | Gestiona tu cuenta', 
     component: ProfileComponent 
   },
   // Ruta para la página de inicio pública
   { 
     path: 'home', 
-    title: 'Mi terraza', 
+    title: 'Bienvenido a Mi Terraza | Tu comida favorita', // Da una bienvenida y muestra la identidad del sitio
     component: HomeComponent 
   },
-
   { 
     path: 'carrito', 
+    title: 'Tu carrito de compras | Mi Terraza', // Enfatiza la acción de compra
     component: CarritoListarComponent
   },
-
   // Rutas dentro del layout con autenticación (authGuard)
   {
     path: '',

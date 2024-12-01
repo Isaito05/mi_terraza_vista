@@ -60,8 +60,10 @@
                             <h6 class="mb-1">{{ item.PROD_VENTA_NOMBRE }}</h6>
                             <p class="text-muted small mb-1">{{ getTruncatedText(item.PROD_VENTA_DESCRIPCION) }}</p>
 
-                            <!-- <span > {{getIngredientList(item.extraIngredients) }}</span> <br>
-                            <span > {{item.selectedSize}}</span>  -->
+                            <span > {{item.CANTIDAD}}</span> <br>
+                            <span > {{getIngredientList(item.extraIngredients) }}</span> <br>
+                            <span > {{item.selectedSize}}</span> <br>
+                            <span > {{item.productKey}}</span> <br>
 
                             <div *ngIf="!item.isExpanded">
                                 <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = true">Ver
@@ -84,7 +86,8 @@
                                     <!-- Icono de Descripción con tooltip -->
                                     <i class="fa-solid fa-info-circle me-2"
                                         matTooltip="Descripción: {{ item.specialInstructions || 'Sin instrucciones especiales' }}"></i>
-                                    <i class="fa-solid fa-pen-to-square" (click)="openEditModal(item)"  matTooltip="Editar producto"></i>
+                                    <!-- <i class="fa-solid fa-pen-to-square" (click)="openEditModal(item)"  matTooltip="Editar producto"></i> -->
+                                    <i class="fa-solid fa-pen-to-square" (click)="productoaEditar(item)"  matTooltip="Editar producto"></i>
                                 </div>
 
                                 <!-- Botón para contraer detalles -->
@@ -138,7 +141,7 @@
                             <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Nro. de orden:</strong><span>123456</span></p>
                         </div>
                         <div class="col-6">
-                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dia:</strong> {{ currentDate | date: 'dd/MM/yyyy:HH:mm' }}</p>
+                            <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dia:</strong> {{ currentDate | date: 'MMM d, y' }}</p>
                         </div>
                         <!-- <div class="col">
                             <p class="geist-mono" style="font-size: 13px; margin-bottom: 0;"><strong>Dirección:</strong> Cra 15b #46 12</p>
@@ -180,7 +183,7 @@
                                     <p class="mb-0 geist-mono" style="font-size: 13px;">{{ item.CANTIDAD }}</p>
                                 </div>
                                 <div class="col-4 text-end">
-                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ formatCurrency(item.PROD_VENTA_PRECIO) }}</p>
+                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD) }}</p>
                                 </div>
                             </div>
                             <!-- Adicionales -->
@@ -192,7 +195,7 @@
                                     <i class="fa-solid fa-pizza-slice ms-1 position-absolute" style="font-size: 14px;" matTooltip="{{ getIngredientListFac(item.extraIngredients) }}"></i>
                                 </div>
                                 <div>
-                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ calcularTotalAdicionales(item.extraIngredients) }}</p>
+                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ calcularTotalAdicionales(item.extraIngredients, item.CANTIDAD) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -266,127 +269,11 @@
     </div>
 
     <!-- Modal de Bootstrap para personalizar el producto -->
-    <div class="modal fade" id="customizationModal" tabindex="-1" aria-labelledby="customizationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <!-- Encabezado del modal -->
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="customizationModalLabel">Editar Producto</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-    
-                <!-- Cuerpo del modal -->
-                <div class="modal-body p-4">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <!-- Columna izquierda -->
-                            <div class="col-md-6">
-                                <!-- Selección de tamaño -->
-                                <div class="mb-4">
-                                    <label for="size" class="form-label h6">Tamaño del Producto</label>
-                                    <select id="size" [(ngModel)]="selectedItem.selectedSize" class="form-select border border-primary shadow-sm">
-                                        <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
-                                    </select>
-                                </div>
+    <app-carrito-edit-modal  
+    [selectedProduct]="productToEdit"
+    (saveChanges)="actualizarProducto($event)"
+    [isEditing]="isEditing" >
+    </app-carrito-edit-modal>
 
-                                  <!-- Selector de cantidad -->
-                                <div class="mb-3">
-                                    <label for="quantity" class="form-label h6">Cantidad</label>
-                                    <input type="number" id="quantity" class="form-control no-spin" [(ngModel)]="selectedQuantity" min="1"
-                                    (change)="updateQuantity(selectedQuantity)">
-                                </div>
-    
-                                <!-- Ingredientes Extra -->
-                                <div class="mb-4">
-                                    <label class="form-label h6">Ingredientes Extra</label>
-                                    <div class="p-3 border rounded shadow-sm bg-light">
-                                        <div *ngFor="let ingredient of extraIngredients" class="form-check">
-                                            <input type="checkbox" [(ngModel)]="ingredient.selected" class="form-check-input" [id]="ingredient.name">
-                                            <label [for]="ingredient.name" class="form-check-label">
-                                                {{ ingredient.name }} ({{ formatCurrency(ingredient.price) }})
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                 <!-- Selección de salsas -->
-                                <div class="mb-4">
-                                <label class="form-label h6">Salsas</label>
-                                <div class="btn-group d-flex" role="group">
-                                    <button *ngFor="let sauce of sauces" type="button" class="btn btn-outline-primary"
-                                    [class.active]="sauce.selected" (click)="toggleSauce(sauce)">
-                                    {{ sauce.name }}
-                                    </button>
-                                </div>
-                                </div>
-                        
-                                <!-- Instrucciones especiales -->
-                                <div class="mb-4">
-                                <label for="specialInstructions" class="form-label h6">Instrucciones Especiales</label>
-                                <textarea id="specialInstructions" [(ngModel)]="specialInstructions"
-                                    class="form-control border border-primary shadow-sm" rows="3"
-                                    placeholder="Ej: Sin cebolla, extra salsa"></textarea>
-                                </div>
-                            </div>
-    
-                            <!-- Columna derecha -->
-                            <div class="col-md-6">
-                                <!-- Imagen del producto -->
-                                <div class="">
-                                    <img class="card-img-top" [src]="imagen" style="height: 200px; object-fit: cover;">
-                                </div>
-    
-                                <!-- Resumen del costo total -->
-                                <div class="mb-3 border-top pt-3">
-                                    <p><strong>Costo Base:</strong> {{ formatCurrency(basePrice) }}</p>
-                                </div>
-    
-                                <!-- Información adicional de personalización -->
-                                <div class="mb-3">
-                                    <p class="mb-1"><strong>Tamaño seleccionado:</strong> {{ selectedItem.selectedSize || 'Ninguno' }}</p>
-                                    <p><strong>Ingredientes seleccionados:</strong></p>
-                                    <ul class="list-unstyled">
-                                        <!-- Verificar si hay ingredientes seleccionados -->
-                                        <li *ngIf="!hasSelectedIngredients()" class="text-muted">
-                                            Sin ingredientes extra
-                                        </li>
-    
-                                        <!-- Listar los ingredientes seleccionados -->
-                                        <ng-container *ngFor="let ingredient of extraIngredients">
-                                            <li *ngIf="ingredient.selected" class="d-flex justify-content-between">
-                                                <span>{{ ingredient.name }}</span>
-                                                <span class="text-muted">{{ formatCurrency(ingredient.price) }}</span>
-                                            </li>
-                                        </ng-container>
-                                    </ul>
-    
-                                    <p><strong>Ingredientes Adicionales:</strong> {{ formatCurrency(totalExtras) }}</p>
-                                    <p><strong>Total:</strong> {{ formatCurrency(calculateTotalPrice()) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- Footer del modal -->
-                <div class="modal-footer bg-light d-flex">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" (click)="updateItem()">Guardar cambios</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="pedidoToast" class="toast text-light bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
-           <div class="d-flex">
-               <div class="toast-body">
-                    <strong>Tu pedido se ha realizado con exito!</strong>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-           </div> 
-        </div>
-    </div>
-      
     <app-footer></app-footer>
 </div>

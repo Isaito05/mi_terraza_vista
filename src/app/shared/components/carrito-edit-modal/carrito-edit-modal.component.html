@@ -1,0 +1,125 @@
+ <!-- Modal de Bootstrap para personalizar el producto -->
+ <div class="modal fade" id="customizationModal" tabindex="-1" aria-labelledby="customizationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Encabezado del modal -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="customizationModalLabel">Personalizar Producto - <span class="text-uppercase">{{ selectedProduct?.PROD_VENTA_NOMBRE }}</span></h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeModal()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Cuerpo del modal en formato horizontal -->
+<div class="modal-body p-4">
+<div class="container-fluid">
+  <div class="row">
+    <!-- Columna izquierda -->
+    <div class="col-md-6">
+      <!-- Tamaño del producto -->
+      <div class="mb-4">
+        <label for="size" class="form-label h6">Tamaño del Producto</label>
+        <select id="size" [(ngModel)]="selectedSize" class="form-select border border-primary shadow-sm">
+          <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
+        </select>
+      </div>
+
+      <!-- Selector de cantidad -->
+      <div class="mb-3">
+        <label for="quantity" class="form-label h6">Cantidad </label>
+        <input type="number" id="quantity" class="form-control no-spin" [(ngModel)]="selectedQuantity" min="1"
+          (change)="updateQuantity(selectedQuantity)">
+      </div>
+
+      <!-- Ingredientes Extra -->
+      <div class="mb-4">
+        <label class="form-label h6">Ingredientes Extra</label>
+        <div class="p-3 border rounded shadow-sm bg-light">
+          <div *ngFor="let ingredient of extraIngredients" class="form-check">
+            <input type="checkbox" [(ngModel)]="ingredient.selected" class="form-check-input" [id]="ingredient.name">
+            <label [for]="ingredient.name" class="form-check-label">
+              {{ ingredient.name }} ({{ formatCurrency(ingredient.price) }})
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selección de salsas -->
+      <div class="mb-4">
+        <label class="form-label h6">Salsas</label>
+        <div class="btn-group d-flex" role="group">
+          <button *ngFor="let sauce of sauces" type="button" class="btn btn-outline-primary"
+            [class.active]="sauce.selected" (click)="toggleSauce(sauce)">
+            {{ sauce.name }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Instrucciones especiales -->
+      <div class="mb-4">
+        <label for="specialInstructions" class="form-label h6">Instrucciones Especiales</label>
+        <textarea id="specialInstructions" [(ngModel)]="specialInstructions"
+          class="form-control border border-primary shadow-sm" rows="3"
+          placeholder="Ej: Sin cebolla, extra salsa"></textarea>
+      </div>
+    </div>
+
+    <!-- Columna derecha -->
+    <div class="col-md-6">
+
+      <div class="">
+        <img class="card-img-top" [src]="imagen" style="height: 200px; object-fit: cover;">
+      </div>
+
+      <!-- Tiempo de preparación estimado -->
+      <div class="text-center my-3">
+        <p class="text-muted"><i class="fas fa-clock"></i> Tiempo estimado de preparación: {{ estimatedPreparationTime
+          }} minutos</p>
+      </div>
+
+      <!-- Resumen del costo total -->
+      <div class="mb-3 border-top pt-3">
+        <p><strong>Costo Base:</strong> {{ formatCurrency(basePrice * selectedQuantity) }}</p>
+      </div>
+
+      <!-- Información adicional de personalización -->
+      <div class="mb-3">
+        <p class="mb-1"><strong>Tamaño seleccionado:</strong> {{ selectedSize || 'Ninguno' }}</p>
+        <p><strong>Ingredientes seleccionados:</strong></p>
+        <ul class="list-unstyled">
+          <!-- Verificar si hay ingredientes seleccionados -->
+          <li *ngIf="!hasSelectedIngredients()" class="text-muted">
+            Sin ingredientes extra
+          </li>
+
+          <!-- Listar los ingredientes seleccionados -->
+          <ng-container *ngFor="let ingredient of extraIngredients">
+            <li *ngIf="ingredient.selected" class="d-flex justify-content-between">
+              <span>{{ ingredient.name }}</span>
+              <span class="text-muted">{{ formatCurrency(ingredient.price * selectedQuantity) }}</span>
+            </li>
+          </ng-container>
+        </ul>
+
+        <p><strong>Ingredientes Adicionales:</strong> {{formatCurrency(calculateTotalExtras()*selectedQuantity)}}</p>
+        <!-- <p><strong>Cantidad:</strong> {{selectedQuantity}} <span class="text-muted">{{ formatCurrency(selectedProduct!.PROD_VENTA_PRECIO * selectedQuantity) }}</span></p> -->
+        <p><strong>Total:</strong> {{ formatCurrency(calculateTotalPrice()) }}</p>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+            <!-- Footer del modal -->
+            <div class="modal-footer bg-light d-flex">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()" data-bs-dismiss="modal">Cerrar</button>
+            
+                <!-- <button type="button" class="btn btn-primary" (click)="productoPersonalizado()">Agregar al carrito</button>
+                <button type="button" class="btn btn-primary" (click)="productoPersonalizado()" [routerLink]="['/carrito']">Realizar pedido</button> -->
+                <button type="button" *ngIf="!isEditing" class="btn btn-primary" (click)="agregarProducto()">Agregar al carrito</button>
+                <button type="button" *ngIf="!isEditing" class="btn btn-primary" (click)="agregarProducto()" [routerLink]="['/carrito']">Realizar pedido</button>
+                
+                <button type="button" *ngIf="isEditing" class="btn btn-primary" (click)="saveCustomization()">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>

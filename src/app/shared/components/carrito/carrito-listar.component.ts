@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -18,35 +18,46 @@ import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
 import { id } from '@swimlane/ngx-datatable';
+import { SharedModule } from "../../shared.module";
+import { Product } from 'src/app/features/usuario/models/product.interface';
+import { CarritoEditModalComponent } from '../carrito-edit-modal/carrito-edit-modal.component';
+import { Ingredient } from 'src/app/features/usuario/models/product.interface';
 
-export interface Product {
-  productKey: any;
-  isExpanded: any;
-  PROD_VENTA_ID: number;
-  PROD_VENTA_NOMBRE: string;
-  PROD_VENTA_PRECIO: number;
-  PROD_VENTA_DESCRIPCION: string;
-  PROD_VENTA_IMAGEN: string;
-  PROD_VENTA_ESTADO: number;
-  CANTIDAD: number
-  selectedSize: string; // Nuevo campo
-  extraIngredients: any[];
-  specialInstructions?: string;
-  priceWithCustomization?: number;
-  salsa: any[];
-  nuevaDireccion?: string
-}
+// export interface Product {
+//   productKey: any;
+//   isExpanded: any;
+//   PROD_VENTA_ID: number;
+//   PROD_VENTA_NOMBRE: string;
+//   PROD_VENTA_PRECIO: number;
+//   PROD_VENTA_DESCRIPCION: string;
+//   PROD_VENTA_IMAGEN: string;
+//   PROD_VENTA_ESTADO: number;
+//   CANTIDAD: number
+//   selectedSize: string; // Nuevo campo
+//   extraIngredients: any[];
+//   specialInstructions?: string;
+//   priceWithCustomization?: number;
+//   salsa: any[];
+//   nuevaDireccion?: string
+// }
+
+// export interface Ingredient {
+//   name: string;
+//   price: number;
+//   selected: boolean;
+// }
 
 @Component({
   selector: 'app-carrito-listar',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule, RouterModule, MatRadioModule],
+  imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule, MatTooltipModule, RouterModule, MatRadioModule, SharedModule],
   templateUrl: './carrito-listar.component.html',
   styleUrl: './carrito-listar.component.css'
 })
 export class CarritoListarComponent {
+  @ViewChild('customModal') modalComponent!: CarritoEditModalComponent;
   listaItemsCarrito: Product[] = [];
-  cartCount: number = 0;
+  // cartCount: number = 0;
   currentDate: Date = new Date();
   deliveryOption: string = '';
   showQrCode: boolean = false;
@@ -54,40 +65,41 @@ export class CarritoListarComponent {
   estimatedDeliveryTime: string = '30-45 minutos';
   selectedQuantity: number = 0;
   specialInstructions?: string = '';
-  imagen: any;
-  CANTIDAD: number = 0;
-  sizes = ['Pequeño', 'Mediano', 'Grande']; // Ejemplo de tamaños disponibles
-  sauces = [
-    { name: 'Ketchup', selected: false },
-    { name: 'Mostaza', selected: false },
-    { name: 'Mayonesa', selected: false },
-  ];
+  // imagen: any;
+  // CANTIDAD: number = 0;
+  productToEdit: Product | null = null;
+  isEditing: boolean = false;
+  // basePrice = 0;
+  // totalExtras = 0;
+  direccion_u: string = '';
+  id_u: number = 0;
+  // sizes = ['Pequeño', 'Mediano', 'Grande']; // Ejemplo de tamaños disponibles
+  // sauces = [
+  //   { name: 'Ketchup', selected: false },
+  //   { name: 'Mostaza', selected: false },
+  //   { name: 'Mayonesa', selected: false },
+  // ];
   extraIngredients = [
     { name: 'Queso extra', price: 2000, selected: false },
     { name: 'Pepperoni', price: 2500, selected: false },
     { name: 'Champiñones', price: 1500, selected: false }
-  ]; // Ejemplo de ingredientes adicionales
-  basePrice = 0;
-  totalExtras = 0;
-  selectedItem: Product = {
-    isExpanded: false,
-    PROD_VENTA_ID: 0,
-    PROD_VENTA_NOMBRE: '',
-    PROD_VENTA_PRECIO: 0,
-    PROD_VENTA_DESCRIPCION: '',
-    PROD_VENTA_IMAGEN: '',
-    PROD_VENTA_ESTADO: 1,
-    CANTIDAD: 1,
-    selectedSize: '',
-    extraIngredients: [],
-    specialInstructions: '',
-    productKey: undefined,
-    salsa: []
-  };
-  direccion_u: string = '';
-  id_u: number = 0;
-  historialPedidos: any[] = [];
-
+  ]; 
+  
+  // selectedItem: Product = {
+  //   isExpanded: false,
+  //   PROD_VENTA_ID: 0,
+  //   PROD_VENTA_NOMBRE: '',
+  //   PROD_VENTA_PRECIO: 0,
+  //   PROD_VENTA_DESCRIPCION: '',
+  //   PROD_VENTA_IMAGEN: '',
+  //   PROD_VENTA_ESTADO: 1,
+  //   CANTIDAD: 1,
+  //   selectedSize: '',
+  //   extraIngredients: [],
+  //   specialInstructions: '',
+  //   productKey: undefined,
+  //   salsa: []
+  // };
 
   constructor(
     private datoService: DatosService,
@@ -105,8 +117,6 @@ export class CarritoListarComponent {
       this.direccion_u = decodedToken.direccion;
       this.id_u = decodedToken.id
     }
-    // this.historialPedidos = this.pedidoService.obtenerHistorial();
-    // console.log('Historial cargado en ProfileComponent:', this.historialPedidos);
   }
 
   calculateTotal(): number {
@@ -184,12 +194,9 @@ export class CarritoListarComponent {
   }
   
   procesarPedido(){
-    const fechaRegistro = new Date();
-    const offset = fechaRegistro.getTimezoneOffset();
-    fechaRegistro.setMinutes(fechaRegistro.getMinutes() - offset)
     const pedido = {
       PED_RGU_ID: this.id_u, // ID del usuario
-      PED_FECHA: fechaRegistro.toISOString(), // Fecha y hora actual en formato ISO
+      PED_FECHA: new Date().toISOString(), // Fecha y hora actual en formato ISO
       PED_ESTADO: 'Pendiente', // Estado inicial del pedido
       PED_DESCRIPCION:this.listaItemsCarrito
       .map((producto: Product) => producto.specialInstructions)
@@ -212,26 +219,12 @@ export class CarritoListarComponent {
       (response) => {
         console.log('Pedido procesado con éxito:', response);
         Swal.fire('Éxito', 'Tu pedido ha sido procesado.', 'success');
-        // Agregar el pedido al historial
-        // this.pedidoService.agregarPedido(pedido);
-        this.pedidoService.activarNotificacion(); 
-
-        // Mostrar el Toast
-        this.mostrarToast();
       },
       (error) => {
         console.error('Error al procesar el pedido:', error);
         Swal.fire('Error', 'Hubo un problema al procesar tu pedido.', 'error');
       }
     );
-  }
-
-  mostrarToast() {
-    const toastElement = document.getElementById('pedidoToast');
-    if (toastElement) {
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
-    }
   }
 
   actualizarDireccion(nuevaDireccion: string) {
@@ -244,26 +237,27 @@ export class CarritoListarComponent {
       confirmButtonText: 'Aceptar',
     });
   }
-
+  
   getIngredientList(ingredients: any[]): string {
-    return ingredients && ingredients.length > 0 
-    ? ingredients.map(ingredient => `${ingredient.name} (${this.formatCurrency(ingredient.price)})`).join(', ')
+    console.log('Producto seleccionadoentro a:', ingredients);
+    return ingredients && ingredients.length > 0 ? 
+    ingredients.filter((i: any)=> i.selected).map((i: any) => `${i.name} (${this.formatCurrency(i.price)})`).join(', ')
     : 'Sin adicionales';
   }
 
   getIngredientListFac(ingredients: any[]): string {
+    console.log('Producto seleccionado salieno b:', ingredients);
     if (!ingredients || ingredients.length === 0) {
         return 'Sin adicionales';
     }
-    const ingredientList = ingredients
-        .map(ingredient => `${ingredient.name}`)
-        .join(', ');
-
+    const ingredientList = ingredients.filter((i:any)=> i.selected).map((i:any) => i.name).join(', ');
+        console.log('Producto seleccionado final:', ingredientList);
     return `${ingredientList}.`;
   }
 
-  calcularTotalAdicionales(ingredients: any[]): string {
-    const total = ingredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+  calcularTotalAdicionales(ingredients: any[], cantidad: any): string {
+    console.log(cantidad,"cantidad")
+    const total = ingredients.filter((i:any)=> i.selected).reduce((sum, ing) => sum + ing.price*cantidad , 0) || 0;
     return this.formatCurrency(total);
   }
 
@@ -373,106 +367,77 @@ export class CarritoListarComponent {
   }
   
   // Calcular el precio total en el modal
-  calculateTotalPrice() {
-    return this.basePrice + this.calculateExtras(this.extraIngredients);
-  }
+  // calculateTotalPrice() {
+  //   return this.basePrice + this.calculateExtras(this.extraIngredients);
+  // }
 
   // Método para abrir el modal de edición
-  openEditModal(item: Product) {
-    // Copiamos los datos del producto para no modificar el original
-    this.selectedItem = { ...item };
-    this.imagen = this.selectedItem.PROD_VENTA_IMAGEN
+  // openEditModal(item: Product) {
+  //   // Copiamos los datos del producto para no modificar el original
+  //   this.selectedItem = { ...item };
+  //   this.imagen = this.selectedItem.PROD_VENTA_IMAGEN
     
-    // Asegurarnos de que los ingredientes adicionales estén correctamente inicializados
-    this.selectedItem.extraIngredients = this.selectedItem.extraIngredients || [];
-    this.selectedItem.salsa = this.selectedItem.salsa || [];
-    this.selectedQuantity = item.CANTIDAD;
-    this.specialInstructions = item.specialInstructions
+  //   // Asegurarnos de que los ingredientes adicionales estén correctamente inicializados
+  //   this.selectedItem.extraIngredients = this.selectedItem.extraIngredients || [];
+  //   this.selectedItem.salsa = this.selectedItem.salsa || [];
+  //   this.selectedQuantity = item.CANTIDAD;
+  //   this.specialInstructions = item.specialInstructions
     
-    console.log(item, "eta vaina")
-    
-    // Guardamos el precio base y calculamos el costo de los extras
-    this.basePrice = item.PROD_VENTA_PRECIO;
-    this.totalExtras = this.calculateExtras(this.selectedItem.extraIngredients);
+  //   // Guardamos el precio base y calculamos el costo de los extras
+  //   this.basePrice = item.PROD_VENTA_PRECIO;
+  //   this.totalExtras = this.calculateExtras(this.selectedItem.extraIngredients);
   
-    // Actualizamos el estado de los ingredientes adicionales seleccionados en el modal
-    this.extraIngredients.forEach(ingredient => {
-      // Marca si el ingrediente está seleccionado en el producto
-      const isSelected = this.selectedItem.extraIngredients.some(
-        (selected: any) => selected.name === ingredient.name && selected.selected
-      );
-      ingredient.selected = isSelected; // Marcar como seleccionado o no
-    });
+  //   // Actualizamos el estado de los ingredientes adicionales seleccionados en el modal
+  //   this.extraIngredients.forEach(ingredient => {
+  //     // Marca si el ingrediente está seleccionado en el producto
+  //     const isSelected = this.selectedItem.extraIngredients.some(
+  //       (selected: any) => selected.name === ingredient.name && selected.selected
+  //     );
+  //     ingredient.selected = isSelected; // Marcar como seleccionado o no
+  //   });
 
-    this.sauces.forEach(ingredient => {
-      // Marca si el ingrediente está seleccionado en el producto
-      const isSelected = this.selectedItem.salsa.some(
-        (selected: any) => selected.name === ingredient.name && selected.selected
-      );
-      ingredient.selected = isSelected; // Marcar como seleccionado o no
-    });
+  //   this.sauces.forEach(ingredient => {
+  //     // Marca si el ingrediente está seleccionado en el producto
+  //     const isSelected = this.selectedItem.salsa.some(
+  //       (selected: any) => selected.name === ingredient.name && selected.selected
+  //     );
+  //     ingredient.selected = isSelected; // Marcar como seleccionado o no
+  //   });
   
-    // Mostrar el modal
-    const customizationModal = new bootstrap.Modal(document.getElementById('customizationModal')!);
-    customizationModal.show();
-  }
+  //   // Mostrar el modal
+  //   const customizationModal = new bootstrap.Modal(document.getElementById('customizationModal')!);
+  //   customizationModal.show();
+  // }
   
  // Método para actualizar el item en el carrito en el modal
-  updateItem() {
-  this.cargarCarritoDesdeLocalStorage();
+  // updateItem() {
+  // this.cargarCarritoDesdeLocalStorage();
+  // if (this.selectedItem) {
+
+  //   if (!this.selectedItem.extraIngredients) { this.selectedItem.extraIngredients = [];}
+  //   if (!this.selectedItem.salsa) { this.selectedItem.salsa = [];}
+
+  //   const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
+  //   const selectedSalsa = this.sauces.filter(ingredient => ingredient.selected);
+  //   const updatedItem = { ...this.selectedItem, 
+  //     extraIngredients: [...selectedIngredients],
+  //     salsa: [...selectedSalsa],
+  //     specialInstructions:this.specialInstructions,
+  //     CANTIDAD: this.selectedQuantity
+  //   };
   
-  console.log("esto trae", this.selectedItem)
-  if (this.selectedItem) {
-    // Si no tiene ingredientes, inicializamos el array vacío.
-    if (!this.selectedItem.extraIngredients) {
-      this.selectedItem.extraIngredients = [];
-    }
-    
-    if (!this.selectedItem.salsa) {
-      this.selectedItem.salsa = [];
-    }
+  //   const index = this.listaItemsCarrito.findIndex(item => item.productKey === this.selectedItem.productKey);
 
-    // Filtramos los ingredientes seleccionados y asignamos una copia profunda de los ingredientes seleccionados
-    const selectedIngredients = this.extraIngredients.filter(ingredient => ingredient.selected);
-    const selectedSalsa = this.sauces.filter(ingredient => ingredient.selected);
+  //   if (index !== -1) {
+  //     const newProductKey = this.datoService.generateProductKey(updatedItem);
+  //     this.listaItemsCarrito[index] = { ...updatedItem, productKey: newProductKey, };
+  //     this.guardarCarritoEnLocalStorage();
+  //   }
 
-    // Hacemos una copia profunda de 'selectedItem' y de sus ingredientes, para que no haya referencias compartidas
-    const updatedItem = {
-      ...this.selectedItem, // Copia superficial de todos los campos
-      extraIngredients: [...selectedIngredients],
-      salsa: [...selectedSalsa],
-      specialInstructions:this.specialInstructions,
-      CANTIDAD: this.selectedQuantity
-      
-    };
-    console.log("esto trae el select", this.selectedQuantity)
-    console.log("esto trae lo sielect.cantidad ", this.selectedItem.CANTIDAD)
-
-    // Encuentra el índice del producto en la lista de carrito
-    const index = this.listaItemsCarrito.findIndex(item => item.productKey === this.selectedItem.productKey);
-
-    if (index !== -1) {
-      // Recalcular la clave del producto después de actualizar los detalles
-      const newProductKey = this.datoService.generateProductKey(updatedItem);
-
-      // Actualizar la clave y otros detalles del producto en el carrito
-      this.listaItemsCarrito[index] = {
-        ...updatedItem,
-        productKey: newProductKey, // Asignar la nueva clave generada
-      };
-
-      // Guardar el carrito actualizado en localStorage
-      this.guardarCarritoEnLocalStorage();
-
-      // Debugging: Verificar la actualización
-      console.log("Item actualizado en listaItemsCarrito:", this.listaItemsCarrito[index]);
-    }
-
-    // Cerramos el modal después de la actualización
-    const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
-    customizationModal?.hide();
-  }
-  }
+  //   const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
+  //   customizationModal?.hide();
+  // }
+  // }
 
   confirmDelete(item: Product): void {
       
@@ -497,18 +462,117 @@ export class CarritoListarComponent {
     });
   }
 
-  updateQuantity(quantity: number) {
-    if (quantity > 0) {
-      this.selectedQuantity = quantity;
-      console.log("Carrito cargado desde localStorage:", this.listaItemsCarrito);
+  // updateQuantity(quantity: number) {
+  //   if (quantity > 0) {
+  //     this.selectedQuantity = quantity;
+  //     console.log("Carrito cargado desde localStorage:", this.listaItemsCarrito);
 
-    }
-  }
+  //   }
+  // }
 
   // Función para seleccionar/deseleccionar salsas
-  toggleSauce(sauce: any): void {
-    sauce.selected = !sauce.selected;
-    console.log(`Salsa ${sauce.name} seleccionada: ${sauce.selected}`);
+  // toggleSauce(sauce: any): void {
+  //   sauce.selected = !sauce.selected;
+  //   console.log(`Salsa ${sauce.name} seleccionada: ${sauce.selected}`);
+  // }
+
+  productoaEditar(product: Product) {
+    console.log('--- Editando producto ---');
+    console.log('Producto seleccionado:', product);
+    this.isEditing = true; // Indicar que está en modo edición
+    this.productToEdit = { ...product }; // Seleccionamos el producto para editar
+    
+    // Mezclar los ingzredientes seleccionados con la lista completa
+    this.productToEdit.extraIngredients = this.mezclarIngredientes(product.extraIngredients || []);
+  
+    console.log('Ingredientes mezclados:', this.productToEdit.extraIngredients);
+    
+    const modal = new bootstrap.Modal(document.getElementById('customizationModal') as HTMLElement);
+    modal.show();
   }
   
+  // actualizarProducto(updatedProduct: Product) {
+  //   console.log('Actualizando producto', updatedProduct);
+    
+  //   const index = this.listaItemsCarrito.findIndex((item) => item.PROD_VENTA_ID === updatedProduct.PROD_VENTA_ID);
+  //   if (index !== -1) {
+  //     this.listaItemsCarrito[index] = {
+  //       ...updatedProduct,
+  //       productKey: updatedProduct.productKey || this.listaItemsCarrito[index].productKey,
+  //       isExpanded: updatedProduct.isExpanded !== undefined ? updatedProduct.isExpanded : false,
+  //     };
+
+  //      // Guardar el carrito actualizado en localStorage
+  //      this.guardarCarritoEnLocalStorage();
+
+  //     console.log('Producto actualizado en el carrito:', this.listaItemsCarrito[index]);
+  //   }
+  //    // Cerramos el modal después de la actualización
+  //    const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
+  //    customizationModal?.hide();
+  // }
+
+  actualizarProducto(updatedProduct: Product) {
+    console.log('--- INICIANDO ACTUALIZACIÓN ---');
+    console.log('Actualizando producto', updatedProduct);
+  
+    // Buscar el índice usando una combinación de `PROD_VENTA_ID` y `productKey`
+    const index = this.listaItemsCarrito.findIndex(
+      (item) => 
+        item.PROD_VENTA_ID === updatedProduct.PROD_VENTA_ID &&
+        item.productKey === updatedProduct.productKey
+    );
+  
+    if (index !== -1) {
+
+      console.log('Índice del producto encontrado:', index);
+      console.log('Estado del carrito antes de la actualización:', JSON.parse(JSON.stringify(this.listaItemsCarrito)));
+      // Generar un nuevo `productKey` si es necesario
+      console.log('Actualixa producto', updatedProduct);
+      const newProductKey = this.datoService.generateProductKey(updatedProduct);
+      console.log('LLave de mierdaa', newProductKey);
+  
+      // Actualizar el producto en el carrito
+      this.listaItemsCarrito[index] = {
+        ...updatedProduct,
+        productKey: newProductKey, // Usar el nuevo `productKey`
+        isExpanded: updatedProduct.isExpanded !== undefined ? updatedProduct.isExpanded : false,
+      };
+      console.log('Producto después de la actualización:', this.listaItemsCarrito[index]);
+      console.log('Estado del carrito después de la actualización:', JSON.parse(JSON.stringify(this.listaItemsCarrito)));
+      // Guardar el carrito actualizado en localStorage
+      this.guardarCarritoEnLocalStorage();
+  
+      console.log('Producto actualizado en el carrito:', this.listaItemsCarrito[index]);
+    } else {
+      console.warn('No se encontró el producto para actualizar.');
+    }
+  
+    // Cerrar el modal después de la actualización
+    const customizationModal = bootstrap.Modal.getInstance(document.getElementById('customizationModal')!);
+    customizationModal?.hide();
+  }
+  
+ // Mezclar ingredientes seleccionados con la lista completa
+ private mezclarIngredientes(selectedIngredients: Ingredient[]): Ingredient[] {
+  const allIngredients = [
+    { name: 'Queso extra', price: 2000, selected: false },
+    { name: 'Pepperoni', price: 2500, selected: false },
+    { name: 'Champiñones', price: 1500, selected: false },
+  ];
+
+  if (!selectedIngredients || selectedIngredients.length === 0) {
+    console.warn('Lista de ingredientes seleccionados vacía o no definida:', selectedIngredients);
+    return allIngredients.map(ingredient => ({ ...ingredient, selected: false }));
+  }
+
+  // Mezclar los ingredientes seleccionados con los generales
+  return allIngredients.map((ingredient) => {
+    const matchingIngredient = selectedIngredients.find(
+      (selected) => selected.name === ingredient.name && selected.selected
+    );
+    return { ...ingredient, selected: !!matchingIngredient };
+  });
+}
+
 }

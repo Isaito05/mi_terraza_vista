@@ -9,6 +9,7 @@ import { CheckBoxComponent } from './components/check-box/check-box.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MenuComponent } from './components/menu/menu.component';
 
+
 import { SharedRoutingModule } from './shared-routing.module';
 
 import { ngxLoadingAnimationTypes, NgxLoadingModule } from 'ngx-loading';
@@ -16,6 +17,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { CarritoEditModalComponent } from './components/carrito-edit-modal/carrito-edit-modal.component';
 
 
 
@@ -29,14 +31,15 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
     FormsModule,
     HeaderComponent,
     ReactiveFormsModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
   ],
   declarations: [
     SidebarComponent,
     TableComponent,
     ModalComponent,
     CheckBoxComponent,
-    MenuComponent
+    MenuComponent,
+    CarritoEditModalComponent
   ],
   exports: [
     SidebarComponent,
@@ -44,7 +47,8 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
     ModalComponent,
     HeaderComponent,
     CheckBoxComponent,
-    MenuComponent
+    MenuComponent,
+    CarritoEditModalComponent
     
   ]
 })
