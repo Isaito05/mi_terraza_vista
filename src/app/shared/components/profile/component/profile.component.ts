@@ -8,6 +8,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 import { NavbarComponent } from '../../navbar/navbar.component';
 
@@ -23,6 +24,7 @@ import Swal from 'sweetalert2';
 import { FacturaModalComponent } from '../../factura-modal/factura-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 declare var $: any;
 
@@ -39,13 +41,13 @@ declare var $: any;
     MatSortModule,
     MatButtonModule,
     MatBadgeModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 
-export class ProfileComponent implements OnInit, AfterViewInit {
+export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterViewInit {
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
   private paginator!: MatPaginator;
   private sort!: MatSort;
@@ -78,6 +80,11 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   };
   dataSource!: MatTableDataSource<any>;
 
+  override itemsPerPageLabel = 'Items por página'; // Cambiar "Items per page"
+  override nextPageLabel = 'Siguiente página';     // Cambiar "Next page"
+  override previousPageLabel = 'Página anterior'; // Cambiar "Previous page"
+  override lastPageLabel = 'Última página'; 
+
   constructor(
     private renderer: Renderer2,
     private usuarioService:UsuarioService,
@@ -85,13 +92,21 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private pedidoService: PedidoService, private cdref: ChangeDetectorRef
-  ) { }
+    private pedidoService: PedidoService, private cdref: ChangeDetectorRef,
+    private webSocketService: WebsocketService
+  ) {
+    super()
+   }
 
   setDataSourceAttributes() {    
     // this.dataSource = new MatTableDataSource( this.listOfApplications['data']);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;    
+    this.paginator._intl.itemsPerPageLabel = "Por pagina"
+    this.paginator._intl.firstPageLabel = "Primera pagina"
+    this.paginator._intl.lastPageLabel = "Ultima pagina"
+    this.paginator._intl.nextPageLabel = "Siguiente pagina"
+    this.paginator._intl.previousPageLabel = "Pagina anterior"
     this.cdref.detectChanges();
   }
 
@@ -99,6 +114,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(FacturaModalComponent, {
         width: '400px', // Ajusta el tamaño del modal
         data: pedido, // Envía los datos del pedido al modal
+        panelClass: 'scrollable-modal'
       });
       console.log(pedido)
 
@@ -118,6 +134,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    
     this.hayNotificacion = this.pedidoService.getEstadoNotificacion()
     this.pedidoService.notificacion$.subscribe((estado) => {
       this.hayNotificacion = estado;
@@ -159,24 +176,36 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       }
     });
     this.cargarPedidos(this.userId)
-    
+     // Escuchar eventos de WebSocket
+     this.webSocketService.on('pedidoActualizado').subscribe((pedidoActualizado) => {
+      console.log('Pedido actualizado recibido:', pedidoActualizado);
+
+      // Actualizar la tabla al recibir el evento
+      const index = this.historialPedidos.findIndex(
+        (pedido) => pedido.PED_ID === pedidoActualizado.PED_ID
+      );
+
+      if (index !== -1) {
+        this.historialPedidos[index] = pedidoActualizado; // Actualiza el pedido existente
+      } else {
+        this.historialPedidos.unshift(pedidoActualizado); // Agrega el pedido si es nuevo
+      }
+
+      // Refrescar el dataSource
+      this.dataSource = new MatTableDataSource(this.historialPedidos);
+      this.dataSource.paginator = this.paginator;
+    });
   }
 
   cargarPedidos(id: number): void {
     this.pedidoService.getPedidoByUsuId(id).subscribe({
       next: (pedidos) => {
-        // this.dataSource = new MatTableDataSource<any>([pedidos]);
         this.historialPedidos = pedidos;
         console.log('Pedidos cargados:', pedidos);
+
         this.dataSource = new MatTableDataSource(pedidos);
         this.dataSource.paginator = this.paginator;
-        // this.dataSource.data = this.historialPedidos;
-        
-        console.log('Número de pedidos en historialPedidos:', this.historialPedidos.length);
-        console.log('Número de pedidos en dataSource:', this.dataSource.data.length); 
 
-        console.log(this.historialPedidos.length, 'Número de pedidos');
-        
         // Solo cambiar notificación si no existe en localStorage
         if (!localStorage.getItem('hayNotificacion')) {
           this.hayNotificacion = pedidos.length > 0;
@@ -189,6 +218,17 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         console.error('Error al cargar pedidos:', error);
       },
     });
+  }
+
+  eliminarBadge(pedido: any) {
+    this.pedidoService.eliminarBadgePedido(pedido.PED_ID).subscribe({
+      next: () => {
+        pedido.isNew = false;
+      },
+      error: (err) => {
+        console.error('Error al actualizar el estado del pedido', err);
+      },
+    })
   }
 
   marcarPedidosRevisados(): void {

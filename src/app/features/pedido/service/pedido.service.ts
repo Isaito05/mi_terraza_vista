@@ -45,32 +45,6 @@ export class PedidoService {
     return this.http.put<any>(url, body);
   }
 
-  // agregarPedido(pedido: any) {
-  //   // const historialActual = this.obtenerHistorial();
-  //   this.historialPedidos.push(pedido);
-  //   localStorage.setItem('historialPedidos', JSON.stringify(this.historialPedidos));
-  //   this.pedidosSubject.next(this.historialPedidos);
-  // }
-
-  // cargarHistorialDesdeLocalStorage() {
-  //   const pedidos = localStorage.getItem('historialPedidos');
-  //   if (pedidos) {
-  //     this.historialPedidos = JSON.parse(pedidos);
-  //   }
-  // }
-
-  // getPedidosObservable() {
-  //   return this.pedidosSubject.asObservable();
-  // }
-
-  // obtenerHistorial(): any[] {
-  //   if (this.historialPedidos.length === 0) {
-  //     const localHistorial = localStorage.getItem('historialPedidos');
-  //     this.historialPedidos = localHistorial ? JSON.parse(localHistorial) : [];
-  //   }
-  //   return this.historialPedidos;
-  // }
-
   actualizarPedidos(pedidos: any[]): void {
     this.pedidosSubject.next(pedidos); // Actualiza el estado de pedidos
   }
@@ -91,6 +65,10 @@ export class PedidoService {
 
   getEstadoNotificacion(): boolean {
     return JSON.parse(localStorage.getItem('hayNotificacion') || 'false');
+  }
+
+  eliminarBadgePedido(pedidoId: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${pedidoId}/badge`, { isNew: false });
   }
  
 }

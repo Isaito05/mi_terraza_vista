@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -104,13 +104,14 @@ export class CarritoListarComponent {
   constructor(
     private datoService: DatosService,
     private bottomSheet: MatBottomSheet,
-    private pedidoService: PedidoService
+    private pedidoService: PedidoService,
+    private router: Router
   ){}
 
   ngOnInit(): void {
     this.cargarCarritoDesdeLocalStorage();
     this.listaItemsCarrito = this.listaItemsCarrito.map(item => ({ ...item, isExpanded: false }));
-    console.log(this.listaItemsCarrito, 'a')
+    // console.log(this.listaItemsCarrito, 'a')
     const token = sessionStorage.getItem('token');
     if (token) {
       const decodedToken: any = jwtDecode(token)
@@ -194,6 +195,33 @@ export class CarritoListarComponent {
   }
   
   procesarPedido(){
+    // Verificar si el usuario está autenticado
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      Swal.fire({
+        title: 'Inicia sesión para continuar',
+        text: 'Debes iniciar sesión para realizar un pedido y disfrutar de todas las funcionalidades de nuestra plataforma.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Iniciar sesión',
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirigir a la página de inicio de sesión si el usuario confirma
+          this.router.navigate(['/login']);
+        } else {
+          // Mensaje adicional si el usuario decide no iniciar sesión
+          Swal.fire(
+            'Pedido no procesado',
+            'Por favor, inicia sesión para completar tu compra.',
+            'info'
+          );
+        }
+      });
+      return;
+    }
+    
     const fechaRegistro = new Date();
     const offset = fechaRegistro.getTimezoneOffset();
     fechaRegistro.setMinutes(fechaRegistro.getMinutes() - offset)
@@ -222,8 +250,6 @@ export class CarritoListarComponent {
       (response) => {
         console.log('Pedido procesado con éxito:', response);
         Swal.fire('Éxito', 'Tu pedido ha sido procesado.', 'success');
-         // Agregar el pedido al historial
-        // this.pedidoService.agregarPedido(pedido);
         this.pedidoService.activarNotificacion(); 
 
         // Mostrar el Toast

@@ -157,3 +157,21 @@
   background-color: #ff9800;
   color: white;
 }
+
+.icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.badge-nuevo {
+  position: absolute;
+  top: -24px; /* Ajusta según el tamaño */
+  right: -34px; /* Ajusta según el tamaño */
+  background-color: red; /* Amarillo */
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 12px; /* Redondeado */
+  text-transform: uppercase;
+}

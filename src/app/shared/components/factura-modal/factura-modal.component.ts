@@ -27,6 +27,7 @@ export class FacturaModalComponent {
    * Procesa los datos de PED_INFO para obtener los productos y sus detalles.
    */
   procesarProductos(): void {
+    console.log(this.data)
     try {
       // Parsear el campo PED_INFO
       const productosRaw = JSON.parse(this.data.PED_INFO);

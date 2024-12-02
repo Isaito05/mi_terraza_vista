@@ -175,10 +175,16 @@ body {
 .mat-form-field-appearance-outline .mat-form-field-outline {
     color: #4caf50; /* Verde */
     border-color: #4caf50;
-  }
+}
   
-  .mat-button, .mat-raised-button{
+.mat-button, .mat-raised-button{
     background-color:red;
-} 
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface  {
+    max-height: 89vh !important; /* Ajusta la altura máxima del contenido */
+    overflow-y: auto !important; /* Habilita el desplazamiento vertical */
+}
+
   
 

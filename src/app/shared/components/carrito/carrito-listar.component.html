@@ -60,11 +60,6 @@
                             <h6 class="mb-1">{{ item.PROD_VENTA_NOMBRE }}</h6>
                             <p class="text-muted small mb-1">{{ getTruncatedText(item.PROD_VENTA_DESCRIPCION) }}</p>
 
-                            <span > {{item.CANTIDAD}}</span> <br>
-                            <span > {{getIngredientList(item.extraIngredients) }}</span> <br>
-                            <span > {{item.selectedSize}}</span> <br>
-                            <span > {{item.productKey}}</span> <br>
-
                             <div *ngIf="!item.isExpanded">
                                 <button class="btn btn-link p-0 text-primary" (click)="item.isExpanded = true">Ver
                                     más</button>
@@ -183,7 +178,7 @@
                                     <p class="mb-0 geist-mono" style="font-size: 13px;">{{ item.CANTIDAD }}</p>
                                 </div>
                                 <div class="col-4 text-end">
-                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ formatCurrency(item.PROD_VENTA_PRECIO * item.CANTIDAD) }}</p>
+                                    <p class="mb-0 geist-mono" style="font-size: 13px;">{{ formatCurrency(item.PROD_VENTA_PRECIO) }}</p>
                                 </div>
                             </div>
                             <!-- Adicionales -->

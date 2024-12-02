@@ -161,24 +161,37 @@
                       <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
                       <td mat-cell *matCellDef="let pedido">
                         <span
-                        class="badge" [ngClass]="{'badge-pendiente': pedido.PED_ESTADO === 'Pendiente', 'badge-enviado': pedido.PED_ESTADO === 'Enviado', 'badge-cancelado': pedido.PED_ESTADO === 'Cancelado', 'badge-perparacion': pedido.PED_ESTADO === 'En preparacion'}">
+                        class="badge" 
+                        [ngClass]="{
+                          'badge-pendiente': pedido.PED_ESTADO === 'Pendiente', 
+                          'badge-enviado': pedido.PED_ESTADO === 'Enviado', 
+                          'badge-cancelado': pedido.PED_ESTADO === 'Cancelado', 
+                          'badge-perparacion': pedido.PED_ESTADO === 'En preparacion'
+                        }">
                           {{ pedido.PED_ESTADO }}
                         </span>
                       </td>
                     </ng-container>
 
                     <ng-container matColumnDef="icono">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                      <td mat-cell *matCellDef="let pedido"><i class="fa-solid fa-receipt fs-5" matTooltip="ver mas" (click)="openFactura(pedido)"></i></td>
+                      <th mat-header-cell *matHeaderCellDef></th>
+                      <td mat-cell *matCellDef="let pedido" style="padding: 0 35px 0 16px !important;">
+                        <i class="fa-solid fa-receipt fs-5" matTooltip="ver mas" (click)="openFactura(pedido)"></i>
+                        <div class="icon-container">
+                          <span class="badge badge-nuevo" *ngIf="pedido.PED_NUEVO" style="cursor: pointer;">Nuevo</span>
+                        </div>
+                      </td>
                     </ng-container>                    
                 
                     <!-- Table Header and Rows -->
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="eliminarBadge(row)"></tr>
                   </table>
                 
                   <!-- Paginator -->
-                  <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements"></mat-paginator>
+                   <div class="d-flex justify-content-center">
+                     <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                   </div>
                 </div>
                 
               </div>
