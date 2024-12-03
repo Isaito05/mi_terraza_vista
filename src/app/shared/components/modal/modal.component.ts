@@ -13,6 +13,7 @@ import { ProveedorService } from 'src/app/features/proveedor/service/proveedor.s
 import { environment } from 'src/environments/environment';
 
 import Swal from 'sweetalert2';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
@@ -143,7 +144,7 @@ export class ModalComponent {
 
     if (this.title === 'Detalles del pedido') {
       this.Tablapedido(this.data['PED_ID']);
-      console.log(this.pedidos)
+      console.log(this.data['PED_ID'], "que lo quee es mi hermano")
     }
 
     if (this.data['RGU_IMG_PROFILE']) {
@@ -555,10 +556,11 @@ export class ModalComponent {
 
   Tablapedido(pedId: any) {
     this.pedidoService.getData().subscribe(data => {
+      console.log(data, "mamawuebo")
       const pedidosFiltrados = data.filter((pedido: { PED_ID: number; }) => pedido.PED_ID === pedId);
   
       const productosMap = new Map<string, { cantidad: number; tamano: string; direccion_new: string; ingredientesAdicionales: any[] }>(); // Mapa con detalles
-  
+      console.log(productosMap, "producto mapa")
       pedidosFiltrados.forEach((pedido: { PED_INFO: string | any[]; }) => {
         if (typeof pedido.PED_INFO === 'string') {
           try {
@@ -593,38 +595,52 @@ export class ModalComponent {
   
       // Convertir el Map a un array de promesas para obtener los detalles de los productos
       const productPromises = Array.from(productosMap.entries()).map(([id, details]) =>
-      this.prodventaService.getProVenById(id).toPromise().then(data => {
-      // Calcular el precio total de los ingredientes adicionales
-      const totalIngredientes = details.ingredientesAdicionales
-      ? details.ingredientesAdicionales.reduce((sum, ingrediente) => sum + ingrediente.precio, 0)
-      : 0;
+        firstValueFrom(this.prodventaService.getProVenById(id))
+          .then(dataArray => {
+            const data = Array.isArray(dataArray) && dataArray.length > 0 ? dataArray[0] : null;
+      
+            if (!data) {
+              console.warn(`No se encontraron datos para el ID: ${id}`);
+              return null;
+            }
+      
+            console.log('Datos procesados del servicio:', data); // Depuración
+      
+            // Calcular el precio total de los ingredientes adicionales
+            const totalIngredientes = details.ingredientesAdicionales
+              ? details.ingredientesAdicionales.reduce((sum, ingrediente) => sum + (ingrediente.precio || 0), 0)
+              : 0;
 
-    // Calcular el subtotal incluyendo ingredientes adicionales
-    const subtotal = (data.PROD_VENTA_PRECIO + totalIngredientes) * details.cantidad;
+              console.log('Detalle del servicio:', details); // Depuración
+      
+            // Calcular el subtotal incluyendo ingredientes adicionales
+            const subtotal = (data.PROD_VENTA_PRECIO + totalIngredientes) * details.cantidad;
+      
+            return {
+              id,
+              nombre: data.PROD_VENTA_NOMBRE || 'Nombre no disponible',
+              precio: data.PROD_VENTA_PRECIO || 0,
+              descripcion: data.PROD_VENTA_DESCRIPCION || 'Sin descripción',
+              cantidad: details.cantidad,
+              tamano: details.tamano,
+              direccion: details.direccion_new || 'Sin dirección',
+              ingredientesAdicionales: details.ingredientesAdicionales || [],
+              subtotal,
+            };
+          })
+          .catch(error => {
+            console.error(`Error al procesar el producto con ID ${id}:`, error);
+            return null; // Manejar el error
+          })
+      );
 
-    return {
-      id,
-      nombre: data.PROD_VENTA_NOMBRE,
-      precio: data.PROD_VENTA_PRECIO,
-      descripcion: data.PROD_VENTA_DESCRIPCION,
-      cantidad: details.cantidad,
-      tamano: details.tamano,
-      direccion: details.direccion_new,
-      ingredientesAdicionales: details.ingredientesAdicionales,
-      subtotal
-    };
-    }).catch(error => {
-      console.error('Error al obtener los datos:', error);
-      return null; // Manejar el error
-    })
-  );
 
-  
-      // Esperar a que todas las promesas se resuelvan
-      Promise.all(productPromises).then(results => {
-        this.pedidos = results.filter(result => result !== null); // Filtrar resultados nulos en caso de error
-        console.log(this.pedidos);
-      });
+     // Esperar a que todas las promesas se resuelvan
+        Promise.all(productPromises).then(results => {
+          console.log('Resultados de las promesas:', results); // Depuración
+          this.pedidos = results.filter(result => result !== null); // Filtrar resultados nulos
+          console.log('Pedidos procesados:', this.pedidos);
+        });
     });
   }
   
