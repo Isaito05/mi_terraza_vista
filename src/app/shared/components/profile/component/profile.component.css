@@ -1,87 +1,88 @@
 .list-group {
-    width: 33rem;
-    border: none;
-    /* box-shadow: 0px 1px 5px -2px rgba(0, 0, 0, 0.75); */
+  width: 33rem;
+  border: none;
+  /* box-shadow: 0px 1px 5px -2px rgba(0, 0, 0, 0.75); */
 }
 
 .list-group-item {
-    border: none;
+  border: none;
 }
 
 .list-group-item:hover {
-    background-color: #f9f9f9;
-    /* Fondo claro en hover o activo */
-    border-left: 3px solid #FFD700;
-    color: #333;
+  background-color: #f9f9f9;
+  /* Fondo claro en hover o activo */
+  border-left: 3px solid #FFD700;
+  color: #333;
 }
 
 .order-info {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .info-profile {
-    text-align: justify;
-    padding: 0rem 0.8rem;
-    font-size: 0.8rem;
+  text-align: justify;
+  padding: 0rem 0.8rem;
+  font-size: 0.8rem;
 }
 
 .profile-card {
-    position: relative;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    overflow: hidden;
-    /* Posiciona el contenido sobre el fondo */
-    /* color: white; */
-    z-index: 1;
+  position: relative;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  overflow: hidden;
+  /* Posiciona el contenido sobre el fondo */
+  /* color: white; */
+  z-index: 1;
 }
 
 .profile-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 35%;
-    background-image: url('src/assets/images/fondopz.jpg');
-    background-size: cover;
-    background-position: center;
-    filter: blur(0px); /* Ajusta el valor de desenfoque según tu preferencia */
-    z-index: -1;
-    /* Controla la opacidad del fondo difuminado */
-    opacity: 0.7;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35%;
+  background-image: url('src/assets/images/fondopz.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(0px);
+  /* Ajusta el valor de desenfoque según tu preferencia */
+  z-index: -1;
+  /* Controla la opacidad del fondo difuminado */
+  opacity: 0.7;
 }
 
 
 .profile-pic {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .nav-pills .nav-link {
-    border-radius: 7px;
+  border-radius: 7px;
 }
 
 .list-group-item {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .list-group-item .arrow-icon {
-    font-size: 1.2rem;
-    color: black;
+  font-size: 1.2rem;
+  color: black;
 }
 
 .mat-elevation-z8 {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 .demo-table {
-    width: 100%;
+  width: 100%;
 }
 
 .mat-mdc-row .mat-mdc-cell {
@@ -92,6 +93,11 @@
 
 .mat-mdc-row:hover .mat-mdc-cell {
   border-color: currentColor;
+}
+
+.mat-mdc-row:hover{
+  background-color: #f5f5f5 !important;
+  border-bottom: none !important;
 }
 
 .demo-row-is-clicked {
@@ -119,6 +125,16 @@
 
 .badge-cancelado {
   background-color: #dc3545;
+}
+
+.badge-entrega-inmediata {
+  background-color: #004085;
+  color: #cce5ff;
+}
+
+.badge-contraentrega {
+  background-color: #85C1FF;
+  color: #002752
 }
 
 .profile-card {
@@ -165,13 +181,41 @@
 
 .badge-nuevo {
   position: absolute;
-  top: -24px; /* Ajusta según el tamaño */
-  right: -34px; /* Ajusta según el tamaño */
-  background-color: red; /* Amarillo */
+  top: -24px;
+  /* Ajusta según el tamaño */
+  right: -34px;
+  /* Ajusta según el tamaño */
+  background-color: red;
+  /* Amarillo */
   color: #fff;
   font-size: 10px;
   font-weight: bold;
   padding: 3px 6px;
-  border-radius: 12px; /* Redondeado */
+  border-radius: 12px;
+  /* Redondeado */
   text-transform: uppercase;
+}
+
+.i-cancelado {
+  position: absolute;
+  top: -22px;
+  /* Ajusta según el tamaño */
+  right: -18px;
+  font-size: 16px;
+  color: #1E3050;
+}
+
+.punto-notificacion {
+  width: 12px;
+  height: 12px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 20.3rem;
+  right: 1rem;
+  border: 2px solid white;
+}
+
+.ds-pe {
+  border: 2px solid #FEA116
 }

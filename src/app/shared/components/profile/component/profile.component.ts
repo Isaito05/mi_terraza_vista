@@ -6,11 +6,15 @@ import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 
 import { NavbarComponent } from '../../navbar/navbar.component';
+import { FooterComponent } from '../../footer/footer.component';
+import { FacturaModalComponent } from '../../factura-modal/factura-modal.component';
+import { CanceladoModalComponent } from '../../cancelado-modal/cancelado-modal.component';
 
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
@@ -18,13 +22,11 @@ import { PedidoService } from 'src/app/features/pedido/service/pedido.service';
 
 import { environment } from 'src/environments/environment';
 
+import { WebsocketService } from 'src/app/core/services/websocket.service';
+
 import { jwtDecode } from 'jwt-decode';
 import * as bootstrap from 'bootstrap';
 import Swal from 'sweetalert2';
-import { FacturaModalComponent } from '../../factura-modal/factura-modal.component';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 declare var $: any;
 
@@ -42,12 +44,13 @@ declare var $: any;
     MatButtonModule,
     MatBadgeModule,
     MatTooltipModule,
+    FooterComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 
-export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterViewInit {
+export class ProfileComponent implements OnInit, AfterViewInit {
   private hoverListeners: Array<() => void> = [];  // Para almacenar los listeners de hover
   private paginator!: MatPaginator;
   private sort!: MatSort;
@@ -80,11 +83,6 @@ export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterV
   };
   dataSource!: MatTableDataSource<any>;
 
-  override itemsPerPageLabel = 'Items por página'; // Cambiar "Items per page"
-  override nextPageLabel = 'Siguiente página';     // Cambiar "Next page"
-  override previousPageLabel = 'Página anterior'; // Cambiar "Previous page"
-  override lastPageLabel = 'Última página'; 
-
   constructor(
     private renderer: Renderer2,
     private usuarioService:UsuarioService,
@@ -92,21 +90,19 @@ export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterV
     private authService: AuthService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private pedidoService: PedidoService, private cdref: ChangeDetectorRef,
+    public pedidoService: PedidoService, 
+    private cdref: ChangeDetectorRef,
     private webSocketService: WebsocketService
-  ) {
-    super()
-   }
+  ) {}
 
-  setDataSourceAttributes() {    
-    // this.dataSource = new MatTableDataSource( this.listOfApplications['data']);
+  setDataSourceAttributes() {        
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;    
     this.paginator._intl.itemsPerPageLabel = "Por pagina"
     this.paginator._intl.firstPageLabel = "Primera pagina"
     this.paginator._intl.lastPageLabel = "Ultima pagina"
     this.paginator._intl.nextPageLabel = "Siguiente pagina"
     this.paginator._intl.previousPageLabel = "Pagina anterior"
+    this.dataSource.sort = this.sort;   
     this.cdref.detectChanges();
   }
 
@@ -121,11 +117,18 @@ export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterV
     dialogRef.afterClosed().subscribe(result => {
         console.log('El modal se cerró:', result);
     });
-}
+  }
+
+  abrirMotivoCancelacion(pedido: any) {
+    this.dialog.open(CanceladoModalComponent, {
+      width: '400px',
+      data: {
+        PED_CANCELADO: pedido.PED_CANCELADO || 'No se especificó un motivo.'
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
-    // console.log('Paginator', this.dataSource.paginator);
-    // this.dataSource.paginator = this.paginator;
     this.initializeScrollToTop(); // Inicializar el botón "back to top"
     this.initializeSpinner();
 
@@ -224,6 +227,8 @@ export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterV
     this.pedidoService.eliminarBadgePedido(pedido.PED_ID).subscribe({
       next: () => {
         pedido.isNew = false;
+        this.hayNotificacion = false;
+        this.pedidoService.desactivarNotificacion()
       },
       error: (err) => {
         console.error('Error al actualizar el estado del pedido', err);
@@ -246,6 +251,17 @@ export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterV
     // }
   }
 
+  formatMetodoPago(metodo: string): string {
+    switch (metodo) {
+      case 'Entrega_inmediata':
+        return 'Entrega inmediata';
+      case 'Contraentrega':
+        return 'Contra entrega';
+      default:
+        return metodo;
+    }
+  }
+  
   onSubmit() {
     if (this.editForm.valid) {
       console.log(this.editForm," loos demons")
@@ -258,11 +274,6 @@ export class ProfileComponent extends MatPaginatorIntl implements OnInit, AfterV
         RGU_IDENTIFICACION: this.editForm.value.RGU_IDENTIFICACION,
         RGU_DIRECCION: this.editForm.value.RGU_DIRECCION,
       };
-      // console.log(updatedData," loos demons")
-      // const dataToUpdate = { ...updatedData };
-      // console.log(dataToUpdate)
-      // delete dataToUpdate.RGU_PASSWORD; 
-      // console.log(updatedData, 'se va a enviar')
       this.usuarioService.updateData(updatedData).subscribe(
         (response) => {
           console.log('Usuario actualizado con éxito:', response);

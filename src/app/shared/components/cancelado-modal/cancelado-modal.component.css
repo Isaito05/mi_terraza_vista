@@ -1,0 +1,40 @@
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.pedido-detalles p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.motivo-cancelacion h3 {
+  margin: 10px 0 5px;
+  font-size: 16px;
+}
+
+.motivo-cancelacion p {
+  font-size: 14px;
+  color: #555;
+  font-style: italic;
+}
+
+.mensaje-agradecimiento {
+  text-align: center;
+  margin-top: 20px;
+  color: #4caf50;
+}
+
+.title-mensaje-agradecimiento {
+  font-size: 12px !important;
+  margin-bottom: 0;
+  font-weight: 800;
+}
+
+.mensaje-agradecimiento p {
+  margin-bottom: 0;
+  font-size: 10px;
+  color: #555;
+}

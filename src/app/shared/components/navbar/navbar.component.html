@@ -47,7 +47,7 @@
                 
                     <ul class="dropdown-menu" style="right: 3rem;">
                         <li *ngIf="rol_ad"><a class="dropdown-item active" [routerLink]="['/pedido']">Administracion</a></li>
-                        <li><a class="dropdown-item" [routerLink]="['/profile']" (click)="limpiarNotificacion()">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i><div class="punto-notificacion" *ngIf="pedidoService.getEstadoNotificacion()"></div></a></li>
+                        <li><a class="dropdown-item" [routerLink]="['/profile']">Mi perfil  <i class="fa-regular fa-address-card ms-1"></i><div class="punto-notificacion" *ngIf="pedidoService.getEstadoNotificacion()"></div></a></li>
                         <li><a class="dropdown-item" href="#">Notificaciones  <i class="fa-solid fa-bell ms-1"></i></a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item d-flex justify-content-end" (click)="logOut()" style="cursor: pointer;">Salir  <i class="bi bi-door-open-fill m-icon"></i></a></li>
