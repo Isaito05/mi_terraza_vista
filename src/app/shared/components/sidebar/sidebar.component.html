@@ -50,6 +50,12 @@
             Proveedor
           </a>
         </li>
+        <li class="sidebar-item" [ngClass]="{'active': isActive('/factura')}">
+          <a [routerLink]="['/factura']" class="sidebar-link">
+            <i class="fa-solid fa-boxes-packing pe-2"></i>
+            Factura
+          </a>
+        </li>
         <!-- <li class="sidebar-header">
           Multi Level Nav
         </li>
