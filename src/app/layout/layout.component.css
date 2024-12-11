@@ -1,4 +1,17 @@
-.container-fluid {
+.bg-layout {
     background: linear-gradient(184deg,  #f0e4ff, #ffffff) !important;
     padding: 0 !important;
+}
+
+.header {
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0; /* Se mantiene pegado al borde superior */
+    /* height: 60px; */
+    z-index: 10;
+}
+
+.content {
+    padding: 1px 13px;
 }

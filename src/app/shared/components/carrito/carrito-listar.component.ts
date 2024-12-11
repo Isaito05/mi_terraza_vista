@@ -243,7 +243,7 @@ export class CarritoListarComponent {
           .map((ing: any) => ({ nombre: ing.name, precio: ing.price })),
         direccion_new: producto.nuevaDireccion
         }))),
-      PED_CANCELADO: 'no'
+      PED_CANCELADO: 'No se especificó un motivo.'
     };
     console.log('Pedido a enviar:', pedido);
     this.pedidoService.saveData(pedido).subscribe(

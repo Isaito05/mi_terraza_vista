@@ -6,6 +6,10 @@ a {
     cursor: pointer;
 }
 
+.bg-header {
+    /* background: linear-gradient(473deg,  #f0e4ff, #ffffff) !important; */
+}
+
 .t-icon {
     font-size: 1.30rem;
 }
@@ -25,11 +29,21 @@ a {
 
 .status-indicator {
     position: absolute;
-    bottom: 0;
-    left: 28px;
+    bottom: 6px;
+    left: 37px;
     width: 10px;
     height: 10px;
     background-color: green;
     border: 2px solid white;
     border-radius: 50%;
+}
+
+.logo-image {
+    width: 64px;
+    height: auto;
+    margin: 6px 7px;
+}
+
+.font {
+    font-size: 2.5rem !important;
 }

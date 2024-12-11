@@ -1,53 +1,52 @@
-<div class="wrapper">
+<div class="wrapper" [ngClass]="{'collapsed': isSidebarCollapsed}">
   <!-- Sidebar -->
-  <aside id="sidebar">
+  <aside id="sidebar" class="sidebar">
     <div class="">
-      <div class="sidebar-logo">
-        <img src="assets/images/TERRAZA.png" alt="Logo" class="logo-image" />
-        <a href="#" class="logo-text">Mi Terraza</a>
+      <div class="collapsed-icon" (click)="toggleSidebar()" [class.icon-left]="isSidebarCollapsed">
+        <i class="fa-solid" [ngClass]="isSidebarCollapsed ? 'fa-caret-right' : 'fa-caret-left'"></i>
       </div>
       <!-- Sidebar Navigation -->
-      <ul class="sidebar-nav">
-        <li class="sidebar-item" [ngClass]="{'active': isActive('/usuario')}" *ngIf="!isWorkerRole()">
+      <ul class="sidebar-nav mt-4">
+        <li class="sidebar-item mt-2" [ngClass]="{'active': isActive('/usuario')}" *ngIf="!isWorkerRole()">
           <a [routerLink]="['/usuario']" class="sidebar-link">
             <i class="fa-solid fa-user-group pe-2"></i>
-            Usuarios
+            <span *ngIf="!isSidebarCollapsed">Usuarios</span>
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/pago')}" *ngIf="!isWorkerRole()">
           <a [routerLink]="['/pago']" class="sidebar-link">
             <i class="fa-solid fa-money-bill-wave pe-2"></i>
-            Pagos
+            <span *ngIf="!isSidebarCollapsed">Pagos</span>
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/bodega')}">
           <a [routerLink]="['/bodega']" class="sidebar-link">
             <i class="fa-solid fa-box-open pe-2"></i>
-            Bodega
+            <span *ngIf="!isSidebarCollapsed">Bodega</span>
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/proprov')}">
-          <a [routerLink]="['/proprov']" class="sidebar-link d-lg-flex" >
+          <a [routerLink]="['/proprov']" class="sidebar-link" >
             <i class="fa-solid fa-basket-shopping pe-2"></i>
-            Poducto prov
+            <span *ngIf="!isSidebarCollapsed">Poducto prov</span>
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/pedido')}">
           <a [routerLink]="['/pedido']" class="sidebar-link">
             <i class="fa-solid fa-clipboard-list pe-2"></i>
-            Pedido
+            <span *ngIf="!isSidebarCollapsed">Pedido</span>
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/prodventa')}">
-          <a [routerLink]="['/prodventa']" class="sidebar-link d-lg-flex">
+          <a [routerLink]="['/prodventa']" class="sidebar-link">
             <i class="fa-solid fa-pizza-slice pe-2 "></i>
-            Producto venta 
+            <span *ngIf="!isSidebarCollapsed">Producto venta </span>
           </a>
         </li>
         <li class="sidebar-item" [ngClass]="{'active': isActive('/proveedor')}">
           <a [routerLink]="['/proveedor']" class="sidebar-link">
             <i class="fa-solid fa-boxes-packing pe-2"></i>
-            Proveedor
+            <span *ngIf="!isSidebarCollapsed">Proveedor</span>
           </a>
         </li>
         <!-- <li class="sidebar-header">

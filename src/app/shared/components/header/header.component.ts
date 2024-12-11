@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { NgxLoadingModule } from 'ngx-loading';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ImageUploadService } from 'src/app/core/services/image-upload.service';
+import { SidebarService } from 'src/app/core/services/sidebar.service';
 import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 import { environment } from 'src/environments/environment';
 
@@ -27,7 +28,9 @@ export class HeaderComponent {
   constructor( 
     private authService: AuthService, 
     private usuarioService: UsuarioService, 
-    private router: Router ){}
+    private router: Router,
+    private sidebarService: SidebarService
+  ){}
 
   ngOnInit() {
     const token = sessionStorage.getItem('token');
@@ -89,5 +92,9 @@ export class HeaderComponent {
       this.authService.logout();
       this.router.navigate(['/login'])
     },1000);
+  }
+
+  toggleSidebar(): void {
+    this.sidebarService.toggleSidebar();
   }
 }

@@ -1,14 +1,19 @@
-<div class="d-flex justify-content-start">
-    <div class="sidebar" data-color="red">
-        <app-sidebar></app-sidebar>
+<div class="d-flex flex-column bg-layout">
+    <!-- Header ocupando todo el ancho -->
+    <div class="header w-100">
+        <app-header></app-header>
     </div>
-    <div class="container-fluid">
-        <div class="">
-            <app-header></app-header>
+
+    <!-- Contenedor principal -->
+    <div class="d-flex flex-grow-1">
+        <!-- Sidebar a la izquierda -->
+        <div class="sidebar">
+            <app-sidebar></app-sidebar>
         </div>
-        <router-outlet></router-outlet>
-        
-        <!-- <app-sidebar></app-sidebar> -->
-        <!-- <app-footer></app-footer> -->
+
+        <!-- Contenido principal (router-outlet) -->
+        <div class="content flex-grow-1">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>
