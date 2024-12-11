@@ -1,4 +1,5 @@
 export interface Usuario {
+    RGU_CORREO: any;
     RGU_ID: number;
     RGU_NOMBRES: string;
     RGU_APELLIDOS: string;

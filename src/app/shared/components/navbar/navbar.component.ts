@@ -78,8 +78,13 @@ export class NavbarComponent implements AfterViewInit, OnInit{
     if(this.role === 'Administrador' || this.role === 'Trabajador') {
       this.rol_ad = true;
     }
-
-    this.imangenPerfil = this.getImagenUsuario();
+    
+    this.usuarioService.getUsuarioById(this.userId).subscribe( 
+      (data) => {
+        this.imangenPerfil = this.getImagenUsuario(data?.is_google_user);
+      }
+    )
+   
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const urlTree = this.router.parseUrl(this.router.url);
@@ -119,7 +124,7 @@ export class NavbarComponent implements AfterViewInit, OnInit{
         }
     
         this.imangenPerfil = this.getImagenUsuario();
-        // console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
+        console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
       }
     });
     this.datoService.cart$.subscribe(cart => {
@@ -172,8 +177,11 @@ export class NavbarComponent implements AfterViewInit, OnInit{
     return this.apellido
   }
 
-  getImagenUsuario(): string {
+  getImagenUsuario(is_google_user?: any): string {
     const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
+
+    if (is_google_user) { return `${this.i_perfil}`; }
+
     if (imagen !== 'no hay imagen') {
       return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
     }
