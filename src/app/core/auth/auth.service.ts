@@ -24,7 +24,29 @@ export class AuthService {
     private router: Router,
     private usuarioService: UsuarioService
   ) {}
-
+  
+  loginWithGoogle(idToken: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrlHttp}/auth/google-login`, { idToken })
+      .pipe(
+        map(response => {
+          // Guarda el token en sessionStorage
+          sessionStorage.setItem('token', response.access_token);
+  
+          // Guarda la información del usuario en sessionStorage
+          const user = {
+            RGU_NOMBRES: response.user.nombre,
+            RGU_APELLIDOS: response.user.apellido || '',
+            RGU_IMG_PROFILE: response.user.i_perfil,
+          };
+          sessionStorage.setItem('user', JSON.stringify(user));
+  
+          // Emitir el usuario actualizado (si es necesario para otros componentes)
+          this.usuarioService.setUsuario(user);
+          return response;
+        })
+      );
+  }
+  
   private encryptData(data: any): string {
     return CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
   }

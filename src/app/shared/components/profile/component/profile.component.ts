@@ -27,7 +27,7 @@ import { WebsocketService } from 'src/app/core/services/websocket.service';
 import { jwtDecode } from 'jwt-decode';
 import * as bootstrap from 'bootstrap';
 import Swal from 'sweetalert2';
-
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
@@ -90,10 +90,13 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    public pedidoService: PedidoService, 
+    public pedidoService: PedidoService,
     private cdref: ChangeDetectorRef,
-    private webSocketService: WebsocketService
-  ) {}
+    private webSocketService: WebsocketService,
+    private DomSanitizer :DomSanitizer
+  ) {
+    // super()
+   }
 
   setDataSourceAttributes() {        
     this.dataSource.paginator = this.paginator;
@@ -144,14 +147,17 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     });
     const token = sessionStorage.getItem('token'); 
     if (token) {
-      const decodedToken: any = jwtDecode(token);
-      this.userId = decodedToken.id;
-      this.i_perfil = decodedToken.i_perfil;
+      console.log(token)
+      const decodedToken: any = jwtDecode(token);    console.log("el id",decodedToken)
+      this.userId = decodedToken.id; console.log("el id",decodedToken.id)
+      this.i_perfil = decodedToken.i_perfil;  console.log("el i_perfil",decodedToken.i_perfil)
     }
       this.usuarioService.getUsuarioById(this.userId).subscribe(
         (data) => {
           this.usuario = data;
-          // console.log('Usuario obtenido:', this.usuario);
+           console.log('Usuario obtenido:', this.usuario); 
+           console.log('Usuario obtenido:', this.usuario?.is_google_user); 
+
       
           // Inicializa el formulario con los valores del usuario (nombre y apellidos)
           this.editForm = this.fb.group({
@@ -159,25 +165,35 @@ export class ProfileComponent implements OnInit, AfterViewInit {
             RGU_APELLIDOS: [this.usuario?.RGU_APELLIDOS || '', Validators.required],
             RGU_CORREO: [this.usuario?.RGU_CORREO || '', Validators.required],
             RGU_TELEFONO: [this.usuario?.RGU_TELEFONO || '', Validators.required],
-            RGU_IDENTIFICACION: [this.usuario?.RGU_IDENTIFICACION || '', Validators.required],
-            RGU_DIRECCION: [this.usuario?.RGU_DIRECCION || '', Validators.required],
+            RGU_IDENTIFICACION: [
+              this.usuario?.RGU_IDENTIFICACION || '', 
+              this.usuario?.is_google_user ? [] : Validators.required
+            ],
+            RGU_DIRECCION: [
+              this.usuario?.RGU_DIRECCION || '', 
+              this.usuario?.is_google_user ? [] : Validators.required
+            ],
             // RGU_GENERO: [this.usuario?.RGU_CORREO || '', Validators.required],
           });
           // console.log(this.editForm);
+
+          this.imangenPerfil = this.getImagenUsuario(this.usuario?.is_google_user);
+          console.log(this.imangenPerfil, ':imagen perfil ');
+          // this.usuarioService.$usuario.subscribe((usuario) => {
+          //   if (usuario) {
+          //     this.usuario = usuario;
+          //     this.imangenPerfil = this.getImagenUsuario();
+          //     console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
+          //   }
+          // });
+
         },
         (error) => {
           console.error('Error al obtener los datos del usuario', error);
         }
       );      
     // }
-    this.imangenPerfil = this.getImagenUsuario();
-    this.usuarioService.$usuario.subscribe((usuario) => {
-      if (usuario) {
-        this.usuario = usuario;
-        this.imangenPerfil = this.getImagenUsuario();
-        console.log(this.imangenPerfil, ':imagen perfil después de la actualización');
-      }
-    });
+    
     this.cargarPedidos(this.userId)
      // Escuchar eventos de WebSocket
      this.webSocketService.on('pedidoActualizado').subscribe((pedidoActualizado) => {
@@ -311,13 +327,29 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
+      if (this.editForm.invalid) {
+        console.log('El formulario es inválido', this.editForm);
+        Object.keys(this.editForm.controls).forEach((key) => {
+          const control = this.editForm.controls[key];
+          if (control.invalid) {
+            console.log(`Campo inválido: ${key}`, control.errors);
+          }
+        });
+        return;
+      }
       console.log('El formulario es inválido');
     }
   }
 
-  getImagenUsuario(): string {
-    // console.log(this.i_perfil)
+  getImagenUsuario(is_google_user?: any): string {
+    console.log(is_google_user)
     const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
+
+    if (is_google_user) {
+      console.log("ya andamos dentro!!!",this.i_perfil )
+      return `${this.i_perfil}`;
+    }
+
     // console.log(imagen)
     if (imagen !== undefined) {
       return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;

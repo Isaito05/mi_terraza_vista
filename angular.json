@@ -13,6 +13,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "core-js/modules/es.array.index-of.js"
+            ],
             "outputPath": "dist/mi_terraza_vista",
             "index": "src/index.html",
             "main": "src/main.ts",

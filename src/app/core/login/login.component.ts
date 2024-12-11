@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -21,12 +21,17 @@ export class LoginComponent {
   intentoFallido: boolean = false;
   botonHabilitado: boolean = true;
   loading: boolean = false;
+  rol: string = "";
+  userInfo: any ;
+  private clientId: string = '1016354076787-sjg4iutorlppu716q4hsognu5hk68u57.apps.googleusercontent.com';
+  public user: any = null; // Información del usuario logueado
 
   
   constructor(
     private authService: AuthService, 
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private ngZone: NgZone
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, this.validacionEmail]],
@@ -38,6 +43,45 @@ export class LoginComponent {
         this.botonHabilitado = true
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.initializeGoogleButton();
+  }
+  
+  initializeGoogleButton() {
+    google.accounts.id.initialize({
+      client_id: this.clientId, // Tu Client ID
+      callback: this.handleGoogleCallback.bind(this), 
+    });
+  
+    // Renderiza el botón en el contenedor con ID 'googleButton'
+    const googleButton = document.getElementById('googleButton');
+    if (googleButton) {
+      google.accounts.id.renderButton(googleButton, {
+        theme: 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'rectangular',
+      });
+    } else {
+      console.error('El elemento con ID googleButton no se encontró en el DOM.');
+    }
+  
+    // Opcional: Muestra el prompt si el usuario ya está autenticado
+    google.accounts.id.prompt();
+  }
+  
+  handleGoogleCallback(response: any) {
+    // console.log('Google JWT Token:', response.credential);
+    this.authService.loginWithGoogle(response.credential).subscribe(
+      (data) => {
+        this.ngZone.run(() => {
+          this.router.navigate(['/home']);
+        });
+      },
+      (error) => { console.error('Error al autenticar con Google:', error); }
+    );
   }
 
   verContrasena(): void {

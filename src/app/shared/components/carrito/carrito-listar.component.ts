@@ -22,6 +22,8 @@ import { SharedModule } from "../../shared.module";
 import { Product } from 'src/app/features/usuario/models/product.interface';
 import { CarritoEditModalComponent } from '../carrito-edit-modal/carrito-edit-modal.component';
 import { Ingredient } from 'src/app/features/usuario/models/product.interface';
+import { FacturaService } from 'src/app/features/factura/service/factura.service';
+
 
 // export interface Product {
 //   productKey: any;
@@ -105,6 +107,7 @@ export class CarritoListarComponent {
     private datoService: DatosService,
     private bottomSheet: MatBottomSheet,
     private pedidoService: PedidoService,
+    private facturaService: FacturaService,
     private router: Router
   ){}
 
@@ -245,10 +248,44 @@ export class CarritoListarComponent {
         }))),
       PED_CANCELADO: 'No se especificó un motivo.'
     };
-    console.log('Pedido a enviar:', pedido);
+
+    console.log('Pedido a enviar:', pedido); 
     this.pedidoService.saveData(pedido).subscribe(
       (response) => {
         console.log('Pedido procesado con éxito:', response);
+
+        // Verifica que el backend devuelva el ID del pedido
+      const pedidoId = response?.PED_ID; // Cambia esto según la respuesta del backend
+      if (!pedidoId) {
+        console.error('Error: No se devolvió el ID del pedido');
+        Swal.fire('Error', 'No se pudo obtener el ID del pedido.', 'error');
+        return;
+      }
+      console.log('se devolvió el ID del pedido',pedido.PED_RGU_ID);
+       // Procesar la factura
+       const factura = {
+        FACTURA_PED_ID: pedidoId, // ID del pedido recién creado
+        FACTURA_RGU_ID: pedido.PED_RGU_ID, // ID del usuario
+        FACTURA_FECHA: new Date().toISOString(), // Fecha actual
+        FACTURA_ESTADO: 'Pendiente', // Estado inicial de la FACTURA
+        FACTURA_TOTAL: pedido.PED_PRECIO_TOTAL, // Total de la FACTURA
+        FACTURA_METODO_PAGO: pedido.PED_MET_PAGO, // Método de pago
+        FACTURA_DESCRIPCION: 'Factura generada automáticamente.', // Descripción
+        FACTURA_CANCELADA: false, // Por defecto, no cancelada
+        FACTURA_FECHA_CANCELACION: null, // Fecha de cancelación (si aplica)
+        FACTURA_FCH_REGISTRO: new Date().toISOString(), // Fecha de registro
+      };
+
+
+      this.facturaService.saveData(factura).subscribe(
+        (facturaResponse) => {
+          console.log('Factura guardada con éxito:', facturaResponse);
+        },
+        (error) => {
+          console.error('Error al guardar la factura:', error);
+        }
+      );
+
         Swal.fire('Éxito', 'Tu pedido ha sido procesado.', 'success');
         this.pedidoService.activarNotificacion(); 
 
@@ -289,17 +326,17 @@ export class CarritoListarComponent {
   }
 
   getIngredientListFac(ingredients: any[]): string {
-    console.log('Producto seleccionado salieno b:', ingredients);
+    // console.log('Producto seleccionado salieno b:', ingredients);
     if (!ingredients || ingredients.length === 0) {
         return 'Sin adicionales';
     }
     const ingredientList = ingredients.filter((i:any)=> i.selected).map((i:any) => i.name).join(', ');
-        console.log('Producto seleccionado final:', ingredientList);
+        // console.log('Producto seleccionado final:', ingredientList);
     return `${ingredientList}.`;
   }
 
   calcularTotalAdicionales(ingredients: any[], cantidad: any): string {
-    console.log(cantidad,"cantidad")
+    // console.log(cantidad,"cantidad")
     const total = ingredients.filter((i:any)=> i.selected).reduce((sum, ing) => sum + ing.price*cantidad , 0) || 0;
     return this.formatCurrency(total);
   }

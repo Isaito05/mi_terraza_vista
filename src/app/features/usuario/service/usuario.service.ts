@@ -102,7 +102,8 @@ export class UsuarioService {
           RGU_NOMBRES: usuario.RGU_NOMBRES,
           RGU_IDENTIFICACION: usuario.RGU_IDENTIFICACION,
           RGU_APELLIDOS: usuario.RGU_APELLIDOS,
-          RGU_ROL: usuario.RGU_ROL
+          RGU_ROL: usuario.RGU_ROL,
+          RGU_CORREO: usuario.RGU_CORREO
         }))
       )
     );

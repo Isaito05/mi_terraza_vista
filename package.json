@@ -23,6 +23,8 @@
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@popperjs/core": "^2.11.8",
     "@swimlane/ngx-datatable": "^20.1.0",
+    "@types/gapi": "^0.0.47",
+    "@types/gapi.auth2": "^0.0.61",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "crypto-js": "^4.2.0",

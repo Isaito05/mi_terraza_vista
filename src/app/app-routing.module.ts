@@ -111,6 +111,12 @@ const routes: Routes = [
         canActivate: [authGuard]
       },
       {
+        path: 'factura',
+        title: 'Factura',
+        loadChildren: () => import('./features/factura/factura.module').then(m => m.FacturaModule),
+        canActivate: [authGuard]
+      },
+      {
         path: 'upload',
         title: 'Cargar Archivos',
         loadChildren: () => import('./core/upload/upload.module').then(m => m.UploadModule),
