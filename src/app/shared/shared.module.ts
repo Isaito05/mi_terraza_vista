@@ -18,6 +18,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { CarritoEditModalComponent } from './components/carrito-edit-modal/carrito-edit-modal.component';
+import { LocationComponent } from './components/location/location.component';
 
 
 
@@ -32,6 +33,7 @@ import { CarritoEditModalComponent } from './components/carrito-edit-modal/carri
     HeaderComponent,
     ReactiveFormsModule,
     MatBottomSheetModule,
+    
   ],
   declarations: [
     SidebarComponent,
@@ -39,7 +41,8 @@ import { CarritoEditModalComponent } from './components/carrito-edit-modal/carri
     ModalComponent,
     CheckBoxComponent,
     MenuComponent,
-    CarritoEditModalComponent
+    CarritoEditModalComponent,
+    LocationComponent
   ],
   exports: [
     SidebarComponent,
@@ -48,7 +51,8 @@ import { CarritoEditModalComponent } from './components/carrito-edit-modal/carri
     HeaderComponent,
     CheckBoxComponent,
     MenuComponent,
-    CarritoEditModalComponent
+    CarritoEditModalComponent,
+    LocationComponent
     
   ]
 })

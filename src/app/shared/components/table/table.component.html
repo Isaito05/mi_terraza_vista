@@ -102,10 +102,10 @@
               </ng-template>
             </td>
             <td>
-              <button class="btn pt-0" (click)="onEdit(item)" aria-label="Editar elemento">
+              <button class="btn pt-0" id="Editar" [class.hidden]="title === 'Modulo de Factura'" (click)="onEdit(item)" aria-label="Editar elemento">
                 <i class="fa-solid fa-file-pen fs-5"></i>
               </button>
-              <button class="btn pt-0" (click)="onDelete(item)" aria-label="Eliminar elemento">
+              <button class="btn pt-0" [class.hidden]="title === 'Modulo de Factura'" (click)="onDelete(item)" aria-label="Eliminar elemento">
                 <i class="fa-solid fa-trash-can-arrow-up fs-5"></i>
               </button>
               <button class="btn pt-0" (click)="onDetail(item)" aria-label="Ver detalles del elemento">

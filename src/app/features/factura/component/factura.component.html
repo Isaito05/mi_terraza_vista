@@ -7,9 +7,8 @@
     </ul>
   </div>
   <div class="d-flex justify-content-start mb-3">
-    <button class="button-86 fw-bold me-2" (click)="openModal()" ><i class="bi bi-plus-circle me-2"></i>Registrar</button>
-    <button class="button-86 fw-bold w-pdf me-2"><i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF</button>
-    <button type="button" class="align-items-center button-86 d-flex fw-bold w-excel" ><i class="fa-solid fa-file-excel me-2"></i>Exportar a Excel</button>
+    <button class="button-86 fw-bold w-pdf me-2" (click)="generateFacturaPdf()"><i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF</button>
+    <button type="button" class="align-items-center button-86 d-flex fw-bold w-excel" (click)="generateFacturaExcel()"><i class="fa-solid fa-file-excel me-2"></i>Exportar a Excel</button>
   </div>
   <app-modal 
   [title]="isViewingDetails ? 'Detalles de la factura' : (isEditing ? 'Editar factura' : 'Registrar factura')"
@@ -31,8 +30,6 @@
     ]" noDataMessage="No hay pagos disponibles."
     [title]="title"
     [dataService]="facturaService"
-    (edit)="onEdit($event)"
-    (delete)="onDelete($event)"
     (detail)="onDetail($event)">
     >
 </app-table>

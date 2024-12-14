@@ -23,7 +23,7 @@ import { Product } from 'src/app/features/usuario/models/product.interface';
 import { CarritoEditModalComponent } from '../carrito-edit-modal/carrito-edit-modal.component';
 import { Ingredient } from 'src/app/features/usuario/models/product.interface';
 import { FacturaService } from 'src/app/features/factura/service/factura.service';
-
+import { UsuarioService } from 'src/app/features/usuario/service/usuario.service';
 
 // export interface Product {
 //   productKey: any;
@@ -86,6 +86,7 @@ export class CarritoListarComponent {
     { name: 'Pepperoni', price: 2500, selected: false },
     { name: 'Champiñones', price: 1500, selected: false }
   ]; 
+  usuario: any = {}
   
   // selectedItem: Product = {
   //   isExpanded: false,
@@ -107,6 +108,7 @@ export class CarritoListarComponent {
     private datoService: DatosService,
     private bottomSheet: MatBottomSheet,
     private pedidoService: PedidoService,
+    private usuarioService: UsuarioService,
     private facturaService: FacturaService,
     private router: Router
   ){}
@@ -118,8 +120,19 @@ export class CarritoListarComponent {
     const token = sessionStorage.getItem('token');
     if (token) {
       const decodedToken: any = jwtDecode(token)
-      this.direccion_u = decodedToken.direccion;
+      console.log(decodedToken,"cristiano ronaldo")
+      console.log(decodedToken.id,"leo messi")
+
+      
       this.id_u = decodedToken.id
+      this.usuarioService.getUsuarioById(this.id_u).subscribe(
+        (data) => {
+          this.usuario = data;
+           console.log('Usuario obtenido:', this.usuario); 
+           this.direccion_u = this.usuario.RGU_DIRECCION;
+      })
+
+      
     }
   }
 
@@ -155,7 +168,9 @@ export class CarritoListarComponent {
   }
 
   confirmOrder() {
-    this.direccion_u // Reemplázalo con la dirección del usuario.
+    console.log(this.direccion_u,"direcion brrr")
+    if (this.direccion_u) {
+      this.direccion_u // Reemplázalo con la dirección del usuario.
     // const direccionActual = "Calle 123 #45-67, Ciudad"; // Reemplázalo con la dirección del usuario.
     console.log(this.listaItemsCarrito, 'B')
       Swal.fire({
@@ -176,6 +191,10 @@ export class CarritoListarComponent {
         this.editarDireccion(); // Llama a la función para editar la dirección
       }
     });
+    }else{ this.editarDireccion(); 
+      console.log(this.direccion_u,"direcion hp o te bajamos como coco")
+    }
+    
   }
 
   editarDireccion() {

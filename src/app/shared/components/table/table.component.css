@@ -117,3 +117,7 @@ table th {
     margin-top: -0.09rem;
     padding-left: 0.4rem;
 }
+
+.hidden {
+    display: none;
+}

@@ -1,0 +1,34 @@
+<div class="container mt-4">
+
+    <!-- Mapa interactivo -->
+    <div class="mt-4">
+        <h3>Selecciona tu ubicación en el mapa</h3>
+        <div id="map" style="height: 400px; width: 100%; border: 1px solid #ddd;"></div>
+      </div>
+
+    <!-- <h1>Ubicación Actual</h1> -->
+  
+    <!-- Mostrar errores si los hay -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+  
+    <!-- Mostrar latitud, longitud y dirección -->
+    <div *ngIf="latitude && longitude" class="mt-4">
+      <!-- <p><strong>Latitud:</strong> {{ latitude }}</p>
+      <p><strong>Longitud:</strong> {{ longitude }}</p> -->
+      <p><strong>Dirección:</strong> {{ ubicacion }}</p>
+    </div>
+  
+    <!-- Ingreso manual de dirección -->
+    <div class="mt-4">
+      <h3>¿No se pudo obtener tu ubicación?</h3>
+      <p>Por favor, ingresa tu dirección manualmente:</p>
+      <input type="text" [(ngModel)]="manualAddress" class="form-control" placeholder="Ejemplo: Avenida Siempre Viva 742" />
+      <button class="btn btn-secondary mt-2" (click)="convertAddressToCoordinates()">Buscar Dirección</button>
+      <button class="btn btn-primary" (click)="getLocation()">Obtener Mi Ubicación</button>
+    </div>
+  
+    
+  </div>
+  

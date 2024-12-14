@@ -1,0 +1,21 @@
+.location-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .location-result {
+    margin-top: 10px;
+    font-size: 1.2em;
+  }
+  
+  .location-error {
+    margin-top: 10px;
+    color: red;
+  }
+
+  #map {
+    height: 400px;
+    width: 100%;
+  }
+  
+  

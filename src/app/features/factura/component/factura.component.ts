@@ -5,6 +5,10 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { UsuarioService } from '../../usuario/service/usuario.service';
 import { Usuario } from '../../usuario/models/usuario.interface';
+import { DatosService } from 'src/app/core/services/datos.service';
+import { PdfReportService } from 'src/app/core/services/pdf-report.service';
+import { ExcelReportService } from 'src/app/core/services/excel-report.service';
+import { Factura } from '../models/factura.interface';
 
 @Component({
   selector: 'app-factura',
@@ -15,7 +19,7 @@ import { Usuario } from '../../usuario/models/usuario.interface';
 })
 export class FacturaComponent {
   facturas: any[] = []; 
-  pagoSeleccionado: any; // Variable para almacenar el pago seleccionadso por ID
+  facturaSeleccionado: any; // Variable para almacenar el pago seleccionadso por ID
   idfactura: number | null = null; // Inicializa idpago como null
   usuario: any[] = [];
   title = 'Modulo de Factura';
@@ -30,7 +34,8 @@ export class FacturaComponent {
   nombreUsuario: string = "";
   editingPed: any = {};
 
-constructor(public facturaService : FacturaService, private usuarioService: UsuarioService  ){  this.camposFactura()}
+constructor(public facturaService : FacturaService, private usuarioService: UsuarioService, 
+  private datosCompartidos: DatosService, private pdfReportService: PdfReportService,  private excelReportService : ExcelReportService  ){  this.camposFactura()}
 
   ngOnInit(): void {  
     this.facturaService.getData().subscribe({
@@ -91,13 +96,11 @@ constructor(public facturaService : FacturaService, private usuarioService: Usua
   }
 
   openModal(user?: any, isDetailView: boolean = false) {
-    console.log(user,"locooo tu crees que uno que")
+    console.log(user,"locooo tu crees que uno que",user.FACTURA_CANCELADA)
     this.usuarioService.getUsuarios().subscribe((usuarios: Usuario[]) => {
       // this.usuarios = usuarios.filter((item: { RGU_ROL: string; }) => item.RGU_ROL === 'Trabajador');
-      console.log();
       const trabajadores = usuarios.filter((item: { RGU_ROL: string; }) => item.RGU_ROL === 'Trabajador');
       this.usuarioOptions = trabajadores.map((usuario: Usuario) => ({
-        
         value: usuario.RGU_ID.toString(), // Convierte el id a string
         label: `${usuario.RGU_NOMBRES} ${usuario.RGU_APELLIDOS} - ${usuario.RGU_IDENTIFICACION}` // Combina nombres y apellidos para la etiqueta
       }));
@@ -106,47 +109,49 @@ constructor(public facturaService : FacturaService, private usuarioService: Usua
         if (isDetailView) {
           this.isViewingDetails = true;  // Modo de visualización de detalles
           this.isEditing = false;
-        } else {
-          this.isEditing = !!user; // Modo edición
-          this.isViewingDetails = false; // Desactiva el modo de visualización de detalles
-        }
-        this.editingUser = user ? { ...user } : {}; // Llena el formulario con los datos del usuario o lo inicializa vacío
+        } 
+        // else {
+        //   this.isEditing = !!user; // Modo edición
+        //   this.isViewingDetails = false; // Desactiva el modo de visualización de detalles
+        // }
+        this.editingUser = user ? { ...user } : {};
+        console.log(this.editingUser) // Llena el formulario con los datos del usuario o lo inicializa vacío
         this.isModalVisible = true;
       this.camposFactura()
     });
   }
 
-  onEdit(user: any) {
-    console.log('Evento de edición recibido:', user);
-    this.openModal(user);
-  }
+  // onEdit(user: any) {
+  //   console.log('Evento de edición recibido:', user);
+  //   this.openModal(user);
+  // }
 
-  onDelete(factura: any) {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: `Eliminarás la factura de: ${factura.nombreUsuario}`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log(factura, 'eta vaina tiene'),
-        this.facturaService.deleteData(factura.FACTURA_ID).subscribe(
-          (response) => {
-            Swal.fire('Eliminado!', 'La factura ha sido eliminado.', 'success').then(() => {
-              location.reload();
-            });
-          },
-          (error) => {
-            console.error('Error al eliminar:', error);
-            Swal.fire('Error', 'Hubo un problema al eliminar la factura', 'error');
-          }
-        );
-      }
-    });
-  }
+  // onDelete(factura: any) {
+  //   Swal.fire({
+  //     title: '¿Estás seguro?',
+  //     text: `Eliminarás la factura de: ${factura.nombreUsuario}`,
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Sí, eliminar'
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       console.log(factura, 'eta vaina tiene'),
+  //       this.facturaService.deleteData(factura.FACTURA_ID).subscribe(
+  //         (response) => {
+  //           Swal.fire('Eliminado!', 'La factura ha sido eliminado.', 'success').then(() => {
+  //             location.reload();
+  //           });
+  //         },
+  //         (error) => {
+  //           console.error('Error al eliminar:', error);
+  //           Swal.fire('Error', 'Hubo un problema al eliminar la factura', 'error');
+  //         }
+  //       );
+  //     }
+  //   });
+  // }
 
   onDetail(user: any) {
     console.log('Evento de detalle recibido:', user);
@@ -166,7 +171,6 @@ constructor(public facturaService : FacturaService, private usuarioService: Usua
     this.isModalVisible = false;
   }
 
-
   camposFactura() {
     this.modalFields = [      
       { id: 'nombreUsuario', label: 'Nombre del usuario', type: 'text' },
@@ -179,6 +183,46 @@ constructor(public facturaService : FacturaService, private usuarioService: Usua
       { id: 'FACTURA_FECHA_CANCELACION', label: 'Fecha de cancelacion', type: 'date' },
       { id: 'FACTURA_CANCELADA', label: 'Factura cancelada', type: 'text' },
     ];
+  }
+
+  generateFacturaPdf() {
+    const headers = ['Nombre del cliente','Fecha de emisión','Fecha de registro','Monto pagado','Metodo de pago','Estado de factura'
+    ,'Descripcion de la factura','Fecha de cancelacion'];
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+
+    const data = (selectedItems.length > 0 ? selectedItems : this.facturas).map(factura => [
+      String(factura.nombreUsuario),
+      String(factura.FACTURA_FECHA),
+      String(factura.FACTURA_FCH_REGISTRO),
+      String(factura.FACTURA_TOTAL),
+      String(factura.FACTURA_METODO_PAGO),
+      String(factura.FACTURA_ESTADO),
+      String(factura.FACTURA_DESCRIPCION),
+      String(factura.FACTURA_FECHA_CANCELACION),
+      
+    ]);
+
+    this.pdfReportService.generatePdf('Reporte de Factura', headers, data, 'reporte_factura');
+  }
+
+  generateFacturaExcel() {
+    const columns: (keyof Factura | string)[] = ['Nombre del cliente','Fecha de emisión','Fecha de registro','Monto pagado','Metodo de pago','Estado de factura','Descripcion de la factura','Fecha de cancelacion',];
+    const title: any = 'Reporte de Facturas'
+    // Mapeo de claves para los encabezados
+    const keyMapping: { [key: string]: keyof Factura | string } = {
+      'Nombre del cliente':  'nombreUsuario',
+      'Fecha de emisión':  'FACTURA_FECHA',
+      'Fecha de registro':  'FACTURA_FCH_REGISTRO',
+      'Monto pagado':  'FACTURA_TOTAL',
+      'Metodo de pago':  'FACTURA_METODO_PAGO',
+      'Estado de factura':  'FACTURA_ESTADO',
+      'Descripcion de la factura':  'FACTURA_DESCRIPCION',
+      'Fecha de cancelacion':  'FACTURA_FECHA_CANCELACION',
+    };
+    const selectedItems = this.datosCompartidos.getSelectedItems();
+    console.log(columns)
+    // Asegúrate de que el método espera un arreglo de claves
+    this.excelReportService.generateExcel<Factura>(this.facturas, columns, 'Factura', keyMapping, undefined, selectedItems, title);
   }
 
 }

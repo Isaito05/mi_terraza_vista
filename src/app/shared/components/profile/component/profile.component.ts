@@ -29,6 +29,7 @@ import * as bootstrap from 'bootstrap';
 import Swal from 'sweetalert2';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 declare var $: any;
+import { FormControl } from "@angular/forms";
 
 @Component({
   selector: 'app-profile',
@@ -44,7 +45,7 @@ declare var $: any;
     MatButtonModule,
     MatBadgeModule,
     MatTooltipModule,
-    FooterComponent
+    FooterComponent,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -57,7 +58,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   editForm!: FormGroup;
   userId!: number;
   usuario: any = {}
-  imangenPerfil: string = '';
+  imangenPerfil: SafeUrl | undefined;
   i_perfil: string = '';
   historialPedidos: any[] = [];
   hayNotificacion: boolean = false;
@@ -93,7 +94,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     public pedidoService: PedidoService,
     private cdref: ChangeDetectorRef,
     private webSocketService: WebsocketService,
-    private DomSanitizer :DomSanitizer
+    private sanitizer: DomSanitizer
   ) {
     // super()
    }
@@ -341,21 +342,35 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getImagenUsuario(is_google_user?: any): string {
-    console.log(is_google_user)
-    const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
+  // getImagenUsuario(is_google_user?: any): string {
+  //   console.log(is_google_user)
+  //   const imagen = this.usuario ? this.usuario.RGU_IMG_PROFILE: 'no hay imagen'
 
+  //   if (is_google_user) {
+  //     console.log("ya andamos dentro!!!",this.i_perfil )
+  //     return `${this.i_perfil}`;
+  //   }
+
+  //   // console.log(imagen)
+  //   if (imagen !== undefined) {
+  //     return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
+  //   }
+  //   // console.log(`${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`)
+  //   return `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`; // Ruta de la imagen por defecto
+  // }
+
+  getImagenUsuario(is_google_user?: boolean): SafeUrl {
+    let url = `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`; // Imagen por defecto
+  
     if (is_google_user) {
-      console.log("ya andamos dentro!!!",this.i_perfil )
-      return `${this.i_perfil}`;
+      console.log('Usuario de Google detectado');
+      url = this.i_perfil; // URL externa
+    } else if (this.usuario?.RGU_IMG_PROFILE) {
+      url = `${environment.apiUrlHttp}${this.usuario.RGU_IMG_PROFILE}?t=${new Date().getTime()}`;
     }
-
-    // console.log(imagen)
-    if (imagen !== undefined) {
-      return `${environment.apiUrlHttp}${imagen}?t=${new Date().getTime()}`;
-    }
-    // console.log(`${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`)
-    return `${environment.apiUrlHttp}${this.i_perfil}?t=${new Date().getTime()}`; // Ruta de la imagen por defecto
+  
+    this.imangenPerfil = this.sanitizer.bypassSecurityTrustUrl(url);
+    return this.imangenPerfil;
   }
 
   // Detectar cambios en el tamaño de la pantalla

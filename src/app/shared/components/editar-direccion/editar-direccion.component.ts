@@ -4,11 +4,12 @@ import { MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/botto
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { SharedModule } from "../../shared.module";
 
 @Component({
   selector: 'app-editar-direccion',
   standalone: true,
-  imports: [MatBottomSheetModule, MatButtonModule, FormsModule, MatInputModule, MatFormFieldModule],
+  imports: [MatBottomSheetModule, MatButtonModule, FormsModule, MatInputModule, MatFormFieldModule, SharedModule],
   template: `
     <!-- <h2 class="text-center">Editar Dirección De Envio</h2> -->
     <!-- <p class="text-center mb-3 fw-t text-dark font-title" style="margin-bottom: 0 !important;">Edita o actualiza tu dirección aquí.</p>
@@ -17,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
       <span class="text-dark font-title">●</span>
       <hr class="flex-grow-1 ms-2 text-dark" /> -->
     <!-- </div> -->
+    <app-location (direccionEmitida)="actualizarDireccion($event)"></app-location>
     <div class="d-flex align-items-start flex-column position-relative mt-3">
       <input [(ngModel)]="direccion" type="text" id="email" name="email" aria-describedby="emailHelp"
         class="form-control p-ci" placeholder="Ingresa tu direccion.." >
@@ -44,5 +46,9 @@ export class EditarDireccionComponent {
 
   guardar() {
     this.bottomSheetRef.dismiss(this.direccion); // Devuelve la nueva dirección al cerrar
+  }
+
+  actualizarDireccion(nuevaDireccion: string) {
+    this.direccion = nuevaDireccion; // Actualiza el campo de texto con la dirección recibida
   }
 }
